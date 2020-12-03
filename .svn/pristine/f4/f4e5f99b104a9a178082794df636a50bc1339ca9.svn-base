@@ -1,0 +1,117 @@
+﻿namespace Numerical_calculator
+{
+    partial class Results_KineticModel
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.plot1 = new OxyPlot.WindowsForms.PlotView();
+            this.button_export = new System.Windows.Forms.Button();
+            this.checkedListBox1 = new System.Windows.Forms.CheckedListBox();
+            this.button_plot = new System.Windows.Forms.Button();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.SuspendLayout();
+            // 
+            // plot1
+            // 
+            this.plot1.BackColor = System.Drawing.SystemColors.AppWorkspace;
+            this.plot1.Location = new System.Drawing.Point(118, 12);
+            this.plot1.Name = "plot1";
+            this.plot1.PanCursor = System.Windows.Forms.Cursors.Hand;
+            this.plot1.Size = new System.Drawing.Size(854, 437);
+            this.plot1.TabIndex = 13;
+            this.plot1.Text = "plot1";
+            this.plot1.ZoomHorizontalCursor = System.Windows.Forms.Cursors.SizeWE;
+            this.plot1.ZoomRectangleCursor = System.Windows.Forms.Cursors.SizeNWSE;
+            this.plot1.ZoomVerticalCursor = System.Windows.Forms.Cursors.SizeNS;
+            // 
+            // button_export
+            // 
+            this.button_export.Location = new System.Drawing.Point(12, 419);
+            this.button_export.Name = "button_export";
+            this.button_export.Size = new System.Drawing.Size(100, 30);
+            this.button_export.TabIndex = 3;
+            this.button_export.Text = "Export";
+            this.button_export.UseVisualStyleBackColor = true;
+            this.button_export.Click += new System.EventHandler(this.button_export_Click);
+            // 
+            // checkedListBox1
+            // 
+            this.checkedListBox1.BackColor = System.Drawing.SystemColors.Control;
+            this.checkedListBox1.CheckOnClick = true;
+            this.checkedListBox1.FormattingEnabled = true;
+            this.checkedListBox1.Location = new System.Drawing.Point(12, 12);
+            this.checkedListBox1.Name = "checkedListBox1";
+            this.checkedListBox1.Size = new System.Drawing.Size(100, 334);
+            this.checkedListBox1.TabIndex = 1;
+            // 
+            // button_plot
+            // 
+            this.button_plot.Location = new System.Drawing.Point(12, 383);
+            this.button_plot.Name = "button_plot";
+            this.button_plot.Size = new System.Drawing.Size(100, 30);
+            this.button_plot.TabIndex = 2;
+            this.button_plot.Text = "Plot";
+            this.button_plot.UseVisualStyleBackColor = true;
+            this.button_plot.Click += new System.EventHandler(this.button_plot_Click);
+            // 
+            // textBox1
+            // 
+            this.textBox1.Enabled = false;
+            this.textBox1.Location = new System.Drawing.Point(12, 357);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(100, 20);
+            this.textBox1.TabIndex = 14;
+            // 
+            // Results_KineticModel
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(984, 461);
+            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.button_export);
+            this.Controls.Add(this.checkedListBox1);
+            this.Controls.Add(this.button_plot);
+            this.Controls.Add(this.plot1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Name = "Results_KineticModel";
+            this.Text = "Results_KineticModel";
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+
+        #endregion
+
+        private OxyPlot.WindowsForms.PlotView plot1;
+        private System.Windows.Forms.Button button_export;
+        private System.Windows.Forms.CheckedListBox checkedListBox1;
+        private System.Windows.Forms.Button button_plot;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        public System.Windows.Forms.TextBox textBox1;
+    }
+}

@@ -1,0 +1,23 @@
+﻿Etapa 1: Items
+
+DONE!
+
+Etapa 2: Conections
+
+- doriesit bugy v reakcii
+- ak je zvoleny item, moznost vyberu  dotknutych reakcii
+- vymazanie reakcie
+- vymazanie aj zmena itemu afektuje reakciu
+- charakteristicka  oblast grafickej reprezentacie reakcie, klick, 
+
+Etapa 3: Calculation
+
+-upravenie zadania pre vypocet dt, dz, ...
+-upravenie menu -menu, setings, results
+
+Etapa 4: Vizualization
+
+-vytvorenie grafickeho a textoveho vystupu v zavislosti na volbe v menu/results
+
+P.S.:
+- osetrenie rozmerov okna

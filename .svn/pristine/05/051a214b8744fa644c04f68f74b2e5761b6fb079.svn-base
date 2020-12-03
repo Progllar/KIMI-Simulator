@@ -1,0 +1,499 @@
+﻿namespace Numerical_calculator
+{
+    partial class Old
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.button_calculate = new System.Windows.Forms.Button();
+            this.groupBox_initial = new System.Windows.Forms.GroupBox();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.vScrollBar1 = new System.Windows.Forms.VScrollBar();
+            this.label2 = new System.Windows.Forms.Label();
+            this.textBoxB2 = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.textBoxA1 = new System.Windows.Forms.TextBox();
+            this.textBoxB3 = new System.Windows.Forms.TextBox();
+            this.textBoxA8 = new System.Windows.Forms.TextBox();
+            this.textBoxB4 = new System.Windows.Forms.TextBox();
+            this.textBoxA7 = new System.Windows.Forms.TextBox();
+            this.textBoxB5 = new System.Windows.Forms.TextBox();
+            this.textBoxA6 = new System.Windows.Forms.TextBox();
+            this.textBoxB6 = new System.Windows.Forms.TextBox();
+            this.textBoxA5 = new System.Windows.Forms.TextBox();
+            this.textBoxB7 = new System.Windows.Forms.TextBox();
+            this.textBoxA4 = new System.Windows.Forms.TextBox();
+            this.textBoxB8 = new System.Windows.Forms.TextBox();
+            this.textBoxA3 = new System.Windows.Forms.TextBox();
+            this.textBoxB1 = new System.Windows.Forms.TextBox();
+            this.textBoxA2 = new System.Windows.Forms.TextBox();
+            this.button_plot = new System.Windows.Forms.Button();
+            this.checkedListBox1 = new System.Windows.Forms.CheckedListBox();
+            this.groupBox_plot = new System.Windows.Forms.GroupBox();
+            this.button_export = new System.Windows.Forms.Button();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.button_clear = new System.Windows.Forms.Button();
+            this.button_load = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.button_add = new System.Windows.Forms.Button();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.plot1 = new OxyPlot.WindowsForms.PlotView();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.groupBox_initial.SuspendLayout();
+            this.groupBox_plot.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(6, 277);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(145, 10);
+            this.progressBar1.TabIndex = 6;
+            // 
+            // button_calculate
+            // 
+            this.button_calculate.Enabled = false;
+            this.button_calculate.Location = new System.Drawing.Point(6, 246);
+            this.button_calculate.Name = "button_calculate";
+            this.button_calculate.Size = new System.Drawing.Size(145, 25);
+            this.button_calculate.TabIndex = 23;
+            this.button_calculate.Text = "Calculate";
+            this.button_calculate.UseVisualStyleBackColor = true;
+            this.button_calculate.Click += new System.EventHandler(this.button_calculate_Click);
+            // 
+            // groupBox_initial
+            // 
+            this.groupBox_initial.Controls.Add(this.textBox2);
+            this.groupBox_initial.Controls.Add(this.textBox3);
+            this.groupBox_initial.Controls.Add(this.label3);
+            this.groupBox_initial.Controls.Add(this.label4);
+            this.groupBox_initial.Controls.Add(this.vScrollBar1);
+            this.groupBox_initial.Controls.Add(this.button_calculate);
+            this.groupBox_initial.Controls.Add(this.progressBar1);
+            this.groupBox_initial.Controls.Add(this.label2);
+            this.groupBox_initial.Controls.Add(this.textBoxB2);
+            this.groupBox_initial.Controls.Add(this.label1);
+            this.groupBox_initial.Controls.Add(this.textBoxA1);
+            this.groupBox_initial.Controls.Add(this.textBoxB3);
+            this.groupBox_initial.Controls.Add(this.textBoxA8);
+            this.groupBox_initial.Controls.Add(this.textBoxB4);
+            this.groupBox_initial.Controls.Add(this.textBoxA7);
+            this.groupBox_initial.Controls.Add(this.textBoxB5);
+            this.groupBox_initial.Controls.Add(this.textBoxA6);
+            this.groupBox_initial.Controls.Add(this.textBoxB6);
+            this.groupBox_initial.Controls.Add(this.textBoxA5);
+            this.groupBox_initial.Controls.Add(this.textBoxB7);
+            this.groupBox_initial.Controls.Add(this.textBoxA4);
+            this.groupBox_initial.Controls.Add(this.textBoxB8);
+            this.groupBox_initial.Controls.Add(this.textBoxA3);
+            this.groupBox_initial.Controls.Add(this.textBoxB1);
+            this.groupBox_initial.Controls.Add(this.textBoxA2);
+            this.groupBox_initial.Location = new System.Drawing.Point(14, 247);
+            this.groupBox_initial.Name = "groupBox_initial";
+            this.groupBox_initial.Size = new System.Drawing.Size(159, 295);
+            this.groupBox_initial.TabIndex = 10;
+            this.groupBox_initial.TabStop = false;
+            this.groupBox_initial.Text = "Initial values";
+            // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(8, 220);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(60, 20);
+            this.textBox2.TabIndex = 21;
+            this.textBox2.Text = "1000";
+            // 
+            // textBox3
+            // 
+            this.textBox3.Location = new System.Drawing.Point(73, 220);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(60, 20);
+            this.textBox3.TabIndex = 22;
+            this.textBox3.Text = "100";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.label3.Location = new System.Drawing.Point(71, 201);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(50, 15);
+            this.label3.TabIndex = 35;
+            this.label3.Text = "Density:";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(8, 203);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(53, 13);
+            this.label4.TabIndex = 100;
+            this.label4.Text = "Time (us):";
+            // 
+            // vScrollBar1
+            // 
+            this.vScrollBar1.LargeChange = 101;
+            this.vScrollBar1.Location = new System.Drawing.Point(136, 40);
+            this.vScrollBar1.Name = "vScrollBar1";
+            this.vScrollBar1.Size = new System.Drawing.Size(15, 160);
+            this.vScrollBar1.SmallChange = 50;
+            this.vScrollBar1.TabIndex = 20;
+            this.vScrollBar1.Value = 15;
+            this.vScrollBar1.Scroll += new System.Windows.Forms.ScrollEventHandler(this.vScrollBar1_Scroll);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.label2.Location = new System.Drawing.Point(71, 22);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(69, 15);
+            this.label2.TabIndex = 12;
+            this.label2.Text = "Value (t=0):";
+            // 
+            // textBoxB2
+            // 
+            this.textBoxB2.Location = new System.Drawing.Point(73, 60);
+            this.textBoxB2.Name = "textBoxB2";
+            this.textBoxB2.Size = new System.Drawing.Size(60, 20);
+            this.textBoxB2.TabIndex = 13;
+            this.textBoxB2.TextChanged += new System.EventHandler(this.textBoxB2_TextChanged);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(8, 24);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(58, 13);
+            this.label1.TabIndex = 11;
+            this.label1.Text = "Parameter:";
+            // 
+            // textBoxA1
+            // 
+            this.textBoxA1.Location = new System.Drawing.Point(8, 40);
+            this.textBoxA1.Name = "textBoxA1";
+            this.textBoxA1.ReadOnly = true;
+            this.textBoxA1.Size = new System.Drawing.Size(60, 20);
+            this.textBoxA1.TabIndex = 4;
+            // 
+            // textBoxB3
+            // 
+            this.textBoxB3.Location = new System.Drawing.Point(73, 80);
+            this.textBoxB3.Name = "textBoxB3";
+            this.textBoxB3.Size = new System.Drawing.Size(60, 20);
+            this.textBoxB3.TabIndex = 14;
+            this.textBoxB3.TextChanged += new System.EventHandler(this.textBoxB3_TextChanged);
+            // 
+            // textBoxA8
+            // 
+            this.textBoxA8.Location = new System.Drawing.Point(8, 180);
+            this.textBoxA8.Name = "textBoxA8";
+            this.textBoxA8.ReadOnly = true;
+            this.textBoxA8.Size = new System.Drawing.Size(60, 20);
+            this.textBoxA8.TabIndex = 11;
+            // 
+            // textBoxB4
+            // 
+            this.textBoxB4.Location = new System.Drawing.Point(73, 100);
+            this.textBoxB4.Name = "textBoxB4";
+            this.textBoxB4.Size = new System.Drawing.Size(60, 20);
+            this.textBoxB4.TabIndex = 15;
+            this.textBoxB4.TextChanged += new System.EventHandler(this.textBoxB4_TextChanged);
+            // 
+            // textBoxA7
+            // 
+            this.textBoxA7.Location = new System.Drawing.Point(8, 160);
+            this.textBoxA7.Name = "textBoxA7";
+            this.textBoxA7.ReadOnly = true;
+            this.textBoxA7.Size = new System.Drawing.Size(60, 20);
+            this.textBoxA7.TabIndex = 10;
+            // 
+            // textBoxB5
+            // 
+            this.textBoxB5.Location = new System.Drawing.Point(73, 120);
+            this.textBoxB5.Name = "textBoxB5";
+            this.textBoxB5.Size = new System.Drawing.Size(60, 20);
+            this.textBoxB5.TabIndex = 16;
+            this.textBoxB5.TextChanged += new System.EventHandler(this.textBoxB5_TextChanged);
+            // 
+            // textBoxA6
+            // 
+            this.textBoxA6.Location = new System.Drawing.Point(8, 140);
+            this.textBoxA6.Name = "textBoxA6";
+            this.textBoxA6.ReadOnly = true;
+            this.textBoxA6.Size = new System.Drawing.Size(60, 20);
+            this.textBoxA6.TabIndex = 9;
+            // 
+            // textBoxB6
+            // 
+            this.textBoxB6.Location = new System.Drawing.Point(73, 140);
+            this.textBoxB6.Name = "textBoxB6";
+            this.textBoxB6.Size = new System.Drawing.Size(60, 20);
+            this.textBoxB6.TabIndex = 17;
+            this.textBoxB6.TextChanged += new System.EventHandler(this.textBoxB6_TextChanged);
+            // 
+            // textBoxA5
+            // 
+            this.textBoxA5.Location = new System.Drawing.Point(8, 120);
+            this.textBoxA5.Name = "textBoxA5";
+            this.textBoxA5.ReadOnly = true;
+            this.textBoxA5.Size = new System.Drawing.Size(60, 20);
+            this.textBoxA5.TabIndex = 8;
+            // 
+            // textBoxB7
+            // 
+            this.textBoxB7.Location = new System.Drawing.Point(73, 160);
+            this.textBoxB7.Name = "textBoxB7";
+            this.textBoxB7.Size = new System.Drawing.Size(60, 20);
+            this.textBoxB7.TabIndex = 18;
+            this.textBoxB7.TextChanged += new System.EventHandler(this.textBoxB7_TextChanged);
+            // 
+            // textBoxA4
+            // 
+            this.textBoxA4.Location = new System.Drawing.Point(8, 100);
+            this.textBoxA4.Name = "textBoxA4";
+            this.textBoxA4.ReadOnly = true;
+            this.textBoxA4.Size = new System.Drawing.Size(60, 20);
+            this.textBoxA4.TabIndex = 7;
+            // 
+            // textBoxB8
+            // 
+            this.textBoxB8.Location = new System.Drawing.Point(73, 180);
+            this.textBoxB8.Name = "textBoxB8";
+            this.textBoxB8.Size = new System.Drawing.Size(60, 20);
+            this.textBoxB8.TabIndex = 19;
+            this.textBoxB8.TextChanged += new System.EventHandler(this.textBoxB8_TextChanged);
+            // 
+            // textBoxA3
+            // 
+            this.textBoxA3.Location = new System.Drawing.Point(8, 80);
+            this.textBoxA3.Name = "textBoxA3";
+            this.textBoxA3.ReadOnly = true;
+            this.textBoxA3.Size = new System.Drawing.Size(60, 20);
+            this.textBoxA3.TabIndex = 6;
+            // 
+            // textBoxB1
+            // 
+            this.textBoxB1.Location = new System.Drawing.Point(73, 40);
+            this.textBoxB1.Name = "textBoxB1";
+            this.textBoxB1.Size = new System.Drawing.Size(60, 20);
+            this.textBoxB1.TabIndex = 12;
+            this.textBoxB1.TextChanged += new System.EventHandler(this.textBoxB1_TextChanged);
+            // 
+            // textBoxA2
+            // 
+            this.textBoxA2.Location = new System.Drawing.Point(8, 60);
+            this.textBoxA2.Name = "textBoxA2";
+            this.textBoxA2.ReadOnly = true;
+            this.textBoxA2.Size = new System.Drawing.Size(60, 20);
+            this.textBoxA2.TabIndex = 5;
+            // 
+            // button_plot
+            // 
+            this.button_plot.Enabled = false;
+            this.button_plot.Location = new System.Drawing.Point(6, 224);
+            this.button_plot.Name = "button_plot";
+            this.button_plot.Size = new System.Drawing.Size(100, 34);
+            this.button_plot.TabIndex = 10;
+            this.button_plot.Text = "Plot";
+            this.button_plot.UseVisualStyleBackColor = true;
+            this.button_plot.Click += new System.EventHandler(this.button_plot_Click);
+            // 
+            // checkedListBox1
+            // 
+            this.checkedListBox1.BackColor = System.Drawing.SystemColors.Control;
+            this.checkedListBox1.FormattingEnabled = true;
+            this.checkedListBox1.Location = new System.Drawing.Point(8, 19);
+            this.checkedListBox1.Name = "checkedListBox1";
+            this.checkedListBox1.Size = new System.Drawing.Size(100, 199);
+            this.checkedListBox1.TabIndex = 0;
+            this.checkedListBox1.SelectedIndexChanged += new System.EventHandler(this.checkedListBox1_SelectedIndexChanged);
+            // 
+            // groupBox_plot
+            // 
+            this.groupBox_plot.Controls.Add(this.button_export);
+            this.groupBox_plot.Controls.Add(this.checkedListBox1);
+            this.groupBox_plot.Controls.Add(this.button_plot);
+            this.groupBox_plot.Location = new System.Drawing.Point(179, 247);
+            this.groupBox_plot.Name = "groupBox_plot";
+            this.groupBox_plot.Size = new System.Drawing.Size(116, 295);
+            this.groupBox_plot.TabIndex = 11;
+            this.groupBox_plot.TabStop = false;
+            this.groupBox_plot.Text = "Vizualization";
+            // 
+            // button_export
+            // 
+            this.button_export.Enabled = false;
+            this.button_export.Location = new System.Drawing.Point(6, 264);
+            this.button_export.Name = "button_export";
+            this.button_export.Size = new System.Drawing.Size(100, 25);
+            this.button_export.TabIndex = 12;
+            this.button_export.Text = "Export";
+            this.button_export.UseVisualStyleBackColor = true;
+            this.button_export.Click += new System.EventHandler(this.button_export_Click);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.button_clear);
+            this.groupBox1.Controls.Add(this.button_load);
+            this.groupBox1.Controls.Add(this.textBox1);
+            this.groupBox1.Controls.Add(this.button_add);
+            this.groupBox1.Location = new System.Drawing.Point(12, 12);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(283, 229);
+            this.groupBox1.TabIndex = 11;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Equations";
+            // 
+            // button_clear
+            // 
+            this.button_clear.Enabled = false;
+            this.button_clear.Location = new System.Drawing.Point(195, 198);
+            this.button_clear.Name = "button_clear";
+            this.button_clear.Size = new System.Drawing.Size(80, 25);
+            this.button_clear.TabIndex = 4;
+            this.button_clear.Text = "Clear";
+            this.button_clear.UseVisualStyleBackColor = true;
+            this.button_clear.Click += new System.EventHandler(this.button4_Click);
+            // 
+            // button_load
+            // 
+            this.button_load.Location = new System.Drawing.Point(10, 198);
+            this.button_load.Name = "button_load";
+            this.button_load.Size = new System.Drawing.Size(80, 25);
+            this.button_load.TabIndex = 2;
+            this.button_load.Text = "Load";
+            this.button_load.UseVisualStyleBackColor = true;
+            this.button_load.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // textBox1
+            // 
+            this.textBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.textBox1.Location = new System.Drawing.Point(10, 19);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(265, 173);
+            this.textBox1.TabIndex = 1;
+            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            // 
+            // button_add
+            // 
+            this.button_add.Enabled = false;
+            this.button_add.Location = new System.Drawing.Point(102, 198);
+            this.button_add.Name = "button_add";
+            this.button_add.Size = new System.Drawing.Size(80, 25);
+            this.button_add.TabIndex = 3;
+            this.button_add.Text = "Add";
+            this.button_add.UseVisualStyleBackColor = true;
+            this.button_add.Click += new System.EventHandler(this.button_add_Click);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            // 
+            // plot1
+            // 
+            this.plot1.BackColor = System.Drawing.SystemColors.AppWorkspace;
+            this.plot1.Location = new System.Drawing.Point(301, 12);
+            this.plot1.Name = "plot1";
+            this.plot1.PanCursor = System.Windows.Forms.Cursors.Hand;
+            this.plot1.Size = new System.Drawing.Size(1051, 530);
+            this.plot1.TabIndex = 0;
+            this.plot1.Text = "plot1";
+            this.plot1.ZoomHorizontalCursor = System.Windows.Forms.Cursors.SizeWE;
+            this.plot1.ZoomRectangleCursor = System.Windows.Forms.Cursors.SizeNWSE;
+            this.plot1.ZoomVerticalCursor = System.Windows.Forms.Cursors.SizeNS;
+            // 
+            // Old
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(1364, 554);
+            this.Controls.Add(this.groupBox_plot);
+            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.groupBox_initial);
+            this.Controls.Add(this.plot1);
+            this.Name = "Old";
+            this.Text = "Calculator";
+            this.Load += new System.EventHandler(this.Main_form_Load);
+            this.groupBox_initial.ResumeLayout(false);
+            this.groupBox_initial.PerformLayout();
+            this.groupBox_plot.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            this.ResumeLayout(false);
+
+        }
+
+        #endregion
+
+        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Button button_calculate;
+        private System.Windows.Forms.GroupBox groupBox_initial;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button button_plot;
+        private System.Windows.Forms.CheckedListBox checkedListBox1;
+        private System.Windows.Forms.GroupBox groupBox_plot;
+        private System.Windows.Forms.VScrollBar vScrollBar1;
+        private System.Windows.Forms.TextBox textBoxB2;
+        private System.Windows.Forms.TextBox textBoxA1;
+        private System.Windows.Forms.TextBox textBoxB3;
+        private System.Windows.Forms.TextBox textBoxA8;
+        private System.Windows.Forms.TextBox textBoxB4;
+        private System.Windows.Forms.TextBox textBoxA7;
+        private System.Windows.Forms.TextBox textBoxB5;
+        private System.Windows.Forms.TextBox textBoxA6;
+        private System.Windows.Forms.TextBox textBoxB6;
+        private System.Windows.Forms.TextBox textBoxA5;
+        private System.Windows.Forms.TextBox textBoxB7;
+        private System.Windows.Forms.TextBox textBoxA4;
+        private System.Windows.Forms.TextBox textBoxB8;
+        private System.Windows.Forms.TextBox textBoxA3;
+        private System.Windows.Forms.TextBox textBoxB1;
+        private System.Windows.Forms.TextBox textBoxA2;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Button button_load;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Button button_add;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Button button_clear;
+        private OxyPlot.WindowsForms.PlotView plot1;
+        private System.Windows.Forms.Button button_export;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+
+    }
+}
+

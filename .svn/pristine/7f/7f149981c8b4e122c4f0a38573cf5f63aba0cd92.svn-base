@@ -1,0 +1,202 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.IO;
+using OxyPlot;
+using OxyPlot.WindowsForms;
+using OxyPlot.Axes;
+using OxyPlot.Series;
+
+namespace Numerical_calculator
+{
+    public partial class Results_KineticModel : Form
+    {
+        public string[] hlavicka { get; set; }
+        public List<double[]> tabulka { get; set; }
+        public string Popis_X { get; set; }
+        public bool dinamic_mode { get; set; }
+        public List<List<double[]>> data_din { get; set; }
+        public string name_din { get; set; }
+
+        public Results_KineticModel()
+        {
+            InitializeComponent();
+        }
+
+        private void button_plot_Click(object sender, EventArgs e)
+        {
+            if (dinamic_mode)
+            {
+                start_animation_din();
+            }
+            else
+            {
+                start_animation();
+            }
+        }
+
+        public void start_animation_din()
+        {
+            double real_distance = 0;
+            double mmry;
+            double dif = Main.Distance / Main.NumberOfSteps;
+            double cnt = 0;
+            double set_distance = Main.Convertor(textBox1.Text);
+            while(cnt <= Main.Distance)
+            {
+                mmry = Math.Abs(set_distance - real_distance);
+                if( Math.Abs(set_distance - cnt) < mmry)
+                {
+                    real_distance = cnt;               
+                }
+                cnt += dif;
+                cnt = Math.Round(cnt,12);
+            }
+            int i = 0;
+            PlotModel model = new PlotModel() { LegendSymbolLength = 24, IsLegendVisible = true };
+            model.LegendTitle = "Legend";
+            model.LegendOrientation = LegendOrientation.Horizontal;
+            model.LegendPlacement = LegendPlacement.Inside;
+            model.LegendPosition = LegendPosition.RightTop;
+            foreach (string str in hlavicka)
+            {
+                if (checkedListBox1.CheckedItems.Contains(str))
+                {
+                    FunctionSeries fs = new FunctionSeries();
+                    foreach (List<double[]> tabulka in data_din) // cez koncentracie
+                    {
+                        foreach (double[] dou in tabulka) // cez suradnicu
+                        {
+                            if (dou[dou.GetLength(0) - 2] == real_distance)
+                            {
+                                fs.Points.Add(new DataPoint(dou[(dou.GetLength(0) - 1)], dou[i]));
+                            }
+                        }
+                    }
+                    fs.Title = str;
+                    model.Series.Add(fs);
+                }
+                i++;
+            }
+            model.Axes.Add(new LinearAxis() { Position = AxisPosition.Bottom, Title = Popis_X, MajorGridlineStyle = LineStyle.Dash });
+            model.Axes.Add(new LogarithmicAxis() { Position = AxisPosition.Left, MajorGridlineStyle = LineStyle.Solid, MinorGridlineStyle = LineStyle.Dot, IntervalLength = 100, Title = "Concentration" });
+            plot1.Model = model;
+        }
+
+        public void start_animation()
+        {
+            int i = 0;
+            PlotModel model = new PlotModel() { LegendSymbolLength = 24, IsLegendVisible = true };
+            model.LegendTitle = "Legend";
+            model.LegendOrientation = LegendOrientation.Horizontal;
+            model.LegendPlacement = LegendPlacement.Inside;
+            model.LegendPosition = LegendPosition.RightTop;
+            foreach (string str in hlavicka)
+            {
+                if (checkedListBox1.CheckedItems.Contains(str))
+                {
+                    FunctionSeries fs = new FunctionSeries();
+                    foreach (double[] dou in tabulka)
+                    {
+                        fs.Points.Add(new DataPoint(dou[(dou.GetLength(0) - 1)], dou[i]));
+                    }
+                    fs.Title = str;
+                    model.Series.Add(fs);
+                }
+                i++;
+            }
+            model.Axes.Add(new LinearAxis() { Position = AxisPosition.Bottom, Title = Popis_X, MajorGridlineStyle = LineStyle.Dash });
+            model.Axes.Add(new LogarithmicAxis() { Position = AxisPosition.Left, MajorGridlineStyle = LineStyle.Solid, MinorGridlineStyle = LineStyle.Dot, IntervalLength = 100, Title = "Concentration" });
+            plot1.Model = model;
+        }
+
+        private void button_export_Click(object sender, EventArgs e)
+        {
+            if (dinamic_mode)
+            {
+            }
+            else
+            {
+                saveFileDialog1.Title = "Output";
+                saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+                saveFileDialog1.FilterIndex = 2;
+                saveFileDialog1.RestoreDirectory = true;
+                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    int pocet_itemov = checkedListBox1.CheckedItems.Count + 1;
+                    List<double[]> export = new List<double[]>();
+                    string[] legenda = new string[pocet_itemov];
+                    legenda[0] = Popis_X;
+                    int k = 1;
+                    foreach (string str in hlavicka)
+                    {
+                        if (checkedListBox1.CheckedItems.Contains(str))
+                        {
+                            legenda[k] = str;
+                            k++;
+                        }
+                    }
+                    double[] export_item;
+                    foreach (double[] dou in tabulka)
+                    {
+                        int i = 0, j = 0;
+                        export_item = new double[pocet_itemov];
+                        export_item[0] = dou[dou.GetLength(0) - 1];
+                        foreach (string str in hlavicka)
+                        {
+                            if (checkedListBox1.CheckedItems.Contains(str))
+                            {
+                                export_item[i + 1] = dou[j];
+                                i++;
+                            }
+                            j++;
+                        }
+                        export.Add(export_item);
+                    }
+                    if (saveFileDialog1.FileName != "")
+                    {
+                        StreamWriter write = new StreamWriter(saveFileDialog1.OpenFile());
+                        write.Write(writer(legenda, export));
+                        write.Dispose();
+                        write.Close();
+                    }
+
+                }
+            }
+        }
+
+        public void iniciate()
+        {
+            checkedListBox1.Items.Clear();
+            foreach (string str in hlavicka)
+            {
+                checkedListBox1.Items.Add(str, true);
+            }
+        }
+
+        string writer(string[] Hlavicka, List<double[]> Tabulka)
+        {
+            string writer = "";
+            foreach (string str in Hlavicka)
+            {
+                writer = writer + str + "\t";
+            }
+            writer = writer + "\r\n";
+            foreach (double[] dou in Tabulka)
+            {
+                foreach (double cislo in dou)
+                {
+                    writer = writer + cislo.ToString() + "\t";
+                }
+                writer = writer + "\r\n";
+            }
+            return writer;
+        }
+    }
+}

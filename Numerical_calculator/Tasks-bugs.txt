@@ -1,0 +1,13 @@
+﻿Need to be done/reworked
+
+Main: delete/overwriting of existing reactions in Main is not done properly.
+Main: Missing control of rate constnats, if the caclulation is reasonable. If not, calculation will crush.
+Calculation_control: Convolution of MS is not working.
+Main/results: Oxyplot - color of the data not mach color of imported data.
+
+Results: Rework of calculated data saving in calculation_control/Data_management is required. A lot of information is not visible. 
+Results: Export of calculation parameters together with results export.
+Results: Implementation od data interpolation.
+
+Extras: Electric field can in V/cm, E/N or Er
+

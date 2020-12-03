@@ -1,0 +1,20 @@
+﻿
+- obcasna chyba prepisovania reakcii, ponecha staru na 0,0 
+- nefunguje farebne oznacenie sipky
+- chyba kreslena pri zoome
+- pri vybere reakcie / itemu staci enter
+- ukladanie a load reakcii
+- osetrenie obojsmernych reakcii
+						- mazanie reakcie ak existuje a prepisujem ju
+						- povolit proceed iba ak reakcie existuju a su uzavrete
+- kontrola, ci nie je rate konstant a koncentracie mimo (porovanie s casovou konstatnou) - aby mal vypocet zmisel
+
+- vyskakovanie novych okien pri starom okne
+- moznost ulozenia nakreslenej reakcie
+- vykreslovanie nech ma limity
+
+
+Nepodstatne:
+- charakteristicka  oblast grafickej reprezentacie reakcie, klick, 
+ - hmotnost molekuly sa neskor nebude zadavat priamo, ale bude sa pocitat z formuly rovno aj z hmotnostnou distribuciou 
+

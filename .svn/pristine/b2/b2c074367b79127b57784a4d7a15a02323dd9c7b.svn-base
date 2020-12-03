@@ -1,0 +1,21 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Numerical_calculator
+{
+    public class Item_box
+    {
+        public int Number { get; set; }
+        public int Relaive_x { get; set; }
+        public int Relaive_y { get; set; }
+        public int Position_x { get; set; }
+        public int Position_y { get; set; }
+        public int Dim_x { get; set; }
+        public int Dim_y { get; set; }
+        public int Center_x { get; set; }
+        public int Center_y { get; set; }
+    }
+}

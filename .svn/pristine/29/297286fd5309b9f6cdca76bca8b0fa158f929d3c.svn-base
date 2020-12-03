@@ -1,0 +1,534 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Numerical_calculator
+{
+    public partial class Rate_Konstatn_TypeOf : Form
+    {
+        public Rate_Konstatn_TypeOf()
+        {
+            InitializeComponent();
+        }
+
+        bool _invert = false;
+
+        public void proceed(rate_functions Rate_function, bool invert)
+        {
+            Constant constant = new Constant();
+            comboBox1.Items.Add(constant);
+            Linear linear = new Linear();
+            comboBox1.Items.Add(linear);
+            Exponencional exponencional = new Exponencional();
+            comboBox1.Items.Add(exponencional);
+            if (Rate_function != null)
+            {
+                if (Rate_function.ToString() == constant.ToString())
+                {
+                    comboBox1.Items.Remove(constant);
+                    comboBox1.Items.Add(Rate_function);
+                    textBox2.Text = Rate_function.A.ToString();
+                    checkBox2.Checked = Rate_function.A_lock;
+                    textBox2.Enabled = true;
+                    checkBox2.Enabled = true;
+                    textBox3.Enabled = false;
+                    checkBox3.Enabled = false;
+                    textBox4.Enabled = false;
+                    checkBox4.Enabled = false;
+                    textBox5.Enabled = false;
+                    checkBox5.Enabled = false;
+                    textBox3.Text = "";
+                    textBox4.Text = "";
+                    textBox5.Text = "";
+
+                }
+                if (Rate_function.ToString() == linear.ToString())
+                {
+                    comboBox1.Items.Remove(linear);
+                    comboBox1.Items.Add(Rate_function);
+                    textBox2.Text = Rate_function.A.ToString();
+                    checkBox2.Checked = Rate_function.A_lock;
+                    textBox3.Text = Rate_function.B.ToString();
+                    checkBox3.Checked = Rate_function.B_lock;
+                    textBox2.Enabled = true;
+                    checkBox2.Enabled = true;
+                    textBox3.Enabled = true;
+                    checkBox3.Enabled = true;
+                    textBox4.Enabled = false;
+                    checkBox4.Enabled = false;
+                    textBox5.Enabled = false;
+                    checkBox5.Enabled = false;
+                    textBox4.Text = "";
+                    textBox5.Text = "";
+                }
+                if (Rate_function.ToString() == exponencional.ToString())
+                {
+                    comboBox1.Items.Remove(exponencional);
+                    comboBox1.Items.Add(Rate_function);
+                    textBox2.Text = Rate_function.A.ToString();
+                    checkBox2.Checked = Rate_function.A_lock;
+                    textBox3.Text = Rate_function.B.ToString();
+                    checkBox3.Checked = Rate_function.B_lock;
+                    textBox2.Enabled = true;
+                    checkBox2.Enabled = true;
+                    textBox3.Enabled = true;
+                    checkBox3.Enabled = true;
+                    textBox4.Enabled = false;
+                    checkBox4.Enabled = false;
+                    textBox5.Enabled = false;
+                    checkBox5.Enabled = false;
+                    textBox4.Text = "";
+                    textBox5.Text = "";
+                }
+                comboBox1.SelectedItem = Rate_function;
+                comboBox1.Text = Rate_function.ToString();
+            }
+            _invert = invert;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            this.Dispose();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (comboBox1.SelectedItem.ToString() == "A")
+            {
+                Constant new_constant = new Constant(Convertor(textBox2.Text), checkBox2.Checked);
+                Main.new_rate_function = new_constant;
+            }
+            if (comboBox1.SelectedItem.ToString() == "A + B*E")
+            {
+                Linear new_linear = new Linear(Convertor(textBox2.Text), Convertor(textBox3.Text), checkBox2.Checked, checkBox3.Checked);
+                Main.new_rate_function = new_linear;
+            }
+            if (comboBox1.SelectedItem.ToString() == "A*EXP(B*E)")
+            {
+                Exponencional new_exponencional = new Exponencional(Convertor(textBox2.Text), Convertor(textBox3.Text), checkBox2.Checked, checkBox3.Checked);
+                Main.new_rate_function = new_exponencional;
+
+            }
+            if (_invert)
+            {
+                Main.use_new_rate_();
+            }
+            else
+            {
+                Main.use_new_rate();
+            }
+            this.Dispose();
+
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox1.SelectedItem.ToString() == "A")
+            {
+                textBox2.Enabled = true;
+                checkBox2.Enabled = true;
+                textBox3.Enabled = false;
+                checkBox3.Enabled = false;
+                textBox4.Enabled = false;
+                checkBox4.Enabled = false;
+                textBox5.Enabled = false;
+                checkBox5.Enabled = false;
+                textBox3.Text = "";
+                textBox4.Text = "";
+                textBox5.Text = "";
+            }
+            if (comboBox1.SelectedItem.ToString() == "A + B*E")
+            {
+                textBox2.Enabled = true;
+                checkBox2.Enabled = true;
+                textBox3.Enabled = true;
+                checkBox3.Enabled = true;
+                textBox4.Enabled = false;
+                checkBox4.Enabled = false;
+                textBox5.Enabled = false;
+                checkBox5.Enabled = false;
+                textBox4.Text = "";
+                textBox5.Text = "";
+            }
+            if (comboBox1.SelectedItem.ToString() == "A*EXP(B*E)")
+            {
+                textBox2.Enabled = true;
+                checkBox2.Enabled = true;
+                textBox3.Enabled = true;
+                checkBox3.Enabled = true;
+                textBox4.Enabled = false;
+                checkBox4.Enabled = false;
+                textBox5.Enabled = false;
+                checkBox5.Enabled = false;
+                textBox4.Text = "";
+                textBox5.Text = "";
+            }
+        }
+
+        public static double Convertor(string Str)
+        {
+            double dou = 0;
+            string d = "";
+            try
+            {
+                if (Str != "")
+                {
+                    dou = Convert.ToDouble(Str);
+                }
+                else
+                {
+                    dou = 0;
+                }
+            }
+            catch
+            {
+                d = "";
+                foreach (char ch in Str)
+                {
+                    if (ch == ',')
+                    {
+                        d += ".";
+                    }
+                    else
+                    {
+                        d += ch.ToString();
+                    }
+                }
+                try
+                {
+                    dou = Convert.ToDouble(d);
+                }
+                catch
+                {
+                    d = "";
+                    foreach (char ch in Str)
+                    {
+                        if (ch == '.')
+                        {
+                            d += ",";
+                        }
+                        else
+                        {
+                            d += ch.ToString();
+                        }
+                    }
+                    try
+                    {
+                        dou = Convert.ToDouble(d);
+                    }
+                    catch
+                    {
+                        MessageBox.Show("Unable to convert string to double !");
+                    }
+                }
+            }
+            return dou;
+        }
+    }
+    [Serializable]
+    public class rate_functions
+    {
+        private string _name = "";
+        private int _dimension = 0;
+        private double _A;
+        private bool _A_lock;
+        private double _B;
+        private bool _B_lock;
+        private double _C;
+        private bool _C_lock;
+        private double _D;
+        private bool _D_lock;
+        private double _A_int;
+        private double _B_int;
+        private double _C_int;
+        private double _D_int;
+
+        public virtual string name { get { return _name; } }
+        public virtual int dimension { get { return _dimension; } }
+
+        public virtual string representation { get { return _A.ToString() + " + " + _B.ToString() + "*E"; } }
+        public virtual double A { get { return _A; } set { _A = value; } }
+        public virtual bool A_lock { get { return _A_lock; } set { _A_lock = value; } }
+        public virtual double B { get { return _B; } set { _B = value; } }
+        public virtual bool B_lock { get { return _B_lock; } set { _B_lock = value; } }
+        public virtual double C { get { return _C; } set { _C = value; } }
+        public virtual bool C_lock { get { return _C_lock; } set { _C_lock = value; } }
+        public virtual double D { get { return _D; } set { _D = value; } }
+        public virtual bool D_lock { get { return _D_lock; } set { _D_lock = value; } }
+
+        public virtual double A_int { get { return _A_int; } set { _A_int = value; } }
+        public virtual double B_int { get { return _B_int; } set { _B_int = value; } }
+        public virtual double C_int { get { return _C_int; } set { _C_int = value; } }
+        public virtual double D_int { get { return _D_int; } set { _D_int = value; } }
+
+        public virtual double Value(double E)
+        {
+            return E;
+        }
+
+        public override string ToString()
+        {
+            return name;
+        }
+
+        public rate_functions()
+        { }
+
+        public rate_functions(string Name, string Representation)
+        {
+            if (Name == "A")
+            {
+
+            }
+            if (Name == "A + B*E")
+            {
+
+            }
+            if (Name == "A*EXP(B*E)")
+            {
+
+            }
+        }
+
+        public void update(string Representation)
+        {
+            if (name == "A")
+            {
+                try
+                {
+                    A = Main.Convertor(Representation);
+                }
+                catch
+                {}
+            }
+            if (name == "A + B*E")
+            {
+                try
+                {
+                    double new_a = 0;
+                    double new_b = 0;
+                    string data = "";
+                    foreach (char ch in Representation)
+                    {
+                        if (ch == '+')
+                        {
+                            new_a = Main.Convertor(data);
+                            data = "";
+                        }
+                        else
+                        {
+                            if (ch == '*')
+                            {
+                                new_b = Main.Convertor(data);
+                            }
+                            else
+                            {
+                                data += ch.ToString();
+                            }
+                        }
+                    }
+                }
+                catch
+                {}
+            }
+            if (name == "A*EXP(B*E)")
+            {
+                try
+                {
+                    double new_a = 0;
+                    double new_b = 0;
+                    string data = "";
+                    short v = 0; 
+                    foreach (char ch in Representation)
+                    {
+                        if (ch == '*' && v == 0)
+                        {
+                            new_a = Main.Convertor(data);
+                            data = "";
+                            v++;
+                        }
+                        else
+                        {
+                            if (ch == '[')
+                            {
+                                data = "";
+                            }
+                            else
+                            {
+                                if (ch == '*')
+                                {
+                                    new_b = Main.Convertor(data);
+                                }
+                                else
+                                {
+                                    data += ch.ToString();
+                                }
+                            }                           
+                        }
+                    }
+                    A = new_a;
+                    B = new_b;
+                }
+                catch
+                {
+                }
+            }
+        } 
+    }
+    [Serializable]
+    public class Constant : rate_functions
+    {
+        private string _name = "A";
+        private int _dimension = 0;
+        private double _A;
+        private bool _A_lock;
+
+        public override string name { get { return _name; } }
+        public override int dimension { get { return _dimension; } }
+
+        public override string representation { get { return _A.ToString(); } }
+        public override double A { get { return _A; } set { _A = value; } }
+        public override bool A_lock { get { return _A_lock; } set { _A_lock = value; } }
+
+        public override string ToString()
+        {
+            try
+            {
+                return name;
+            }
+            catch
+            {
+                return "";
+            }
+        }
+
+        public Constant()
+        { }
+
+        public Constant(double A, bool A_lock)
+        {
+            _A = A;
+            _A_lock = A_lock;
+        }
+
+        public override double Value(double E)
+        {
+            return _A;
+        }
+    }
+    [Serializable]
+    public class Linear : rate_functions
+    {
+        private string _name = "A + B*E";
+        private int _dimension = 2;
+        private double _A;
+        private bool _A_lock;
+        private double _B;
+        private bool _B_lock;
+        private double _A_int;
+        private double _B_int;
+
+        public override string name { get { return _name; } }
+        public override int dimension { get { return _dimension; } }
+
+        public override string representation { get { return _A.ToString() + " + " + _B.ToString() + "*E"; } }
+        public override double A { get { return _A; } set { _A = value; } }
+        public override bool A_lock { get { return _A_lock; } set { _A_lock = value; } }
+        public override double B { get { return _B; } set { _B = value; } }
+        public override bool B_lock { get { return _B_lock; } set { _B_lock = value; } }
+        public double A_int { get { return _A_int; } set { _A_int = value; } }
+        public double B_int { get { return _B_int; } set { _B_int = value; } }
+
+        public override string ToString()
+        {
+            try
+            {
+                return name;
+            }
+            catch
+            {
+                return "";
+            }
+        }
+
+        public Linear()
+        { }
+
+        public Linear(double A, double B, bool A_lock, bool B_lock)
+        {
+            _A = A;
+            _B = B;
+            _A_lock = A_lock;
+            _B_lock = B_lock;
+            _A_int = A;
+            _B_int = B;
+        }
+
+        public override double Value(double E)
+        {
+            double value = _A + (_B * E);
+            return value;
+        }
+    }
+    [Serializable]
+    public class Exponencional : rate_functions
+    {
+        private string _name = "A*EXP(B*E)";
+        private int _dimension = 2;
+        private double _A;
+        private bool _A_lock;
+        private double _B;
+        private bool _B_lock;
+        private double _A_int;
+        private double _B_int;
+
+        public override string name { get { return _name; } }
+        public override int dimension { get { return _dimension; } }
+
+        public override string representation { get { return _A.ToString() + "*EXP[" + _B.ToString() + "*E]"; } }
+        public override double A { get { return _A; } set { _A = value; } }
+        public override bool A_lock { get { return _A_lock; } set { _A_lock = value; } }
+        public override double B { get { return _B; } set { _B = value; } }
+        public override bool B_lock { get { return _B_lock; } set { _B_lock = value; } }
+        public double A_int { get { return _A_int; } set { _A_int = value; } }
+        public double B_int { get { return _B_int; } set { _B_int = value; } }
+
+
+        public override string ToString()
+        {
+            try
+            {
+                return name;
+            }
+            catch
+            {
+                return "";
+            }
+        }
+
+        public Exponencional()
+        { }
+
+        public Exponencional(double A, double B, bool A_lock, bool B_lock)
+        {
+            _A = A;
+            _B = B;
+            _A_lock = A_lock;
+            _B_lock = B_lock;
+            _A_int = A;
+            _B_int = B;
+        }
+
+        public override double Value(double E)
+        {
+            double value = _A * Math.Exp(_B * E);
+            return value;
+        }
+    }
+}

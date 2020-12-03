@@ -1,0 +1,21 @@
+﻿Etapa 1: Items
+
+-Relokacia panel1_labels so zmenou zoomu (poloha, rozmer)
+-Zmena velkosti pisma v label, ak je text prilis velky
+-Klick na Item nefunguje, ak je klik na label - pridat label_klick a synchronizovat ho s Item_klik
+-delete button
+
+Etapa 2: Conections
+
+- doriesit bugy v reakcii
+- graficka interpretacia reakcie v GUI
+-charakteristicka  oblast grafickej reprezentacie reakcie, klick, 
+
+Etapa 3: Calculation
+
+-upravenie zadania pre vypocet dt, dz, ...
+-upravenie menu -menu, setings, results
+
+Etapa 4: Vizualization
+
+-vytvorenie grafickeho a textoveho vystupu v zavislosti na volbe v menu/results

@@ -1,0 +1,39 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Numerical_calculator
+{
+    public partial class Properties_form : Form
+    {
+
+        public Properties_form()
+        {
+            InitializeComponent();
+            textBox1.Text = Main.Time_duration.ToString();
+            textBox2.Text = Main.NumberOfSteps.ToString();
+            textBox3.Text = Main.Distance.ToString();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+            {       
+            Main.Distance = Main.Convertor(textBox3.Text);
+            Main.Time_duration = Main.Convertor(textBox1.Text);
+            Main.NumberOfSteps = Main.Convertor(textBox2.Text);
+            Main.save_settings();
+            this.Dispose();
+        }
+
+        private void button_cancle_Click(object sender, EventArgs e)
+        {
+            this.Dispose();
+        }
+
+    }
+}

@@ -1,0 +1,24 @@
+﻿Etapa 1: Items
+
+-Relokacia panel1_labels so zmenou zoomu (poloha, rozmer)
+-Zmena velkosti pisma v label, ak je text prilis velky
+-Klick na Item nefunguje, ak je klik na label - pridat label_klick a synchronizovat ho s Item_klik
+-delete button
+
+Etapa 2: Conections
+
+-Zaviest funkciu mouse_down, mouse_up
+-vytvor objekt reakcia, list reakcii, ulozisko, used_reakcia, 
+-mouse_down - ak si na bunke, zacni kreslit spojnicu a cestu pre reakciu; else nic
+-mouse_up - ak mouse_down_kreslenie == true & bunka je ina(ak bunka existuje = vytvor reakciu else vytvor bunku s itemom aj reakciu)
+- graficka interpretacia reakcie v GUI
+-charakteristicka  oblast grafickej reprezentacie reakcie, klick, 
+
+Etapa 3: Calculation
+
+-upravenie zadania pre vypocet dt, dz, ...
+-upravenie menu -menu, setings, results
+
+Etapa 4: Vizualization
+
+-vytvorenie grafickeho a textoveho vystupu v zavislosti na volbe v menu/results

@@ -1,0 +1,24 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Numerical_calculator
+{
+    public class Items_used
+    {
+        public int box_number { get; set; }
+        public string name { get; set; }
+        public string formula { get; set; }
+        public string s_name { get; set; }
+        public double concentration { get; set; }
+        public double mobility { get; set; }
+        public double mass { get; set; }
+        public bool cation { get; set; }
+        public int reaction_type { get; set; }
+        public double diffusion { get; set; }
+        public int relative_x { get; set; }
+        public int relative_y { get; set; }
+    }
+}

@@ -1,0 +1,638 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.IO;
+
+
+namespace Numerical_calculator
+{
+    public partial class Test : Form
+    {
+        //private PictureBox pictureBox1 = new PictureBox();
+        public int rad_zobrazenia = 2;
+        public List<Item_box> ListOfItemBoxes;
+        public Graphics g_stare;
+        public List<Items> ItemColection = new List<Items>();
+        public List<Items_used> ItemColection_used = new List<Items_used>();
+        public int parameter_x = 0;
+        public int parameter_y = 0;
+        public int Actual_Center_x;
+        public int Actual_Center_y;
+        public int[,] Item_array;
+        public int [] Name_array;
+        public int curent_name = -1;
+        public bool mouse = false;
+        public Bitmap buffer, backround;
+        public System.Windows.Forms.Label new_label;
+        public bool LabelInProgres = false;
+        public bool selected = false;
+        public int selected_nmb = 0;
+
+        public Test()
+        {
+            InitializeComponent();
+            //
+            // Load Items from external file
+            //
+            Load_items();
+        }
+
+        public void panel1_refresh(object sender, PaintEventArgs e)
+        {            
+            buffer = new Bitmap(panel1.Width, panel1.Height);
+            System.Drawing.Graphics graphics = Graphics.FromImage(buffer);
+            graphics.Clear(Color.WhiteSmoke);
+
+            Pen pen_dot = new Pen(Color.Blue, 2);
+            int pocet_prvkov = 6 * rad_zobrazenia * rad_zobrazenia;
+            int pocet_prvkov_x = 3 * rad_zobrazenia;
+            int pocet_prvkov_y = 2 * rad_zobrazenia;
+            int x_diff = panel1.Width / pocet_prvkov_x;
+            int y_diff = panel1.Height / pocet_prvkov_y;
+            int cnt = 0, rel_x = 0, rel_y = 0, pos_x = 0, pos_y = 0, cent_x, cent_y;
+            ListOfItemBoxes = new List<Item_box>();
+            for (int i = 0; i < pocet_prvkov_x; i++)
+            {
+                rel_y = 0;
+                pos_y = 0;
+                for (int j = 0; j < pocet_prvkov_y; j++)
+                {
+                    cent_x = pos_x + (x_diff / 2);
+                    cent_y = pos_y + (y_diff / 2);
+                    ListOfItemBoxes.Add(new Item_box { Number = cnt, Relaive_x = rel_x, Relaive_y = rel_y, 
+                                                       Center_x = cent_x, Center_y = cent_y,
+                                                       Dim_y = y_diff,
+                                                       Dim_x = x_diff, 
+                                                       Position_x = pos_x, Position_y = pos_y });
+                    cnt++;
+                    rel_y++;
+                    pos_y += y_diff;
+                }
+                rel_x++;
+                pos_x += x_diff;
+            }
+            graphics.Dispose();
+            System.Drawing.Graphics graphicsObj = e.Graphics;
+            graphicsObj.Clear(Color.WhiteSmoke);
+            graphicsObj.DrawImage(buffer, 0, 0, buffer.Width, buffer.Height);
+            Create_array();
+            this.panel1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseMove);
+            this.panel1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseDown);
+            this.panel1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseUp);
+            this.panel1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseClick);
+            panel1.Paint -= new System.Windows.Forms.PaintEventHandler(panel1_refresh);
+            backround = (Bitmap)buffer.Clone();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            this.panel1.MouseMove -= new System.Windows.Forms.MouseEventHandler(this.panel1_MouseMove);
+            rad_zobrazenia++;
+            if (rad_zobrazenia > 10)
+            {
+                rad_zobrazenia = 10;
+            }
+            start_refresh_panel1();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            this.panel1.MouseMove -= new System.Windows.Forms.MouseEventHandler(this.panel1_MouseMove);
+            rad_zobrazenia--;
+            if (rad_zobrazenia < 1)
+            {
+                rad_zobrazenia = 1;
+            }
+            start_refresh_panel1();
+        }
+
+        void start_refresh_panel1()
+        {
+            panel1.Refresh();
+            panel1.Paint += new System.Windows.Forms.PaintEventHandler(panel1_refresh);
+        }
+
+        private void panel1_MouseMove(object sender, MouseEventArgs e)
+        {
+            Point cur_pos = panel1.PointToClient(Cursor.Position);
+            mouse = true;
+            for(int i = 0; i < Item_array.GetLength(1); i++)
+            {
+                if (cur_pos.X > Item_array[0,i] && 
+                    cur_pos.X < Item_array[0,i] + Item_array[2,i] && 
+                    cur_pos.Y > Item_array[1,i] &&
+                    cur_pos.Y < Item_array[1,i] + Item_array[3,i])
+                {
+                    if (curent_name != i)
+                    {
+                        System.Drawing.Graphics graphics = this.panel1.CreateGraphics();
+                        graphics.DrawImage(buffer, 0, 0, buffer.Width, buffer.Height);
+                        int point_x = Item_array[0, i] + Item_array[2, i] / 10;
+                        int point_y = Item_array[1, i] + Item_array[3, i] / 10;
+                        int delta_x = Item_array[2, i] - Item_array[2, i] / 5;
+                        int delta_y = Item_array[3, i] - Item_array[3, i] / 5;
+                        Pen pen = new Pen(Color.Blue, 1);
+                        graphics.DrawRectangle(pen, point_x, point_y, delta_x, delta_y);
+                        Pen pen2 = new Pen(Color.WhiteSmoke, 1);
+                        graphics.DrawLine(pen2, point_x + delta_x / 3, point_y, point_x + delta_x - delta_x / 3, point_y);
+                        graphics.DrawLine(pen2, point_x + delta_x / 3, point_y + delta_y, point_x + delta_x - delta_x / 3, point_y + delta_y);
+                        graphics.DrawLine(pen2, point_x, point_y + delta_y / 3, point_x, point_y + delta_y - delta_y/3);
+                        graphics.DrawLine(pen2, point_x + delta_x, point_y + delta_y / 3, point_x + delta_x, point_y + delta_y - delta_y / 3);
+                        curent_name = i;
+                        graphics.Dispose();
+                    }
+
+                }
+            }
+        }
+
+        private void Create_array()
+        {
+            Item_array = new int[8,ListOfItemBoxes.Count];
+            Name_array = new int[ListOfItemBoxes.Count];
+            int i = 0;
+            foreach(Item_box IB in ListOfItemBoxes)
+            {
+                Name_array[i] = IB.Number;
+                Item_array[0,i] = IB.Position_x;
+                Item_array[1,i] = IB.Position_y;
+                Item_array[2,i] = IB.Dim_x;            
+                Item_array[3,i] = IB.Dim_y;
+                Item_array[4,i] = IB.Center_x;
+                Item_array[5,i] = IB.Center_y;
+                i++;
+            }
+        }
+
+        private void Test_Load(object sender, EventArgs e)
+        {
+            start_refresh_panel1();
+        }
+
+        private void panel1_MouseDown(object sender, MouseEventArgs e)
+        {
+        }
+
+        private void panel1_MouseUp(object sender, MouseEventArgs e)
+        {
+        }
+
+        private void panel1_MouseClick(object sender, MouseEventArgs e)
+        {
+             // ak nie je  nic, vytvor Item
+            selected_nmb = curent_name;
+            buffer = (Bitmap)backround.Clone();
+             if (ItemColection.Count == 0)
+             {
+                 new_item(selected_nmb);
+             }
+             else
+             {
+                bool is_new_item = true;
+                foreach (Items_used I in ItemColection_used)
+                {
+                    if (I.box_number == selected_nmb)
+                    {
+                        is_new_item = false;
+                    }
+                }
+                if (is_new_item == true)
+                {
+                    new_item(selected_nmb);
+                }
+                else
+                {
+                    existing_item(selected_nmb);
+                }
+             }
+        }
+
+        private void button_ApplyElement_Click(object sender, EventArgs e)
+        {
+            
+            bool pokracuj = true;
+            bool zmaz_povodne = false;
+            foreach (Items_used I in ItemColection_used)
+            {
+                if (comboBox_name.Text == I.name) // ak je uz pouzity, ci to myslim vazne
+                {
+                    if (MessageBox.Show("Do you want to continue?", "Name already exist.",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                        == DialogResult.No)
+                    {
+                        pokracuj = false;
+                    }
+                }
+                if (selected_nmb == I.box_number)
+                {
+                    zmaz_povodne = true;
+                }
+            }
+            if (pokracuj == true)
+            {
+                if (zmaz_povodne)
+                {
+                    foreach (Label lab in panel1.Controls.OfType<Label>())
+                      {
+                          if (lab.Name == "Name" + selected_nmb.ToString())
+                          {
+                              lab.Dispose();
+                          }
+                      }
+                }
+                Items_used new_Item = new Items_used();
+                new_Item.name = comboBox_name.Text;
+                new_Item.formula = textBox_formula.Text;
+                new_Item.s_name = textBox_shortname.Text;
+                new_Item.concentration = textBox_concentration.Text;
+                new_Item.mobility = textBox_mobility.Text;
+                new_Item.mass = textBox_mass.Text;
+                if (radioButton_cation.Checked == true)
+                { new_Item.cation = true; } else { new_Item.cation = false; }
+                new_Item.box_number = selected_nmb;
+                ItemColection_used.Add(new_Item);
+                bool jetu = false;
+                foreach (Items Item in ItemColection)
+                {
+                    if (Item.name == new_Item.name)
+                    {
+                        jetu = true;
+                    }
+                }
+                if (!jetu)
+                {
+                    Items Item = new Items();
+                    Item.name = comboBox_name.Text;
+                    Item.formula = textBox_formula.Text;
+                    Item.s_name = textBox_shortname.Text;
+                    Item.concentration = textBox_concentration.Text;
+                    Item.mobility = textBox_mobility.Text;
+                    Item.mass = textBox_mass.Text;
+                    if (radioButton_cation.Checked == true)
+                    { Item.cation = true; }
+                    else { Item.cation = false; }
+                    ItemColection.Add(Item);
+                    comboBox_name.Items.Add(Item.name);
+                }
+                try
+                {
+                    foreach (Item_box IB in ListOfItemBoxes)
+                    {
+                        if (IB.Number == selected_nmb)
+                        {
+                            // vytvor label
+                            new_label = new System.Windows.Forms.Label();
+                            new_label.AutoSize = true;
+                            new_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+                            new_label.Location = new System.Drawing.Point(IB.Center_x, IB.Center_y);
+                            new_label.Name = "Name" + selected_nmb.ToString();
+                            new_label.Size = new System.Drawing.Size(20, 30);
+                            new_label.TabIndex = 7;
+                            new_label.Text = "";
+                            Point point = new Point();
+                            panel1.Controls.Add(new_label);
+                            new_label.Text = "[" + textBox_shortname.Text + "]";
+                            point.X = IB.Center_x - (new_label.Size.Width / 2);
+                            point.Y = IB.Center_y - (new_label.Size.Height / 2);
+                            new_label.Location = point;
+                        }
+                    }
+                }
+                catch { }
+                Save_items();
+            }
+        }
+
+        #region Privatne metody
+
+        private void existing_item(int Name)
+        {
+            comboBox_name.Text = "";
+            textBox_formula.Text = "";
+            textBox_shortname.Text = "";
+            textBox_concentration.Text = "";
+            textBox_mobility.Text = "";
+            textBox_mass.Text = "";
+            foreach (Items_used I in ItemColection_used)
+            {
+                if (I.box_number == Name)
+                {
+                    Fill_Element_Boxes(I);
+                }
+            }
+            foreach (Item_box IB in ListOfItemBoxes)
+            {
+                if(Name == IB.Number)
+                {
+                    using (Graphics g = Graphics.FromImage(buffer))
+                    {
+                        int point_x, point_y, delta_x, delta_y;
+                        point_x = 2 + IB.Position_x + IB.Dim_x / 10;
+                        point_y = 2 + IB.Position_y + IB.Dim_y / 10;
+                        delta_x = IB.Dim_x - (IB.Dim_x / 5) - 4;
+                        delta_y = IB.Dim_y - (IB.Dim_y / 5) - 4;
+                        Pen pen = new Pen(Color.Red, 1);
+                        g.DrawRectangle(pen, point_x, point_y, delta_x, delta_y);
+                        g.Dispose();
+                        System.Drawing.Graphics graphics = this.panel1.CreateGraphics();
+                        graphics.DrawImage(buffer, 0, 0, buffer.Width, buffer.Height);
+                        point_x = IB.Position_x + IB.Dim_x / 10;
+                        point_y = IB.Position_y + IB.Dim_y / 10;
+                        delta_x = IB.Dim_x - (IB.Dim_x / 5);
+                        delta_y = IB.Dim_y - (IB.Dim_y / 5);
+                        Pen pen1 = new Pen(Color.Blue, 1);
+                        graphics.DrawRectangle(pen1, point_x, point_y, delta_x, delta_y);
+                        Pen pen2 = new Pen(Color.WhiteSmoke, 1);
+                        graphics.DrawLine(pen2, point_x + delta_x / 3, point_y, point_x + delta_x - delta_x / 3, point_y);
+                        graphics.DrawLine(pen2, point_x + delta_x / 3, point_y + delta_y, point_x + delta_x - delta_x / 3, point_y + delta_y);
+                        graphics.DrawLine(pen2, point_x, point_y + delta_y / 3, point_x, point_y + delta_y - delta_y / 3);
+                        graphics.DrawLine(pen2, point_x + delta_x, point_y + delta_y / 3, point_x + delta_x, point_y + delta_y - delta_y / 3);
+                        graphics.Dispose();
+                    }
+                }
+            }
+        }
+
+        private void Fill_Element_Boxes(Items_used Item)
+        {
+            comboBox_name.Text = Item.name;
+            textBox_formula.Text = Item.formula;
+            textBox_shortname.Text = Item.s_name;
+            textBox_concentration.Text = Item.concentration;
+            textBox_mobility.Text = Item.mobility;
+            textBox_mass.Text = Item.mass;
+            if (Item.cation)
+            {
+                radioButton_cation.Checked = true;
+            }
+            else
+            {
+                radioButton_neutral.Checked = true;
+            }
+        }
+
+        private void new_item(int Name)
+        {
+            formula_enable(true);
+            foreach (Item_box IB in ListOfItemBoxes)
+            {
+                if (IB.Number == Name) // podl mena najdem box
+                {
+                    comboBox_name.Text = "";
+                    textBox_formula.Text = "";
+                    textBox_shortname.Text = "";
+                    textBox_concentration.Text = "";
+                    textBox_mobility.Text = "";
+                    textBox_mass.Text = "";                  
+                     int point_x, point_y, delta_x, delta_y;
+                     using (Graphics g = Graphics.FromImage(buffer))
+                     {
+                         point_x = 2 + IB.Position_x + IB.Dim_x / 10;
+                         point_y = 2 + IB.Position_y + IB.Dim_y / 10;
+                         delta_x = IB.Dim_x - (IB.Dim_x / 5) - 4;
+                         delta_y = IB.Dim_y - (IB.Dim_y / 5) - 4;
+                         Pen pen = new Pen(Color.Red, 1);
+                         g.DrawRectangle(pen, point_x, point_y, delta_x, delta_y);
+                         g.Dispose();
+                     }
+                     System.Drawing.Graphics graphics = this.panel1.CreateGraphics();
+                     graphics.DrawImage(buffer, 0, 0, buffer.Width, buffer.Height);
+                     point_x = IB.Position_x + IB.Dim_x / 10;
+                     point_y = IB.Position_y + IB.Dim_y / 10;
+                     delta_x = IB.Dim_x - (IB.Dim_x / 5);
+                     delta_y = IB.Dim_y - (IB.Dim_y / 5);
+                     Pen pen1 = new Pen(Color.Blue, 1);
+                     graphics.DrawRectangle(pen1, point_x, point_y, delta_x, delta_y);
+                     Pen pen2 = new Pen(Color.WhiteSmoke, 1);
+                     graphics.DrawLine(pen2, point_x + delta_x / 3, point_y, point_x + delta_x - delta_x / 3, point_y);
+                     graphics.DrawLine(pen2, point_x + delta_x / 3, point_y + delta_y, point_x + delta_x - delta_x / 3, point_y + delta_y);
+                     graphics.DrawLine(pen2, point_x, point_y + delta_y / 3, point_x, point_y + delta_y - delta_y / 3);
+                     graphics.DrawLine(pen2, point_x + delta_x, point_y + delta_y / 3, point_x + delta_x, point_y + delta_y - delta_y / 3);
+                     graphics.Dispose();
+                     //panel1.Invalidate();
+
+                }
+            }
+        }
+
+        private void formula_enable(bool Enable)
+        {
+            groupBox1.Enabled = Enable;
+            try_enable_formula_add();
+        }
+
+        private void try_enable_formula_add()
+        {
+            if( comboBox_name.Text != "" &&
+                textBox_formula.Text != "" &&
+                textBox_shortname.Text != "" &&
+                textBox_concentration.Text != "" &&
+                textBox_mobility.Text != "" &&
+                textBox_mass.Text != "" )
+            {
+                button_ApplyElement.Enabled = true;
+            }
+            else
+            {
+                button_ApplyElement.Enabled = false;
+            }
+        }
+
+        private void konstanta_enable(bool Enable)
+        {
+            groupBox2.Enabled = Enable;
+            try_enable_konstanta_add();
+        }
+
+        private void try_enable_konstanta_add()
+        {
+            if (comboBox_reaction.SelectedText != "" &&
+                textBox_Reactant.Text != "" &&
+                textBox_Product.Text != "" &&
+                comboBox_Reactant.SelectedText != "" &&
+                comboBox_Product.SelectedText != "" &&
+                listBox_Direction.Text != "" 
+                )
+            {
+                button_ApplyReaction.Enabled = true;
+            }
+            else
+            {
+                button_ApplyReaction.Enabled = false;
+            }
+        }
+
+        private void button_ClearElement_Click(object sender, EventArgs e)
+        {
+
+        comboBox_name.Text = "";
+        textBox_formula.Text = "";
+        textBox_shortname.Text = "";
+        textBox_concentration.Text = "";
+        textBox_mobility.Text = "";
+        textBox_mass.Text = "";
+        }
+
+        private void radioButton_cation_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton_cation.Checked)
+            {
+                radioButton_neutral.Checked = false;
+            }
+            else
+            {
+                radioButton_neutral.Checked = true;
+            }
+        }
+
+        private void radioButton_neutral_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton_neutral.Checked)
+            {
+                radioButton_cation.Checked = false;
+            }
+            else
+            {
+                radioButton_cation.Checked = true;
+            }
+        }
+
+        private void button_ClearReaction_Click(object sender, EventArgs e)
+        {
+            comboBox_reaction.Text = "";
+            textBox_Reactant.Text = "";
+            textBox_Product.Text = "";
+            comboBox_Reactant.SelectedText = "";
+            comboBox_Product.SelectedText = "";
+            listBox_Direction.Text = "";
+        }
+
+        #endregion
+
+        private void button_ApplyReaction_Click(object sender, EventArgs e)
+        {
+      
+                LabelInProgres = false;
+            
+        }
+
+        private void comboBox_name_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try_enable_formula_add();
+            foreach (Items Item in ItemColection)
+            {
+                if (comboBox_name.Text == Item.name)
+                {
+                    textBox_formula.Text = Item.formula;
+                    textBox_shortname.Text = Item.s_name;
+                    textBox_concentration.Text = Item.concentration;
+                    textBox_mobility.Text = Item.mobility;
+                    textBox_mass.Text = Item.mass;
+                    if (Item.cation)
+                    {
+                        radioButton_cation.Checked = true;
+                    }
+                    else
+                    {
+                        radioButton_cation.Checked = false;
+                    }
+                }
+            }
+        }
+
+        private void textBox_formula_TextChanged(object sender, EventArgs e)
+        {
+            try_enable_formula_add();
+
+        }
+
+        private void textBox_shortname_TextChanged(object sender, EventArgs e)
+        {
+            try_enable_formula_add();
+
+        }
+
+        private void textBox_concentration_TextChanged(object sender, EventArgs e)
+        {
+            try_enable_formula_add();
+
+        }
+
+        private void textBox_mobility_TextChanged(object sender, EventArgs e)
+        {
+            try_enable_formula_add();
+
+        }
+
+        private void textBox_mass_TextChanged(object sender, EventArgs e)
+        {
+            try_enable_formula_add();
+
+        }
+
+        private void Load_items()
+        {
+            string[] str = System.IO.File.ReadAllLines("Items.txt");
+            foreach (string st in str)
+            {
+                string data = "";
+                int i = 0;
+                Items Item = new Items();
+                foreach (char ch in st)
+                {
+                    if (ch == '\t')
+                    {
+                        if (i == 0) { Item.name = data; data = ""; }
+                        if (i == 1) { Item.formula = data; data = ""; }
+                        if (i == 2) { Item.s_name = data; data = ""; }
+                        if (i == 3) { Item.concentration = data; data = ""; }
+                        if (i == 4) { Item.mobility = data; data = ""; }
+                        if (i == 5) { Item.mass = data; data = ""; }
+                        if (i == 6) { Item.cation = Convert.ToBoolean(data); }
+                        i++;
+                    }
+                    else
+                    {
+                        data += ch.ToString();
+                    }
+                }
+                ItemColection.Add(Item);
+                comboBox_name.Items.Add(Item.name);
+            }
+        }
+
+        private void Save_items()
+        {
+            string str = "";
+            foreach (Items Item in ItemColection)
+            {
+                str += Item.name + "\t";
+                str += Item.formula + "\t";
+                str += Item.s_name + "\t";
+                str += Item.concentration + "\t";
+                str += Item.mobility + "\t";
+                str += Item.mass + "\t";
+                str += Item.cation.ToString() + "\t" + "\r\n";
+            }
+            System.IO.File.WriteAllText("Items.txt", str);
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AboutBox about = new AboutBox();
+            about.Show();
+        }
+
+    }
+}

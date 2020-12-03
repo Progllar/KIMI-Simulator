@@ -1,0 +1,231 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Numerical_calculator
+{
+    class Calculation
+    {
+        public double dt { get; set; }
+        public List<Premenna> new_premenna { get; set; }
+        public bool e_field { get; set; }
+        public bool calc_type { get; set; }
+
+        public void calculate_step(List<Equation> equation, List<Konstants> konstants, List<Premenna> premenna)
+        {
+            // pre kazdu rovnicu vypocitaj nultu, prvu druhu a tretiu konstantu postupne
+            foreach (Equation eq in equation) // pocitaj nulty koeficient
+            {
+                double vysledok = 0;
+                foreach (string[] partial_eq in eq.equation)
+                {
+                    double prispevok = 1;
+                    bool znamienko = false;
+                    foreach (string str in partial_eq)
+                    {
+                        if (str == "True")
+                        {
+                            znamienko = true;
+                        }
+                        foreach (Premenna pr in premenna)
+                        {
+                            if (pr.name == str)
+                            {
+                                prispevok = prispevok * pr.value;
+                            }
+                        }
+                        foreach (Konstants ko in konstants)
+                        {
+                            if (ko.name == str)
+                            {
+                                prispevok = prispevok * ko.value;
+                            }
+                        }
+                    }
+                    if (znamienko == true)
+                    {
+                        prispevok = prispevok * (-1);
+                    }
+                    vysledok = vysledok + prispevok;
+                }
+                eq.koeficient_0 = vysledok * dt; // f(x,y,t)*dt
+                if (!calc_type)
+                {
+                    double velocity = Main.Ion_velociy / 100;
+                    if (e_field)
+                    {
+                        velocity += eq.velocity / 100;
+                    }
+                    eq.koeficient_0 /= velocity;
+                }               
+            }
+            foreach (Equation eq in equation) // pocitaj prvy koeficient
+            {
+                double vysledok = 0;
+                foreach (string[] partial_eq in eq.equation)
+                {
+                    double prispevok = 1;
+                    bool znamienko = false;
+                    foreach (string str in partial_eq)
+                    {
+                        if (str == "True")
+                        {
+                            znamienko = true;
+                        }
+                        foreach (Premenna pr in premenna)
+                        {
+                            if (pr.name == str)
+                            {
+                                foreach (Equation e in equation)
+                                {
+                                    if (str == e.name)
+                                    {
+                                        prispevok = prispevok * (pr.value + (e.koeficient_0) / 2);
+                                    }
+                                }
+                            }
+                        }
+                        foreach (Konstants ko in konstants)
+                        {
+                            if (ko.name == str)
+                            {
+                                prispevok = prispevok * ko.value;
+                            }
+                        }
+                    }
+                    if (znamienko == true)
+                    {
+                        prispevok = prispevok * (-1);
+                    }
+                    vysledok = vysledok + prispevok;
+                }
+                eq.koeficient_1 = vysledok * dt; // f(x + k0x/2, y + k0y/2, t + dt/2)*dt
+                if (!calc_type)
+                {
+                    double velocity = Main.Ion_velociy / 100;
+                    if (e_field)
+                    {
+                        velocity += eq.velocity / 100;
+                    }
+                    eq.koeficient_1 /= velocity;
+                }
+            }
+            foreach (Equation eq in equation) // pocitaj druhy koeficient
+            {
+                double vysledok = 0;
+                foreach (string[] partial_eq in eq.equation)
+                {
+                    double prispevok = 1;
+                    bool znamienko = false;
+                    foreach (string str in partial_eq)
+                    {
+                        if (str == "True")
+                        {
+                            znamienko = true;
+                        }
+                        foreach (Premenna pr in premenna)
+                        {
+                            if (pr.name == str)
+                            {
+                                foreach (Equation e in equation)
+                                {
+                                    if (str == e.name)
+                                    {
+                                        prispevok = prispevok * (pr.value + (e.koeficient_1) / 2);
+                                    }
+                                }
+                            }
+                        }
+                        foreach (Konstants ko in konstants)
+                        {
+                            if (ko.name == str)
+                            {
+                                prispevok = prispevok * ko.value;
+                            }
+                        }
+                    }
+                    if (znamienko == true)
+                    {
+                        prispevok = prispevok * (-1);
+                    }
+                    vysledok = vysledok + prispevok;
+                }
+                eq.koeficient_2 = vysledok * dt; // f(x + k1x/2,y + k1y/2,t + dt/2)*dt
+                if (!calc_type)
+                {
+                    double velocity = Main.Ion_velociy / 100;
+                    if (e_field)
+                    {
+                        velocity += eq.velocity / 100;
+                    }
+                    eq.koeficient_2 /= velocity;
+                }
+            }
+            foreach (Equation eq in equation) // pocitaj treti koeficient
+            {
+                double vysledok = 0;
+                foreach (string[] partial_eq in eq.equation)
+                {
+                    double prispevok = 1;
+                    bool znamienko = false;
+                    foreach (string str in partial_eq)
+                    {
+                        if (str == "True")
+                        {
+                            znamienko = true;
+                        }
+                        foreach (Premenna pr in premenna)
+                        {
+                            if (pr.name == str)
+                            {
+                                foreach (Equation e in equation)
+                                {
+                                    if (str == e.name)
+                                    {
+                                        prispevok = prispevok * (pr.value + e.koeficient_2);
+                                    }
+                                }
+                            }
+                        }
+                        foreach (Konstants ko in konstants)
+                        {
+                            if (ko.name == str)
+                            {
+                                prispevok = prispevok * ko.value;
+                            }
+                        }
+                    }
+                    if (znamienko == true)
+                    {
+                        prispevok = prispevok * (-1);
+                    }
+                    vysledok = vysledok + prispevok;
+                }
+                eq.koeficient_3 = vysledok * dt; // f(x + k2x,y + k2y,t + dt/2)*dt
+                if (!calc_type)
+                {
+                    double velocity = Main.Ion_velociy / 100;
+                    if (e_field)
+                    {
+                        velocity += eq.velocity / 100;
+                    }
+                    eq.koeficient_3 /= velocity;
+                }
+            }
+            foreach (Equation eq in equation)
+            {
+                double increment = (eq.koeficient_0 + 2 * eq.koeficient_1 + 2 * eq.koeficient_2 + eq.koeficient_3) / 6;
+                foreach (Premenna pr in premenna)
+                {
+                    if (eq.name == pr.name)
+                    {
+                        pr.value = pr.value + increment;
+                    }
+                }
+            }
+            new_premenna = premenna;
+        }
+    }
+}

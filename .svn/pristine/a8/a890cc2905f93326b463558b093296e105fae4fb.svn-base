@@ -1,0 +1,790 @@
+﻿namespace Numerical_calculator
+{
+    partial class Interpolation
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            System.Windows.Forms.Button button_Interpolation;
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.textBoxA7 = new System.Windows.Forms.TextBox();
+            this.textBoxC10 = new System.Windows.Forms.TextBox();
+            this.textBoxD1 = new System.Windows.Forms.TextBox();
+            this.textBoxD10 = new System.Windows.Forms.TextBox();
+            this.textBoxC1 = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.vScrollBar2 = new System.Windows.Forms.VScrollBar();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.textBoxB1 = new System.Windows.Forms.TextBox();
+            this.textBoxC9 = new System.Windows.Forms.TextBox();
+            this.textBoxA1 = new System.Windows.Forms.TextBox();
+            this.textBoxD9 = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.textBoxC8 = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.textBoxD8 = new System.Windows.Forms.TextBox();
+            this.textBoxB2 = new System.Windows.Forms.TextBox();
+            this.textBoxC7 = new System.Windows.Forms.TextBox();
+            this.textBoxA2 = new System.Windows.Forms.TextBox();
+            this.textBoxD7 = new System.Windows.Forms.TextBox();
+            this.textBoxB3 = new System.Windows.Forms.TextBox();
+            this.textBoxC6 = new System.Windows.Forms.TextBox();
+            this.textBoxA3 = new System.Windows.Forms.TextBox();
+            this.textBoxD6 = new System.Windows.Forms.TextBox();
+            this.textBoxB4 = new System.Windows.Forms.TextBox();
+            this.textBoxC5 = new System.Windows.Forms.TextBox();
+            this.textBoxA4 = new System.Windows.Forms.TextBox();
+            this.textBoxD5 = new System.Windows.Forms.TextBox();
+            this.textBoxB5 = new System.Windows.Forms.TextBox();
+            this.textBoxC4 = new System.Windows.Forms.TextBox();
+            this.textBoxA5 = new System.Windows.Forms.TextBox();
+            this.textBoxD4 = new System.Windows.Forms.TextBox();
+            this.textBoxB6 = new System.Windows.Forms.TextBox();
+            this.textBoxC3 = new System.Windows.Forms.TextBox();
+            this.textBoxA6 = new System.Windows.Forms.TextBox();
+            this.textBoxD3 = new System.Windows.Forms.TextBox();
+            this.textBoxB7 = new System.Windows.Forms.TextBox();
+            this.textBoxC2 = new System.Windows.Forms.TextBox();
+            this.textBoxB8 = new System.Windows.Forms.TextBox();
+            this.textBoxD2 = new System.Windows.Forms.TextBox();
+            this.textBoxA8 = new System.Windows.Forms.TextBox();
+            this.textBoxA10 = new System.Windows.Forms.TextBox();
+            this.textBoxB9 = new System.Windows.Forms.TextBox();
+            this.textBoxB10 = new System.Windows.Forms.TextBox();
+            this.textBoxA9 = new System.Windows.Forms.TextBox();
+            this.vScrollBar1 = new System.Windows.Forms.VScrollBar();
+            this.button_cancle = new System.Windows.Forms.Button();
+            this.button_OK = new System.Windows.Forms.Button();
+            this.plot1 = new OxyPlot.WindowsForms.PlotView();
+            this.checkBox_log = new System.Windows.Forms.CheckBox();
+            this.button_t_x = new System.Windows.Forms.Button();
+            this.button_plot = new System.Windows.Forms.Button();
+            this.button_export = new System.Windows.Forms.Button();
+            this.textBox_dist = new System.Windows.Forms.TextBox();
+            this.label16 = new System.Windows.Forms.Label();
+            this.checkedListBox1 = new System.Windows.Forms.CheckedListBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            button_Interpolation = new System.Windows.Forms.Button();
+            this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // button_Interpolation
+            // 
+            button_Interpolation.Location = new System.Drawing.Point(624, 293);
+            button_Interpolation.Name = "button_Interpolation";
+            button_Interpolation.Size = new System.Drawing.Size(74, 25);
+            button_Interpolation.TabIndex = 97;
+            button_Interpolation.Text = "Interpolate";
+            button_Interpolation.UseVisualStyleBackColor = true;
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(12, 324);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(686, 10);
+            this.progressBar1.TabIndex = 81;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.textBoxA7);
+            this.groupBox1.Controls.Add(this.textBoxC10);
+            this.groupBox1.Controls.Add(this.textBoxD1);
+            this.groupBox1.Controls.Add(this.textBoxD10);
+            this.groupBox1.Controls.Add(this.textBoxC1);
+            this.groupBox1.Controls.Add(this.label4);
+            this.groupBox1.Controls.Add(this.vScrollBar2);
+            this.groupBox1.Controls.Add(this.label3);
+            this.groupBox1.Controls.Add(this.label5);
+            this.groupBox1.Controls.Add(this.textBoxB1);
+            this.groupBox1.Controls.Add(this.textBoxC9);
+            this.groupBox1.Controls.Add(this.textBoxA1);
+            this.groupBox1.Controls.Add(this.textBoxD9);
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.textBoxC8);
+            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Controls.Add(this.textBoxD8);
+            this.groupBox1.Controls.Add(this.textBoxB2);
+            this.groupBox1.Controls.Add(this.textBoxC7);
+            this.groupBox1.Controls.Add(this.textBoxA2);
+            this.groupBox1.Controls.Add(this.textBoxD7);
+            this.groupBox1.Controls.Add(this.textBoxB3);
+            this.groupBox1.Controls.Add(this.textBoxC6);
+            this.groupBox1.Controls.Add(this.textBoxA3);
+            this.groupBox1.Controls.Add(this.textBoxD6);
+            this.groupBox1.Controls.Add(this.textBoxB4);
+            this.groupBox1.Controls.Add(this.textBoxC5);
+            this.groupBox1.Controls.Add(this.textBoxA4);
+            this.groupBox1.Controls.Add(this.textBoxD5);
+            this.groupBox1.Controls.Add(this.textBoxB5);
+            this.groupBox1.Controls.Add(this.textBoxC4);
+            this.groupBox1.Controls.Add(this.textBoxA5);
+            this.groupBox1.Controls.Add(this.textBoxD4);
+            this.groupBox1.Controls.Add(this.textBoxB6);
+            this.groupBox1.Controls.Add(this.textBoxC3);
+            this.groupBox1.Controls.Add(this.textBoxA6);
+            this.groupBox1.Controls.Add(this.textBoxD3);
+            this.groupBox1.Controls.Add(this.textBoxB7);
+            this.groupBox1.Controls.Add(this.textBoxC2);
+            this.groupBox1.Controls.Add(this.textBoxB8);
+            this.groupBox1.Controls.Add(this.textBoxD2);
+            this.groupBox1.Controls.Add(this.textBoxA8);
+            this.groupBox1.Controls.Add(this.textBoxA10);
+            this.groupBox1.Controls.Add(this.textBoxB9);
+            this.groupBox1.Controls.Add(this.textBoxB10);
+            this.groupBox1.Controls.Add(this.textBoxA9);
+            this.groupBox1.Controls.Add(this.vScrollBar1);
+            this.groupBox1.Location = new System.Drawing.Point(12, 12);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(524, 306);
+            this.groupBox1.TabIndex = 80;
+            this.groupBox1.TabStop = false;
+            // 
+            // textBoxA7
+            // 
+            this.textBoxA7.Location = new System.Drawing.Point(6, 191);
+            this.textBoxA7.Name = "textBoxA7";
+            this.textBoxA7.ReadOnly = true;
+            this.textBoxA7.Size = new System.Drawing.Size(200, 20);
+            this.textBoxA7.TabIndex = 46;
+            this.textBoxA7.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBoxC10
+            // 
+            this.textBoxC10.Location = new System.Drawing.Point(331, 269);
+            this.textBoxC10.Name = "textBoxC10";
+            this.textBoxC10.ReadOnly = true;
+            this.textBoxC10.Size = new System.Drawing.Size(80, 20);
+            this.textBoxC10.TabIndex = 73;
+            this.textBoxC10.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBoxD1
+            // 
+            this.textBoxD1.Location = new System.Drawing.Point(417, 35);
+            this.textBoxD1.Name = "textBoxD1";
+            this.textBoxD1.Size = new System.Drawing.Size(80, 20);
+            this.textBoxD1.TabIndex = 11;
+            this.textBoxD1.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // textBoxD10
+            // 
+            this.textBoxD10.Location = new System.Drawing.Point(417, 269);
+            this.textBoxD10.Name = "textBoxD10";
+            this.textBoxD10.Size = new System.Drawing.Size(80, 20);
+            this.textBoxD10.TabIndex = 20;
+            this.textBoxD10.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // textBoxC1
+            // 
+            this.textBoxC1.Location = new System.Drawing.Point(331, 35);
+            this.textBoxC1.Name = "textBoxC1";
+            this.textBoxC1.ReadOnly = true;
+            this.textBoxC1.Size = new System.Drawing.Size(80, 20);
+            this.textBoxC1.TabIndex = 13;
+            this.textBoxC1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(328, 19);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(48, 13);
+            this.label4.TabIndex = 15;
+            this.label4.Text = "Element:";
+            // 
+            // vScrollBar2
+            // 
+            this.vScrollBar2.LargeChange = 101;
+            this.vScrollBar2.Location = new System.Drawing.Point(502, 35);
+            this.vScrollBar2.Name = "vScrollBar2";
+            this.vScrollBar2.Size = new System.Drawing.Size(15, 254);
+            this.vScrollBar2.SmallChange = 50;
+            this.vScrollBar2.TabIndex = 71;
+            this.vScrollBar2.Value = 15;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.label3.Location = new System.Drawing.Point(414, 17);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(71, 15);
+            this.label3.TabIndex = 16;
+            this.label3.Text = "Initial value:";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(315, 17);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(10, 273);
+            this.label5.TabIndex = 70;
+            this.label5.Text = ".\r\n.\r\n.\r\n.\r\n.\r\n.\r\n.\r\n.\r\n.\r\n.\r\n.\r\n.\r\n.\r\n.\r\n.\r\n.\r\n.\r\n.\r\n.\r\n.\r\n.\r\n";
+            // 
+            // textBoxB1
+            // 
+            this.textBoxB1.Location = new System.Drawing.Point(212, 35);
+            this.textBoxB1.Name = "textBoxB1";
+            this.textBoxB1.Size = new System.Drawing.Size(80, 20);
+            this.textBoxB1.TabIndex = 1;
+            this.textBoxB1.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // textBoxC9
+            // 
+            this.textBoxC9.Location = new System.Drawing.Point(331, 243);
+            this.textBoxC9.Name = "textBoxC9";
+            this.textBoxC9.ReadOnly = true;
+            this.textBoxC9.Size = new System.Drawing.Size(80, 20);
+            this.textBoxC9.TabIndex = 68;
+            this.textBoxC9.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBoxA1
+            // 
+            this.textBoxA1.Location = new System.Drawing.Point(6, 35);
+            this.textBoxA1.Name = "textBoxA1";
+            this.textBoxA1.ReadOnly = true;
+            this.textBoxA1.Size = new System.Drawing.Size(200, 20);
+            this.textBoxA1.TabIndex = 31;
+            this.textBoxA1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBoxD9
+            // 
+            this.textBoxD9.Location = new System.Drawing.Point(417, 243);
+            this.textBoxD9.Name = "textBoxD9";
+            this.textBoxD9.Size = new System.Drawing.Size(80, 20);
+            this.textBoxD9.TabIndex = 19;
+            this.textBoxD9.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(4, 19);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(53, 13);
+            this.label1.TabIndex = 32;
+            this.label1.Text = "Reaction:";
+            // 
+            // textBoxC8
+            // 
+            this.textBoxC8.Location = new System.Drawing.Point(331, 217);
+            this.textBoxC8.Name = "textBoxC8";
+            this.textBoxC8.ReadOnly = true;
+            this.textBoxC8.Size = new System.Drawing.Size(80, 20);
+            this.textBoxC8.TabIndex = 66;
+            this.textBoxC8.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.label2.Location = new System.Drawing.Point(209, 17);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(85, 15);
+            this.label2.TabIndex = 34;
+            this.label2.Text = "Rate konstant:";
+            // 
+            // textBoxD8
+            // 
+            this.textBoxD8.Location = new System.Drawing.Point(417, 217);
+            this.textBoxD8.Name = "textBoxD8";
+            this.textBoxD8.Size = new System.Drawing.Size(80, 20);
+            this.textBoxD8.TabIndex = 18;
+            this.textBoxD8.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // textBoxB2
+            // 
+            this.textBoxB2.Location = new System.Drawing.Point(212, 61);
+            this.textBoxB2.Name = "textBoxB2";
+            this.textBoxB2.Size = new System.Drawing.Size(80, 20);
+            this.textBoxB2.TabIndex = 2;
+            this.textBoxB2.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // textBoxC7
+            // 
+            this.textBoxC7.Location = new System.Drawing.Point(331, 191);
+            this.textBoxC7.Name = "textBoxC7";
+            this.textBoxC7.ReadOnly = true;
+            this.textBoxC7.Size = new System.Drawing.Size(80, 20);
+            this.textBoxC7.TabIndex = 64;
+            this.textBoxC7.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBoxA2
+            // 
+            this.textBoxA2.Location = new System.Drawing.Point(6, 61);
+            this.textBoxA2.Name = "textBoxA2";
+            this.textBoxA2.ReadOnly = true;
+            this.textBoxA2.Size = new System.Drawing.Size(200, 20);
+            this.textBoxA2.TabIndex = 35;
+            this.textBoxA2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBoxD7
+            // 
+            this.textBoxD7.Location = new System.Drawing.Point(417, 191);
+            this.textBoxD7.Name = "textBoxD7";
+            this.textBoxD7.Size = new System.Drawing.Size(80, 20);
+            this.textBoxD7.TabIndex = 17;
+            this.textBoxD7.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // textBoxB3
+            // 
+            this.textBoxB3.Location = new System.Drawing.Point(212, 87);
+            this.textBoxB3.Name = "textBoxB3";
+            this.textBoxB3.Size = new System.Drawing.Size(80, 20);
+            this.textBoxB3.TabIndex = 3;
+            this.textBoxB3.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // textBoxC6
+            // 
+            this.textBoxC6.Location = new System.Drawing.Point(331, 165);
+            this.textBoxC6.Name = "textBoxC6";
+            this.textBoxC6.ReadOnly = true;
+            this.textBoxC6.Size = new System.Drawing.Size(80, 20);
+            this.textBoxC6.TabIndex = 62;
+            this.textBoxC6.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBoxA3
+            // 
+            this.textBoxA3.Location = new System.Drawing.Point(6, 87);
+            this.textBoxA3.Name = "textBoxA3";
+            this.textBoxA3.ReadOnly = true;
+            this.textBoxA3.Size = new System.Drawing.Size(200, 20);
+            this.textBoxA3.TabIndex = 37;
+            this.textBoxA3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBoxD6
+            // 
+            this.textBoxD6.Location = new System.Drawing.Point(417, 165);
+            this.textBoxD6.Name = "textBoxD6";
+            this.textBoxD6.Size = new System.Drawing.Size(80, 20);
+            this.textBoxD6.TabIndex = 16;
+            this.textBoxD6.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // textBoxB4
+            // 
+            this.textBoxB4.Location = new System.Drawing.Point(212, 113);
+            this.textBoxB4.Name = "textBoxB4";
+            this.textBoxB4.Size = new System.Drawing.Size(80, 20);
+            this.textBoxB4.TabIndex = 4;
+            this.textBoxB4.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // textBoxC5
+            // 
+            this.textBoxC5.Location = new System.Drawing.Point(331, 139);
+            this.textBoxC5.Name = "textBoxC5";
+            this.textBoxC5.ReadOnly = true;
+            this.textBoxC5.Size = new System.Drawing.Size(80, 20);
+            this.textBoxC5.TabIndex = 60;
+            this.textBoxC5.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBoxA4
+            // 
+            this.textBoxA4.Location = new System.Drawing.Point(6, 113);
+            this.textBoxA4.Name = "textBoxA4";
+            this.textBoxA4.ReadOnly = true;
+            this.textBoxA4.Size = new System.Drawing.Size(200, 20);
+            this.textBoxA4.TabIndex = 39;
+            this.textBoxA4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBoxD5
+            // 
+            this.textBoxD5.Location = new System.Drawing.Point(417, 139);
+            this.textBoxD5.Name = "textBoxD5";
+            this.textBoxD5.Size = new System.Drawing.Size(80, 20);
+            this.textBoxD5.TabIndex = 15;
+            this.textBoxD5.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // textBoxB5
+            // 
+            this.textBoxB5.Location = new System.Drawing.Point(212, 139);
+            this.textBoxB5.Name = "textBoxB5";
+            this.textBoxB5.Size = new System.Drawing.Size(80, 20);
+            this.textBoxB5.TabIndex = 5;
+            this.textBoxB5.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // textBoxC4
+            // 
+            this.textBoxC4.Location = new System.Drawing.Point(331, 113);
+            this.textBoxC4.Name = "textBoxC4";
+            this.textBoxC4.ReadOnly = true;
+            this.textBoxC4.Size = new System.Drawing.Size(80, 20);
+            this.textBoxC4.TabIndex = 58;
+            this.textBoxC4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBoxA5
+            // 
+            this.textBoxA5.Location = new System.Drawing.Point(6, 139);
+            this.textBoxA5.Name = "textBoxA5";
+            this.textBoxA5.ReadOnly = true;
+            this.textBoxA5.Size = new System.Drawing.Size(200, 20);
+            this.textBoxA5.TabIndex = 41;
+            this.textBoxA5.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBoxD4
+            // 
+            this.textBoxD4.Location = new System.Drawing.Point(417, 113);
+            this.textBoxD4.Name = "textBoxD4";
+            this.textBoxD4.Size = new System.Drawing.Size(80, 20);
+            this.textBoxD4.TabIndex = 14;
+            this.textBoxD4.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // textBoxB6
+            // 
+            this.textBoxB6.Location = new System.Drawing.Point(212, 165);
+            this.textBoxB6.Name = "textBoxB6";
+            this.textBoxB6.Size = new System.Drawing.Size(80, 20);
+            this.textBoxB6.TabIndex = 6;
+            this.textBoxB6.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // textBoxC3
+            // 
+            this.textBoxC3.Location = new System.Drawing.Point(331, 87);
+            this.textBoxC3.Name = "textBoxC3";
+            this.textBoxC3.ReadOnly = true;
+            this.textBoxC3.Size = new System.Drawing.Size(80, 20);
+            this.textBoxC3.TabIndex = 56;
+            this.textBoxC3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBoxA6
+            // 
+            this.textBoxA6.Location = new System.Drawing.Point(6, 165);
+            this.textBoxA6.Name = "textBoxA6";
+            this.textBoxA6.ReadOnly = true;
+            this.textBoxA6.Size = new System.Drawing.Size(200, 20);
+            this.textBoxA6.TabIndex = 44;
+            this.textBoxA6.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBoxD3
+            // 
+            this.textBoxD3.Location = new System.Drawing.Point(417, 87);
+            this.textBoxD3.Name = "textBoxD3";
+            this.textBoxD3.Size = new System.Drawing.Size(80, 20);
+            this.textBoxD3.TabIndex = 13;
+            this.textBoxD3.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // textBoxB7
+            // 
+            this.textBoxB7.Location = new System.Drawing.Point(212, 191);
+            this.textBoxB7.Name = "textBoxB7";
+            this.textBoxB7.Size = new System.Drawing.Size(80, 20);
+            this.textBoxB7.TabIndex = 7;
+            this.textBoxB7.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // textBoxC2
+            // 
+            this.textBoxC2.Location = new System.Drawing.Point(331, 61);
+            this.textBoxC2.Name = "textBoxC2";
+            this.textBoxC2.ReadOnly = true;
+            this.textBoxC2.Size = new System.Drawing.Size(80, 20);
+            this.textBoxC2.TabIndex = 54;
+            this.textBoxC2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBoxB8
+            // 
+            this.textBoxB8.Location = new System.Drawing.Point(212, 217);
+            this.textBoxB8.Name = "textBoxB8";
+            this.textBoxB8.Size = new System.Drawing.Size(80, 20);
+            this.textBoxB8.TabIndex = 8;
+            this.textBoxB8.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // textBoxD2
+            // 
+            this.textBoxD2.Location = new System.Drawing.Point(417, 61);
+            this.textBoxD2.Name = "textBoxD2";
+            this.textBoxD2.Size = new System.Drawing.Size(80, 20);
+            this.textBoxD2.TabIndex = 12;
+            this.textBoxD2.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // textBoxA8
+            // 
+            this.textBoxA8.Location = new System.Drawing.Point(6, 217);
+            this.textBoxA8.Name = "textBoxA8";
+            this.textBoxA8.ReadOnly = true;
+            this.textBoxA8.Size = new System.Drawing.Size(200, 20);
+            this.textBoxA8.TabIndex = 48;
+            this.textBoxA8.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBoxA10
+            // 
+            this.textBoxA10.Location = new System.Drawing.Point(6, 269);
+            this.textBoxA10.Name = "textBoxA10";
+            this.textBoxA10.ReadOnly = true;
+            this.textBoxA10.Size = new System.Drawing.Size(200, 20);
+            this.textBoxA10.TabIndex = 52;
+            this.textBoxA10.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBoxB9
+            // 
+            this.textBoxB9.Location = new System.Drawing.Point(212, 243);
+            this.textBoxB9.Name = "textBoxB9";
+            this.textBoxB9.Size = new System.Drawing.Size(80, 20);
+            this.textBoxB9.TabIndex = 9;
+            this.textBoxB9.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // textBoxB10
+            // 
+            this.textBoxB10.Location = new System.Drawing.Point(212, 269);
+            this.textBoxB10.Name = "textBoxB10";
+            this.textBoxB10.Size = new System.Drawing.Size(80, 20);
+            this.textBoxB10.TabIndex = 10;
+            this.textBoxB10.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // textBoxA9
+            // 
+            this.textBoxA9.Location = new System.Drawing.Point(6, 243);
+            this.textBoxA9.Name = "textBoxA9";
+            this.textBoxA9.ReadOnly = true;
+            this.textBoxA9.Size = new System.Drawing.Size(200, 20);
+            this.textBoxA9.TabIndex = 50;
+            this.textBoxA9.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // vScrollBar1
+            // 
+            this.vScrollBar1.LargeChange = 101;
+            this.vScrollBar1.Location = new System.Drawing.Point(297, 35);
+            this.vScrollBar1.Name = "vScrollBar1";
+            this.vScrollBar1.Size = new System.Drawing.Size(15, 254);
+            this.vScrollBar1.SmallChange = 50;
+            this.vScrollBar1.TabIndex = 43;
+            this.vScrollBar1.Value = 15;
+            // 
+            // button_cancle
+            // 
+            this.button_cancle.Location = new System.Drawing.Point(548, 260);
+            this.button_cancle.Name = "button_cancle";
+            this.button_cancle.Size = new System.Drawing.Size(74, 25);
+            this.button_cancle.TabIndex = 78;
+            this.button_cancle.Text = "Cancle";
+            this.button_cancle.UseVisualStyleBackColor = true;
+            this.button_cancle.Click += new System.EventHandler(this.button_cancle_Click);
+            // 
+            // button_OK
+            // 
+            this.button_OK.Location = new System.Drawing.Point(624, 260);
+            this.button_OK.Name = "button_OK";
+            this.button_OK.Size = new System.Drawing.Size(74, 25);
+            this.button_OK.TabIndex = 79;
+            this.button_OK.Text = "Use settings";
+            this.button_OK.UseVisualStyleBackColor = true;
+            this.button_OK.Click += new System.EventHandler(this.button_OK_Click);
+            // 
+            // plot1
+            // 
+            this.plot1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.plot1.BackColor = System.Drawing.SystemColors.AppWorkspace;
+            this.plot1.Location = new System.Drawing.Point(0, 340);
+            this.plot1.Name = "plot1";
+            this.plot1.PanCursor = System.Windows.Forms.Cursors.Hand;
+            this.plot1.Size = new System.Drawing.Size(709, 321);
+            this.plot1.TabIndex = 86;
+            this.plot1.Text = "plot1";
+            this.plot1.ZoomHorizontalCursor = System.Windows.Forms.Cursors.SizeWE;
+            this.plot1.ZoomRectangleCursor = System.Windows.Forms.Cursors.SizeNWSE;
+            this.plot1.ZoomVerticalCursor = System.Windows.Forms.Cursors.SizeNS;
+            // 
+            // checkBox_log
+            // 
+            this.checkBox_log.AutoSize = true;
+            this.checkBox_log.Checked = true;
+            this.checkBox_log.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox_log.Location = new System.Drawing.Point(6, 184);
+            this.checkBox_log.Name = "checkBox_log";
+            this.checkBox_log.Size = new System.Drawing.Size(75, 17);
+            this.checkBox_log.TabIndex = 21;
+            this.checkBox_log.Text = "Log. scale";
+            this.checkBox_log.UseVisualStyleBackColor = true;
+            // 
+            // button_t_x
+            // 
+            this.button_t_x.Enabled = false;
+            this.button_t_x.Location = new System.Drawing.Point(101, 181);
+            this.button_t_x.Name = "button_t_x";
+            this.button_t_x.Size = new System.Drawing.Size(55, 20);
+            this.button_t_x.TabIndex = 21;
+            this.button_t_x.Text = "t --> x";
+            this.button_t_x.UseVisualStyleBackColor = true;
+            // 
+            // button_plot
+            // 
+            this.button_plot.Location = new System.Drawing.Point(624, 229);
+            this.button_plot.Name = "button_plot";
+            this.button_plot.Size = new System.Drawing.Size(74, 25);
+            this.button_plot.TabIndex = 84;
+            this.button_plot.Text = "Plot";
+            this.button_plot.UseVisualStyleBackColor = true;
+            // 
+            // button_export
+            // 
+            this.button_export.Location = new System.Drawing.Point(548, 229);
+            this.button_export.Name = "button_export";
+            this.button_export.Size = new System.Drawing.Size(74, 25);
+            this.button_export.TabIndex = 85;
+            this.button_export.Text = "Export";
+            this.button_export.UseVisualStyleBackColor = true;
+            // 
+            // textBox_dist
+            // 
+            this.textBox_dist.Enabled = false;
+            this.textBox_dist.Location = new System.Drawing.Point(42, 155);
+            this.textBox_dist.Name = "textBox_dist";
+            this.textBox_dist.Size = new System.Drawing.Size(114, 20);
+            this.textBox_dist.TabIndex = 92;
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(3, 158);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(33, 13);
+            this.label16.TabIndex = 93;
+            this.label16.Text = "Time:";
+            // 
+            // checkedListBox1
+            // 
+            this.checkedListBox1.BackColor = System.Drawing.SystemColors.Control;
+            this.checkedListBox1.CheckOnClick = true;
+            this.checkedListBox1.FormattingEnabled = true;
+            this.checkedListBox1.Location = new System.Drawing.Point(6, 20);
+            this.checkedListBox1.Name = "checkedListBox1";
+            this.checkedListBox1.Size = new System.Drawing.Size(150, 124);
+            this.checkedListBox1.TabIndex = 83;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.button_t_x);
+            this.groupBox2.Controls.Add(this.checkBox_log);
+            this.groupBox2.Controls.Add(this.checkedListBox1);
+            this.groupBox2.Controls.Add(this.label16);
+            this.groupBox2.Controls.Add(this.textBox_dist);
+            this.groupBox2.Location = new System.Drawing.Point(542, 12);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(160, 211);
+            this.groupBox2.TabIndex = 95;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "groupBox2";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(548, 296);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(74, 20);
+            this.textBox1.TabIndex = 98;
+            // 
+            // Interpolation
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(708, 661);
+            this.Controls.Add(this.textBox1);
+            this.Controls.Add(button_Interpolation);
+            this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.plot1);
+            this.Controls.Add(this.progressBar1);
+            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.button_plot);
+            this.Controls.Add(this.button_cancle);
+            this.Controls.Add(this.button_OK);
+            this.Controls.Add(this.button_export);
+            this.Name = "Interpolation";
+            this.Text = "Interpolation";
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+
+        #endregion
+
+        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.TextBox textBoxA7;
+        private System.Windows.Forms.TextBox textBoxC10;
+        private System.Windows.Forms.TextBox textBoxD1;
+        private System.Windows.Forms.TextBox textBoxD10;
+        private System.Windows.Forms.TextBox textBoxC1;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.VScrollBar vScrollBar2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox textBoxB1;
+        private System.Windows.Forms.TextBox textBoxC9;
+        private System.Windows.Forms.TextBox textBoxA1;
+        private System.Windows.Forms.TextBox textBoxD9;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox textBoxC8;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox textBoxD8;
+        private System.Windows.Forms.TextBox textBoxB2;
+        private System.Windows.Forms.TextBox textBoxC7;
+        private System.Windows.Forms.TextBox textBoxA2;
+        private System.Windows.Forms.TextBox textBoxD7;
+        private System.Windows.Forms.TextBox textBoxB3;
+        private System.Windows.Forms.TextBox textBoxC6;
+        private System.Windows.Forms.TextBox textBoxA3;
+        private System.Windows.Forms.TextBox textBoxD6;
+        private System.Windows.Forms.TextBox textBoxB4;
+        private System.Windows.Forms.TextBox textBoxC5;
+        private System.Windows.Forms.TextBox textBoxA4;
+        private System.Windows.Forms.TextBox textBoxD5;
+        private System.Windows.Forms.TextBox textBoxB5;
+        private System.Windows.Forms.TextBox textBoxC4;
+        private System.Windows.Forms.TextBox textBoxA5;
+        private System.Windows.Forms.TextBox textBoxD4;
+        private System.Windows.Forms.TextBox textBoxB6;
+        private System.Windows.Forms.TextBox textBoxC3;
+        private System.Windows.Forms.TextBox textBoxA6;
+        private System.Windows.Forms.TextBox textBoxD3;
+        private System.Windows.Forms.TextBox textBoxB7;
+        private System.Windows.Forms.TextBox textBoxC2;
+        private System.Windows.Forms.TextBox textBoxB8;
+        private System.Windows.Forms.TextBox textBoxD2;
+        private System.Windows.Forms.TextBox textBoxA8;
+        private System.Windows.Forms.TextBox textBoxA10;
+        private System.Windows.Forms.TextBox textBoxB9;
+        private System.Windows.Forms.TextBox textBoxB10;
+        private System.Windows.Forms.TextBox textBoxA9;
+        private System.Windows.Forms.VScrollBar vScrollBar1;
+        private System.Windows.Forms.Button button_cancle;
+        private System.Windows.Forms.Button button_OK;
+        private OxyPlot.WindowsForms.PlotView plot1;
+        private System.Windows.Forms.CheckBox checkBox_log;
+        private System.Windows.Forms.Button button_t_x;
+        private System.Windows.Forms.Button button_plot;
+        private System.Windows.Forms.Button button_export;
+        public System.Windows.Forms.TextBox textBox_dist;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.CheckedListBox checkedListBox1;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.TextBox textBox1;
+    }
+}

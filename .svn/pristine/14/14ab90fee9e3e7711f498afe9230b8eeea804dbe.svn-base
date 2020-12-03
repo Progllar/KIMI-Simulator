@@ -1,0 +1,52 @@
+﻿Etapa 1: Items
+
+DONE!
+
+Etapa 2: Conections
+					- ukladanie reakcie pod zvolenim menom - nemisi byt ako navrh - nesmie sa opakonat !
+					 - Pri tvorbe novej reakcie ak exist. rect aj prod chod cez vsetky reakcia a ponukni 
+					 do React.name tiek, kt obsahuju react a prod. 
+					Pri zvoleni vypln jedn. polia podla ulozenej   
+					- povolenie pisana do neurals alebo konst iba ak je nova alebo aj je vybrata stara
+					- Delete itemu  ak reaction = enabled Disable and clear Reaction
+					- clear itemu ak reaction = enabled zmaze Product
+					- delete reaction - len ak je vybrata reakcia, kt je ulozena
+					 - clear reaction - nemaz reactant a product
+  - nefunguje farebne oznacenie sipky
+
+Exist. reakcia
+						- ak je vybrata a spravim item delete, zmaze sa pisomne zobrazenie 
+						- ak je vybrata a spravim item apply - edit - edit aj reakcie
+						- apply - ak existuje (co je jasne ze ano, tak len prepis hodnoty, netreba mazat / alebo zmaz a sprav nanovo vsetko)
+ 
+- doriesit bugy v reakcii:
+	chyba kres;ena pri zoome
+	pri vybere reakcie / itemu staci enter
+- stackovanie neutralov, reakcii
+						- spravovanie neutralov
+- osetrenie obojsmernych reakcii
+						- mazanie reakcie ak existuje a prepisujem ju
+						- povolit proceed iba ak reakcie existuju a su uzavrete
+- kontrola, ci nie je rae konstant a koncentracie mimo (porovanie s casovou konstatnou) - aby mal vypocet zmisel
+
+Etapa 3: Calculation
+
+- upravenie zadania pre vypocet dt, dz, ...
+- upravenie menu -menu, setings, results
+- Calculation control , posun buniek cez tab
+
+Etapa 4: Vizualization
+
+- vytvorenie grafickeho a textoveho vystupu v zavislosti na volbe v menu/results
+
+P.S.:
+- osetrenie rozmerov okna
+- vyskakovanie novych okien pri starom okne
+- moznost ulozenia nakreslenej reakcie
+- vykreslovanie nech ma limity
+
+
+Nepodstatne:
+- charakteristicka  oblast grafickej reprezentacie reakcie, klick, 
+ - hmotnost molekuly sa neskor nebude zadavat priamo, ale bude sa pocitat z formuly rovno aj z hmotnostnou distribuciou 
+

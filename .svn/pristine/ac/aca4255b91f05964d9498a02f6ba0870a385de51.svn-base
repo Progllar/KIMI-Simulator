@@ -1,0 +1,2078 @@
+﻿
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Globalization;
+using System.IO;
+using OxyPlot;
+using OxyPlot.WindowsForms;
+using OxyPlot.Axes;
+using OxyPlot.Series;
+
+namespace Numerical_calculator
+{
+    public partial class Interpolation : Form
+    {
+        private List<string[]> _experimental_data;
+        public List<Items_used> ItemColection_used { get; set; }
+        public List<Reactions_used> ReactionColection_used { get; set; }
+        public int interval_pocet_reaction;
+        public double sirka_intervalu_rection;
+        public int aktual_pomer_reaction = 0;
+        public int interval_pocet_items;
+        public double sirka_intervalu_items;
+        public int aktual_pomer_items = 0;
+        public double dt = Main.Time_duration / Main.NumberOfSteps; // us
+        public double time_range = Main.Time_duration; //us
+        public List<Equation> equation = new List<Equation>();
+        public List<Premenna> premenna = new List<Premenna>();
+        public List<Konstants> konstanta = new List<Konstants>();
+        public string[] hlavicka;
+        public List<double[]> tabulka;
+        public int value { get; set; }
+        public int interval_pocet;
+        public double sirka_intervalu;
+        public int aktual_pomer = 0;
+        public bool calculation_complete = false;
+        List<List<double[]>> data;
+
+        public Interpolation(List<string[]> Experimental_data)
+        {
+            InitializeComponent();
+            _experimental_data = Experimental_data;
+        }   
+        /*
+        public void initiate()
+        {   
+            // inicialization of the graph type
+            int i = 0;
+            PlotModel model = new PlotModel() { LegendSymbolLength = 24, IsLegendVisible = true };
+            model.LegendTitle = "Legend";
+            model.LegendOrientation = LegendOrientation.Horizontal;
+            model.LegendPlacement = LegendPlacement.Inside;
+            model.LegendPosition = LegendPosition.RightTop;
+            string[] hlavicka = new string[1];
+            // extraction of header from data set
+            foreach(string[] line in _experimental_data)
+            {
+                if(i==0)
+                {
+                    hlavicka = line;
+                }
+                i++;
+            }
+            try
+            {
+                _experimental_data.Remove(hlavicka);
+            }
+            catch { }
+            // clarify positions and munber of mz measured products
+            int masses = 0;
+            foreach (string str in hlavicka)
+            {
+                if (str.Contains("mz"))
+                {
+                    masses++;
+                }
+            }
+            int[,] new_hlavicka = new int[masses,2];
+            int k = 0, l = 0;
+            foreach (string str in hlavicka)
+            {
+                if (str.Contains("mz"))
+                {
+                    string number = "";
+                    foreach (char ch in str)
+                    {
+                        if (ch == '0' || ch == '1' || ch == '2' || ch == '3' || ch == '4' || ch == '5' || ch == '6' || ch == '7' || ch == '8' || ch == '9')
+                        {
+                            number += ch.ToString();
+                        }
+                    }
+                    int _number = Convert.ToInt32(number);
+                    new_hlavicka[k,0] = _number;
+                    new_hlavicka[k,1] = l;
+                    k++;
+                }
+                l++;
+            }
+            // transformation of data set into a field composited only from mz data
+            int[,] pure_data = new int[masses, _experimental_data.Count];
+            for(int m = 0; m < masses; m++)
+            {
+                int n = 0;
+                foreach (string[] line in _experimental_data)
+                {
+                    pure_data[m,n] = Convert.ToInt32(line[new_hlavicka[m, 1]]);
+                    n++;
+                }
+            }
+            // calculation of relative values 
+            double[,] relative_data = new double[masses + 1, _experimental_data.Count];
+            for (i = 0; i < _experimental_data.Count; i++)
+            {
+                double H3O_sum = 0;
+                double rest_sum = 0;
+                for(int j = 0; j < masses; j++)
+                {
+                    bool done = false; 
+                    if(new_hlavicka[j,0] == 19)
+                    {
+                        H3O_sum += pure_data[j,i];
+                        done = true;
+                    }
+                    if(new_hlavicka[j,0] == 37)
+                    {
+                        H3O_sum += pure_data[j,i];
+                        done = true;
+                    }
+                    if(new_hlavicka[j,0] == 55)
+                    {
+                        H3O_sum += pure_data[j,i];
+                        done = true;
+                    }
+                    if(new_hlavicka[j,0] == 73)
+                    {
+                        H3O_sum += pure_data[j,i];
+                        done = true;
+                    }
+                    if (!done)
+                    {
+                        rest_sum += pure_data[j, i];
+                    }
+                }
+                double H3O = 0;
+                for(int j = 0; j < masses; j++)
+                {
+                    if(new_hlavicka[j,0] == 19)
+                    {
+                        H3O = pure_data[j,i];
+                    }
+                }
+                double partial_X = -1 * Math.Log((H3O/H3O_sum),Math.E);// x-os
+                relative_data[0, i] = partial_X;
+                // prispevok ionov
+                for (int j = 0; j < masses; j++)
+                {
+                    bool done = false; 
+                    if (new_hlavicka[j, 0] == 19)
+                    {
+                        relative_data[j + 1, i] = pure_data[j, i] / H3O_sum;
+                        done = true;
+                    }
+                    if (new_hlavicka[j, 0] == 37)
+                    {
+                        relative_data[j + 1, i] = pure_data[j, i] / H3O_sum;
+                        done = true;
+                    }
+                    if (new_hlavicka[j, 0] == 55)
+                    {
+                        relative_data[j + 1, i] = pure_data[j, i] / H3O_sum;
+                        done = true;
+                    }
+                    if (new_hlavicka[j, 0] == 73)
+                    {
+                        relative_data[j + 1, i] = pure_data[j, i] / H3O_sum;
+                        done = true;
+                    }
+                    if (!done)
+                    {
+                        relative_data[j + 1, i] = pure_data[j, i] / rest_sum;
+                    }
+                }
+            }
+            // usporiadanie podla x-ovej polohy
+            bool sorting = true;
+            while (sorting)
+            {
+                int iteration = 0;
+                for (i = 1; i < _experimental_data.Count; i++)
+                {
+                    if (relative_data[0, i - 1] > relative_data[0, i])
+                    {
+                        // swap
+                        for (int j = 0; j < masses + 1; j++)
+                        {
+                            double deposit = relative_data[j, i - 1];
+                            relative_data[j, i - 1] = relative_data[j, i];
+                            relative_data[j, i] = deposit;
+                        }
+                        iteration++;
+                    }
+                }
+                if (iteration == 0)
+                {
+                    sorting = false;
+                }
+            }
+            for (i = 0; i < masses; i++)
+            {
+                ScatterSeries sc = new ScatterSeries();
+                sc.MarkerSize = 2;
+                sc.Title = "m/z " + new_hlavicka[i, 0].ToString();
+                for (int j = 0; j < _experimental_data.Count; j++)
+                {
+                    sc.Points.Add(new ScatterPoint(relative_data[0, j], relative_data[i + 1, j]));                 
+                }
+                model.Series.Add(sc);
+            }
+            model.Axes.Add(new LinearAxis() { Position = AxisPosition.Bottom, Title = Popis_X, MajorGridlineStyle = LineStyle.Dash });
+            if (checkBox_log.Checked)
+            {
+                model.Axes.Add(new LogarithmicAxis() { Position = AxisPosition.Left, MajorGridlineStyle = LineStyle.Solid, MinorGridlineStyle = LineStyle.Dot, IntervalLength = 100, Title = "Concentration" });
+            }
+            else
+            {
+                model.Axes.Add(new LinearAxis() { Position = AxisPosition.Left, MajorGridlineStyle = LineStyle.Solid, MinorGridlineStyle = LineStyle.Dot, IntervalLength = 100, Title = "Concentration" });
+            }
+            plot1.Model = model;        
+        }
+
+        public void proceed()
+        {
+            // premenit rekcie na equation a konstanty
+            Cursor.Current = Cursors.WaitCursor;
+            foreach (Items_used Item in ItemColection_used)
+            {
+                if (!Item.association)
+                {
+                    bool detector = false;
+                    foreach (Premenna pr in premenna)
+                    {
+                        if (Item.name == pr.name)
+                        {
+                            detector = true;
+                        }
+                    }
+                    if (!detector)
+                    {
+                        novapremenna(Item.name, Item.concentration, Item.concentration);
+                        equation.Add(new Equation { name = Item.name, equation = new List<string[]>() });
+                    }
+                }
+                else
+                {
+                    foreach (Items Accos in Item.associated_items)
+                    {
+                        bool je = false;
+                        foreach (Items_used I in ItemColection_used)
+                        {
+                            if (Accos == I.GetItem())
+                            {
+                                je = true;
+                            }
+                        }
+                        if (!je)
+                        {
+                            bool detector = false;
+                            foreach (Premenna pr in premenna)
+                            {
+                                if (Item.name == pr.name)
+                                {
+                                    detector = true;
+                                }
+                            }
+                            if (!detector)
+                            {
+                                novapremenna(Accos.name, Accos.concentration, Accos.concentration);
+                                equation.Add(new Equation { name = Accos.name, equation = new List<string[]>() });
+                            }
+                        }
+                    }
+                }
+            }
+            int k = 0;
+            foreach (Reactions_used Reaction in ReactionColection_used)
+            {
+
+                string k_name = "k(" + k.ToString() + ")";
+                string[] s = new string[4];
+                novakonstanta(k_name, Reaction.rate_konstant);
+                s[0] = k_name;//konst
+                foreach (Premenna pr in premenna)
+                {
+                    if (Reaction.item_A.name == pr.name)
+                    {
+                        s[1] = pr.name;
+                    }
+                }
+                foreach (Premenna pr in premenna)
+                {
+                    try
+                    {
+                        if (Reaction.neutral_A.name == pr.name)
+                        {
+                            s[2] = pr.name;
+                        }
+                    }
+                    catch
+                    {
+                        // null exception
+                    }
+                }
+                foreach (Equation eq in equation)
+                {
+                    if (Reaction.item_A.name == eq.name) { if (Reaction.reaction_type == 0) { s[3] = "True"; eq.equation.Add(new string[] { s[0], s[1], s[2], s[3] }); } else { s[3] = "False"; eq.equation.Add(new string[] { s[0], s[1], s[2], s[3] }); } }
+                    if (Reaction.item_B.name == eq.name) { if (Reaction.reaction_type == 0) { s[3] = "False"; eq.equation.Add(new string[] { s[0], s[1], s[2], s[3] }); } else { s[3] = "True"; eq.equation.Add(new string[] { s[0], s[1], s[2], s[3] }); } }
+                    try
+                    {
+                        if (!Reaction.neutral_B.association)
+                        {
+                            if (Reaction.neutral_B.name == eq.name) { if (Reaction.reaction_type == 0) { s[3] = "False"; eq.equation.Add(new string[] { s[0], s[1], s[2], s[3] }); } else { s[3] = "True"; eq.equation.Add(new string[] { s[0], s[1], s[2], s[3] }); } }
+                        }
+                        else
+                        {
+                            foreach (Items Accos in Reaction.neutral_B.associated_items)
+                            {
+                                if (Accos.name == eq.name) { if (Reaction.reaction_type == 0) { s[3] = "False"; eq.equation.Add(new string[] { s[0], s[1], s[2], s[3] }); } else { s[3] = "True"; eq.equation.Add(new string[] { s[0], s[1], s[2], s[3] }); } }
+                            }
+                        }
+                    }
+                    catch { }
+                    try
+                    {
+                        if (Reaction.neutral_A.name == eq.name) { if (Reaction.reaction_type == 0) { s[3] = "True"; eq.equation.Add(new string[] { s[0], s[1], s[2], s[3] }); } else { s[3] = "False"; eq.equation.Add(new string[] { s[0], s[1], s[2], s[3] }); } }
+                    }
+                    catch { }
+                }
+                k++;
+            }
+            // calculation s dt
+            if (this.checkBox1.Checked && (this.comboBox1.SelectedItem != null))
+            {
+                if (Main.calc_type)
+                {
+                    dt = Main.Time_duration / Main.NumberOfSteps; // us
+                    time_range = Main.Time_duration; //us
+                }
+                else
+                {
+                    time_range = (Main.Distance * 1000000) / Main.Ion_velociy; // us
+                    dt = time_range / Main.NumberOfSteps; // us
+                }
+                int steps = Convert.ToInt32(Convertor(this.textBox3.Text));
+                double conc_fin = Convertor(this.textBox2.Text);
+                string name = "";
+                double conc = 0;
+                if ((Main.Ion_velociy != 0) && (Main.Distance != 0))
+                {
+                    foreach (Items_used Item in ItemColection_used)
+                    {
+                        if (Item == (Items_used)comboBox1.SelectedItem)
+                        {
+                            name = Item.name;
+                            conc = Item.concentration;
+                        }
+                    }
+                    if (name != "")
+                    {
+                        Main.conc_start = conc;
+                        Main.conc_end = conc_fin;
+                        Main.conc_steps = steps;
+                        foreach (Premenna pr in premenna)
+                        {
+                            if (pr.name == name)
+                            {
+                                double diff = conc_fin - conc;
+                                double step = diff / (steps - 1);
+                                double dep = 0;
+                                data = new List<List<double[]>>();
+                                while (diff >= dep)
+                                {
+                                    foreach (Premenna pre in premenna)
+                                    {
+                                        pre.value = pre.initial_value;
+                                    }
+                                    Calculate();
+                                    List<double[]> new_tabulka = new List<double[]>();
+                                    foreach (double[] dou in tabulka)
+                                    {
+                                        double[] new_dou = new double[dou.GetLength(0) + 1];
+                                        if (Main.calc_type)
+                                        {
+                                            dou[dou.GetLength(0) - 1] = Math.Round(dou[dou.GetLength(0) - 1], 12);
+                                        }
+                                        else
+                                        {
+                                            dou[dou.GetLength(0) - 1] = Math.Round((dou[dou.GetLength(0) - 1] * Main.Ion_velociy) / 1000000, 12);
+                                        }
+                                        for (int i = 0; i < dou.GetLength(0); i++)
+                                        {
+                                            new_dou[i] = dou[i];
+                                        }
+                                        new_dou[new_dou.GetLength(0) - 1] = conc + dep;
+                                        new_tabulka.Add(new_dou);
+                                    }
+
+                                    data.Add(new_tabulka);
+                                    pr.initial_value = pr.initial_value + step;
+                                    dep += step;
+                                    if (dep > diff)
+                                    {
+                                        progressBar1.Value = 100;
+                                    }
+                                    else
+                                    {
+                                        progressBar1.Value = Convert.ToInt32(100 * dep / diff);
+                                    }
+                                }
+                                // export do main
+                                Main.hlavicka_din = hlavicka;
+                                Main.data_din = data;
+                                Main.name_din = name;
+                                Main.results_din = true;
+
+                            }
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Unable to iniciate 'Dinamic concentration' action.");
+                    }
+                }
+                Main.calculation_done();
+                Cursor.Current = Cursors.Default;
+            }
+            else
+            {
+                MessageBox.Show("Dinamick calculation is not enabled!");
+            }
+        }
+
+        void novapremenna(string s, double Value, double Init_val)
+        {
+            bool tuje = false;
+            foreach (Premenna p in premenna)
+            {
+                if (p.name == s)
+                {
+                    tuje = true;
+                }
+            }
+            if (tuje == false)
+            {
+                premenna.Add(new Premenna() { name = s, value = Value, initial_value = Init_val });
+            }
+        }
+
+        void novakonstanta(string s, double Value)
+        {
+            bool tuje = false;
+            foreach (Konstants k in konstanta)
+            {
+                if (k.name == s)
+                {
+                    tuje = true;
+                }
+            }
+            if (tuje == false)
+            {
+                konstanta.Add(new Konstants() { name = s, value = Value });
+            }
+        }
+ 
+        void Calculate()
+        {
+            int cnt = equation.Count;
+            int i = 0;
+            double t = 0;
+            hlavicka = new string[cnt];
+            foreach (Equation eq in equation)
+            {
+                hlavicka[i] = eq.name;
+                i++;
+            }
+            double[] d = new double[cnt + 1];
+            tabulka = new List<double[]>();
+            i = 0;
+            foreach (Equation eq in equation)
+            {
+                foreach (Premenna pr in premenna)
+                {
+                    if (pr.name == eq.name)
+                    {
+                        d[i] = pr.value;
+                        i++;
+                    }
+                }
+            }
+            d[cnt] = t;
+            tabulka.Add(d);
+            while (t < time_range)
+            {
+                double[] dou = new double[cnt + 1];
+                Calculation calculation = new Calculation();
+                calculation.dt = dt / 1000000; // s
+                calculation.calculate_step(equation, konstanta, premenna);
+                premenna = calculation.new_premenna;
+                int j = 0;
+                foreach (Equation eq in equation)
+                {
+                    foreach (Premenna pr in premenna)
+                    {
+                        if (pr.name == eq.name)
+                        {
+                            dou[j] = pr.value;
+                            j++;
+                        }
+                    }
+                }
+                t = t + dt;
+                t = Math.Round(t,12);
+                dou[cnt] = t;
+                tabulka.Add(dou);
+            }
+        }
+
+        #region Fill boxes
+
+        public void show_values()
+        {
+            fill_items();
+            fill_reaction();
+        }
+
+        public void fill_items()
+        {
+            int premenna_cnt = ItemColection_used.Count;
+            foreach (Items_used Item in ItemColection_used)
+            {
+                if (Item.association == true)
+                {
+                    foreach (Items I in Item.associated_items)
+                    {
+                        bool f = false;
+                        foreach (Items_used J in ItemColection_used)
+                        {
+                            if (I == J.GetItem())
+                            {
+                                f = true;
+                            }
+                        }
+                        if (!f)
+                        {
+                            premenna_cnt++;
+                        }
+                    }
+                }
+            }
+            if (premenna_cnt <= 10)
+            { // nemusime posuvat
+
+                int i = 1;
+                foreach (Items_used Item in ItemColection_used)
+                {
+                    if (Item.association == true)
+                    {
+                        foreach (Items Assoc in Item.associated_items)
+                        {
+                            bool doit = true;
+                            foreach (Items_used I in ItemColection_used)
+                            {
+                                if (Assoc == I.GetItem())
+                                {
+                                    doit = false;
+                                }
+                            }
+                            if (doit)
+                            {
+                                if (i == 1)
+                                {
+                                    textBoxC1.Text = Assoc.name; 
+                                    if (Assoc.concentration > 100)
+                                    {
+                                        textBoxD1.Text = Assoc.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                                    }
+                                    else
+                                    {
+                                        textBoxD1.Text = Assoc.concentration.ToString();
+                                    }
+                                }
+                                if (i == 2)
+                                {
+                                    textBoxC2.Text = Assoc.name; if (Assoc.concentration > 100)
+                                    {
+                                        textBoxD2.Text = Assoc.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                                    }
+                                    else
+                                    {
+                                        textBoxD2.Text = Assoc.concentration.ToString();
+                                    }
+                                }
+                                if (i == 3)
+                                {
+                                    textBoxC3.Text = Assoc.name; if (Assoc.concentration > 100)
+                                    {
+                                        textBoxD3.Text = Assoc.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                                    }
+                                    else
+                                    {
+                                        textBoxD3.Text = Assoc.concentration.ToString();
+                                    }
+                                }
+                                if (i == 4)
+                                {
+                                    textBoxC4.Text = Assoc.name; if (Assoc.concentration > 100)
+                                    {
+                                        textBoxD4.Text = Assoc.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                                    }
+                                    else
+                                    {
+                                        textBoxD4.Text = Assoc.concentration.ToString();
+                                    }
+                                }
+                                if (i == 5)
+                                {
+                                    textBoxC5.Text = Assoc.name; if (Assoc.concentration > 100)
+                                    {
+                                        textBoxD5.Text = Assoc.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                                    }
+                                    else
+                                    {
+                                        textBoxD5.Text = Assoc.concentration.ToString();
+                                    }
+                                }
+                                if (i == 6)
+                                {
+                                    textBoxC6.Text = Assoc.name; if (Assoc.concentration > 100)
+                                    {
+                                        textBoxD6.Text = Assoc.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                                    }
+                                    else
+                                    {
+                                        textBoxD6.Text = Assoc.concentration.ToString();
+                                    }
+                                }
+                                if (i == 7)
+                                {
+                                    textBoxC7.Text = Assoc.name; if (Assoc.concentration > 100)
+                                    {
+                                        textBoxD7.Text = Assoc.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                                    }
+                                    else
+                                    {
+                                        textBoxD7.Text = Assoc.concentration.ToString();
+                                    }
+                                }
+                                if (i == 8)
+                                {
+                                    textBoxC8.Text = Assoc.name; if (Assoc.concentration > 100)
+                                    {
+                                        textBoxD8.Text = Assoc.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                                    }
+                                    else
+                                    {
+                                        textBoxD8.Text = Assoc.concentration.ToString();
+                                    }
+                                }
+                                if (i == 9)
+                                {
+                                    textBoxC9.Text = Assoc.name; if (Assoc.concentration > 100)
+                                    {
+                                        textBoxD9.Text = Assoc.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                                    }
+                                    else
+                                    {
+                                        textBoxD9.Text = Assoc.concentration.ToString();
+                                    }
+                                }
+                                if (i == 10)
+                                {
+                                    textBoxC10.Text = Assoc.name; if (Assoc.concentration > 100)
+                                    {
+                                        textBoxD10.Text = Assoc.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                                    }
+                                    else
+                                    {
+                                        textBoxD10.Text = Assoc.concentration.ToString();
+                                    }
+                                }
+                                i++;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (i == 1)
+                        {
+                            textBoxC1.Text = Item.name;
+                            if (Item.concentration > 100)
+                            {
+                                textBoxD1.Text = Item.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                            }
+                            else
+                            {
+                                textBoxD1.Text = Item.concentration.ToString();
+                            }
+                        }
+                        if (i == 2)
+                        {
+                            textBoxC2.Text = Item.name; if (Item.concentration > 100)
+                            {
+                                textBoxD2.Text = Item.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                            }
+                            else
+                            {
+                                textBoxD2.Text = Item.concentration.ToString();
+                            }
+                        }
+                        if (i == 3)
+                        {
+                            textBoxC3.Text = Item.name; if (Item.concentration > 100)
+                            {
+                                textBoxD3.Text = Item.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                            }
+                            else
+                            {
+                                textBoxD3.Text = Item.concentration.ToString();
+                            }
+                        }
+                        if (i == 4)
+                        {
+                            textBoxC4.Text = Item.name; if (Item.concentration > 100)
+                            {
+                                textBoxD4.Text = Item.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                            }
+                            else
+                            {
+                                textBoxD4.Text = Item.concentration.ToString();
+                            }
+                        }
+                        if (i == 5)
+                        {
+                            textBoxC5.Text = Item.name; if (Item.concentration > 100)
+                            {
+                                textBoxD5.Text = Item.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                            }
+                            else
+                            {
+                                textBoxD5.Text = Item.concentration.ToString();
+                            }
+                        }
+                        if (i == 6)
+                        {
+                            textBoxC6.Text = Item.name; if (Item.concentration > 100)
+                            {
+                                textBoxD6.Text = Item.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                            }
+                            else
+                            {
+                                textBoxD6.Text = Item.concentration.ToString();
+                            }
+                        }
+                        if (i == 7)
+                        {
+                            textBoxC7.Text = Item.name; if (Item.concentration > 100)
+                            {
+                                textBoxD7.Text = Item.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                            }
+                            else
+                            {
+                                textBoxD7.Text = Item.concentration.ToString();
+                            }
+                        }
+                        if (i == 8)
+                        {
+                            textBoxC8.Text = Item.name; if (Item.concentration > 100)
+                            {
+                                textBoxD8.Text = Item.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                            }
+                            else
+                            {
+                                textBoxD8.Text = Item.concentration.ToString();
+                            }
+                        }
+                        if (i == 9)
+                        {
+                            textBoxC9.Text = Item.name; if (Item.concentration > 100)
+                            {
+                                textBoxD9.Text = Item.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                            }
+                            else
+                            {
+                                textBoxD9.Text = Item.concentration.ToString();
+                            }
+                        }
+                        if (i == 10)
+                        {
+                            textBoxC10.Text = Item.name; if (Item.concentration > 100)
+                            {
+                                textBoxD10.Text = Item.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                            }
+                            else
+                            {
+                                textBoxD10.Text = Item.concentration.ToString();
+                            }
+                        }
+                        i++;
+                    }
+                }
+            }
+            else
+            { // musime posuvat bar
+                int i = 1;
+                foreach (Items_used Item in ItemColection_used)
+                {
+                    if (Item.association == true)
+                    {
+                        foreach (Items Assoc in Item.associated_items)
+                        {
+                            bool doit = true;
+                            foreach (Items_used I in ItemColection_used)
+                            {
+                                if (Assoc == I.GetItem())
+                                {
+                                    doit = false;
+                                }
+                            }
+                            if (doit)
+                            {
+                                if (i == 1)
+                                {
+                                    textBoxC1.Text = Assoc.name;
+                                    if (Assoc.concentration > 100)
+                                    {
+                                        textBoxD1.Text = Assoc.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                                    }
+                                    else
+                                    {
+                                        textBoxD1.Text = Assoc.concentration.ToString();
+                                    }
+                                }
+                                if (i == 2)
+                                {
+                                    textBoxC2.Text = Assoc.name; if (Assoc.concentration > 100)
+                                    {
+                                        textBoxD2.Text = Assoc.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                                    }
+                                    else
+                                    {
+                                        textBoxD2.Text = Assoc.concentration.ToString();
+                                    }
+                                }
+                                if (i == 3)
+                                {
+                                    textBoxC3.Text = Assoc.name; if (Assoc.concentration > 100)
+                                    {
+                                        textBoxD3.Text = Assoc.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                                    }
+                                    else
+                                    {
+                                        textBoxD3.Text = Assoc.concentration.ToString();
+                                    }
+                                }
+                                if (i == 4)
+                                {
+                                    textBoxC4.Text = Assoc.name; if (Assoc.concentration > 100)
+                                    {
+                                        textBoxD4.Text = Assoc.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                                    }
+                                    else
+                                    {
+                                        textBoxD4.Text = Assoc.concentration.ToString();
+                                    }
+                                }
+                                if (i == 5)
+                                {
+                                    textBoxC5.Text = Assoc.name; if (Assoc.concentration > 100)
+                                    {
+                                        textBoxD5.Text = Assoc.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                                    }
+                                    else
+                                    {
+                                        textBoxD5.Text = Assoc.concentration.ToString();
+                                    }
+                                }
+                                if (i == 6)
+                                {
+                                    textBoxC6.Text = Assoc.name; if (Assoc.concentration > 100)
+                                    {
+                                        textBoxD6.Text = Assoc.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                                    }
+                                    else
+                                    {
+                                        textBoxD6.Text = Assoc.concentration.ToString();
+                                    }
+                                }
+                                if (i == 7)
+                                {
+                                    textBoxC7.Text = Assoc.name; if (Assoc.concentration > 100)
+                                    {
+                                        textBoxD7.Text = Assoc.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                                    }
+                                    else
+                                    {
+                                        textBoxD7.Text = Assoc.concentration.ToString();
+                                    }
+                                }
+                                if (i == 8)
+                                {
+                                    textBoxC8.Text = Assoc.name; if (Assoc.concentration > 100)
+                                    {
+                                        textBoxD8.Text = Assoc.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                                    }
+                                    else
+                                    {
+                                        textBoxD8.Text = Assoc.concentration.ToString();
+                                    }
+                                }
+                                if (i == 9)
+                                {
+                                    textBoxC9.Text = Assoc.name; if (Assoc.concentration > 100)
+                                    {
+                                        textBoxD9.Text = Assoc.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                                    }
+                                    else
+                                    {
+                                        textBoxD9.Text = Assoc.concentration.ToString();
+                                    }
+                                }
+                                if (i == 10)
+                                {
+                                    textBoxC10.Text = Assoc.name; if (Assoc.concentration > 100)
+                                    {
+                                        textBoxD10.Text = Assoc.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                                    }
+                                    else
+                                    {
+                                        textBoxD10.Text = Assoc.concentration.ToString();
+                                    }
+                                }
+                                i++;
+                            }
+                        }
+                    }
+                    if (i == 1)
+                    {
+                        textBoxC1.Text = Item.name;
+                        if (Item.concentration > 100)
+                        {
+                            textBoxD1.Text = Item.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                        }
+                        else
+                        {
+                            textBoxD1.Text = Item.concentration.ToString();
+                        }
+                    }
+                    if (i == 2)
+                    {
+                        textBoxC2.Text = Item.name; if (Item.concentration > 100)
+                        {
+                            textBoxD2.Text = Item.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                        }
+                        else
+                        {
+                            textBoxD2.Text = Item.concentration.ToString();
+                        }
+                    }
+                    if (i == 3)
+                    {
+                        textBoxC3.Text = Item.name; if (Item.concentration > 100)
+                        {
+                            textBoxD3.Text = Item.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                        }
+                        else
+                        {
+                            textBoxD3.Text = Item.concentration.ToString();
+                        }
+                    }
+                    if (i == 4)
+                    {
+                        textBoxC4.Text = Item.name; if (Item.concentration > 100)
+                        {
+                            textBoxD4.Text = Item.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                        }
+                        else
+                        {
+                            textBoxD4.Text = Item.concentration.ToString();
+                        }
+                    }
+                    if (i == 5)
+                    {
+                        textBoxC5.Text = Item.name; if (Item.concentration > 100)
+                        {
+                            textBoxD5.Text = Item.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                        }
+                        else
+                        {
+                            textBoxD5.Text = Item.concentration.ToString();
+                        }
+                    }
+                    if (i == 6)
+                    {
+                        textBoxC6.Text = Item.name; if (Item.concentration > 100)
+                        {
+                            textBoxD6.Text = Item.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                        }
+                        else
+                        {
+                            textBoxD6.Text = Item.concentration.ToString();
+                        }
+                    }
+                    if (i == 7)
+                    {
+                        textBoxC7.Text = Item.name; if (Item.concentration > 100)
+                        {
+                            textBoxD7.Text = Item.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                        }
+                        else
+                        {
+                            textBoxD7.Text = Item.concentration.ToString();
+                        }
+                    }
+                    if (i == 8)
+                    {
+                        textBoxC8.Text = Item.name; if (Item.concentration > 100)
+                        {
+                            textBoxD8.Text = Item.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                        }
+                        else
+                        {
+                            textBoxD8.Text = Item.concentration.ToString();
+                        }
+                    }
+                    if (i == 9)
+                    {
+                        textBoxC9.Text = Item.name; if (Item.concentration > 100)
+                        {
+                            textBoxD9.Text = Item.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                        }
+                        else
+                        {
+                            textBoxD9.Text = Item.concentration.ToString();
+                        }
+                    }
+                    if (i == 10)
+                    {
+                        textBoxC10.Text = Item.name; if (Item.concentration > 100)
+                        {
+                            textBoxD10.Text = Item.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                        }
+                        else
+                        {
+                            textBoxD10.Text = Item.concentration.ToString();
+                        }
+                    }
+                    i++;
+                }
+                vScrollBar2.LargeChange = 101 * 10 / premenna_cnt;
+                vScrollBar2.Value = 1;
+                interval_pocet_items = (ItemColection_used.Count) - 9;
+                double b = (8 / Convert.ToDouble(ItemColection_used.Count));
+                double a = 101 * (1 - b);
+                sirka_intervalu_items = a / interval_pocet_items;
+            }
+        }
+
+        public void fill_reaction()
+        {
+            int premenna_cnt = ReactionColection_used.Count;
+            if (premenna_cnt <= 10)
+            { // nemusime posuvat
+                int i = 1;
+                foreach (Reactions_used rection in ReactionColection_used)
+                {
+                    if (i == 1) { textBoxA1.Text = rection.name; textBoxB1.Text = rection.rate_konstant.ToString(); }
+                    if (i == 2) { textBoxA2.Text = rection.name; textBoxB2.Text = rection.rate_konstant.ToString(); }
+                    if (i == 3) { textBoxA3.Text = rection.name; textBoxB3.Text = rection.rate_konstant.ToString(); }
+                    if (i == 4) { textBoxA4.Text = rection.name; textBoxB4.Text = rection.rate_konstant.ToString(); }
+                    if (i == 5) { textBoxA5.Text = rection.name; textBoxB5.Text = rection.rate_konstant.ToString(); }
+                    if (i == 6) { textBoxA6.Text = rection.name; textBoxB6.Text = rection.rate_konstant.ToString(); }
+                    if (i == 7) { textBoxA7.Text = rection.name; textBoxB7.Text = rection.rate_konstant.ToString(); }
+                    if (i == 8) { textBoxA8.Text = rection.name; textBoxB8.Text = rection.rate_konstant.ToString(); }
+                    if (i == 9) { textBoxA9.Text = rection.name; textBoxB9.Text = rection.rate_konstant.ToString(); }
+                    if (i == 10) { textBoxA10.Text = rection.name; textBoxB10.Text = rection.rate_konstant.ToString(); }
+                    i++;
+                }
+            }
+            else
+            { // musime posuvat bar
+                int i = 1;
+                foreach (Reactions_used rection in ReactionColection_used)
+                {
+                    if (i == 1) { textBoxA1.Text = rection.name; textBoxB1.Text = rection.rate_konstant.ToString(); }
+                    if (i == 2) { textBoxA2.Text = rection.name; textBoxB2.Text = rection.rate_konstant.ToString(); }
+                    if (i == 3) { textBoxA3.Text = rection.name; textBoxB3.Text = rection.rate_konstant.ToString(); }
+                    if (i == 4) { textBoxA4.Text = rection.name; textBoxB4.Text = rection.rate_konstant.ToString(); }
+                    if (i == 5) { textBoxA5.Text = rection.name; textBoxB5.Text = rection.rate_konstant.ToString(); }
+                    if (i == 6) { textBoxA6.Text = rection.name; textBoxB6.Text = rection.rate_konstant.ToString(); }
+                    if (i == 7) { textBoxA7.Text = rection.name; textBoxB7.Text = rection.rate_konstant.ToString(); }
+                    if (i == 8) { textBoxA8.Text = rection.name; textBoxB8.Text = rection.rate_konstant.ToString(); }
+                    if (i == 9) { textBoxA9.Text = rection.name; textBoxB9.Text = rection.rate_konstant.ToString(); }
+                    if (i == 10) { textBoxA10.Text = rection.name; textBoxB10.Text = rection.rate_konstant.ToString(); }
+                    i++;
+                }
+                vScrollBar1.LargeChange = 101 * 10/ premenna_cnt;
+                vScrollBar1.Value = 1;
+                interval_pocet_reaction = (ReactionColection_used.Count) - 9;
+                double b = (8 / Convert.ToDouble(ReactionColection_used.Count));
+                double a = 101 * (1 - b);
+                sirka_intervalu_rection = a / interval_pocet_reaction;
+            }
+        }
+
+        private void button_OK_Click(object sender, EventArgs e)
+        {
+            // spustenie vypoctu
+            proceed();
+            // VYKRESLENIE
+
+        }
+
+        private void button_cancle_Click(object sender, EventArgs e)
+        {
+            this.Dispose();
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox1.Checked)
+            {
+                comboBox1.Enabled = true;
+                textBox2.Enabled = true;
+                textBox3.Enabled = true;
+                comboBox1.Items.Clear();
+                foreach (Items_used Item in ItemColection_used)
+                {
+                    comboBox1.Items.Add(Item);
+                }
+            }
+            else
+            {
+                comboBox1.Text = "";
+                textBox2.Text = "";
+                textBox3.Text = "";
+                comboBox1.Enabled = false;
+                textBox2.Enabled = false;
+                textBox3.Enabled = false;
+            }
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            foreach (Items_used Item in ItemColection_used)
+            {
+                if (Item == (Items_used)comboBox1.SelectedItem)
+                {
+                    if (Item.concentration > 100)
+                    {
+                        textBox4.Text = Item.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                    }
+                    else
+                    {
+                        textBox4.Text = Item.concentration.ToString();
+                    }
+                    if (Item.concentration > 100)
+                    {
+                        textBox2.Text = Item.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                    }
+                    else
+                    {
+                        textBox2.Text = Item.concentration.ToString();
+                    }
+                }
+            }
+        }
+
+        private void vScrollBar1_Scroll_1(object sender, ScrollEventArgs e)
+        {
+            int value = vScrollBar1.Value;
+            if (vScrollBar1.Value > 101 - vScrollBar1.LargeChange)
+            {
+                value = 101 - vScrollBar1.LargeChange;
+            }
+            int pomer = value / Convert.ToInt16(sirka_intervalu_rection);
+            if (pomer > interval_pocet_reaction - 1)
+            {
+                pomer = interval_pocet_reaction - 1;
+            }
+            if (pomer != aktual_pomer_reaction)
+            {
+                int i = 1 - pomer;
+                foreach (Reactions_used rection in ReactionColection_used)
+                {
+                    if (i == 1) { textBoxA1.Text = rection.name; textBoxB1.Text = rection.rate_konstant.ToString(); }
+                    if (i == 2) { textBoxA2.Text = rection.name; textBoxB2.Text = rection.rate_konstant.ToString(); }
+                    if (i == 3) { textBoxA3.Text = rection.name; textBoxB3.Text = rection.rate_konstant.ToString(); }
+                    if (i == 4) { textBoxA4.Text = rection.name; textBoxB4.Text = rection.rate_konstant.ToString(); }
+                    if (i == 5) { textBoxA5.Text = rection.name; textBoxB5.Text = rection.rate_konstant.ToString(); }
+                    if (i == 6) { textBoxA6.Text = rection.name; textBoxB6.Text = rection.rate_konstant.ToString(); }
+                    if (i == 7) { textBoxA7.Text = rection.name; textBoxB7.Text = rection.rate_konstant.ToString(); }
+                    if (i == 8) { textBoxA8.Text = rection.name; textBoxB8.Text = rection.rate_konstant.ToString(); }
+                    if (i == 9) { textBoxA9.Text = rection.name; textBoxB9.Text = rection.rate_konstant.ToString(); }
+                    if (i == 10) { textBoxA10.Text = rection.name; textBoxB10.Text = rection.rate_konstant.ToString(); }
+                    i++;
+                }
+            }
+            aktual_pomer_reaction = pomer;
+        }
+
+        private void vScrollBar2_Scroll_1(object sender, ScrollEventArgs e)
+        {
+            int value = vScrollBar2.Value;
+            if (vScrollBar2.Value > 101 - vScrollBar2.LargeChange)
+            {
+                value = 101 - vScrollBar2.LargeChange;
+            }
+            int pomer = 0;
+            try
+            {
+                pomer = value / Convert.ToInt16(sirka_intervalu_items);
+            }
+            catch { }
+            if (pomer > interval_pocet_items - 1)
+            {
+                pomer = interval_pocet_items - 1;
+            }
+            if (pomer != aktual_pomer_items)
+            {
+                int i = 1 - pomer;
+                foreach (Items_used Item in ItemColection_used)
+                {
+                    if (i == 1)
+                    {
+                        textBoxC1.Text = Item.name;
+                        if (Item.concentration > 100)
+                        {
+                            textBoxD1.Text = Item.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                        }
+                        else
+                        {
+                            textBoxD1.Text = Item.concentration.ToString();
+                        }
+                    }
+                    if (i == 2)
+                    {
+                        textBoxC2.Text = Item.name; if (Item.concentration > 100)
+                        {
+                            textBoxD2.Text = Item.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                        }
+                        else
+                        {
+                            textBoxD2.Text = Item.concentration.ToString();
+                        }
+                    }
+                    if (i == 3)
+                    {
+                        textBoxC3.Text = Item.name; if (Item.concentration > 100)
+                        {
+                            textBoxD3.Text = Item.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                        }
+                        else
+                        {
+                            textBoxD3.Text = Item.concentration.ToString();
+                        }
+                    }
+                    if (i == 4)
+                    {
+                        textBoxC4.Text = Item.name; if (Item.concentration > 100)
+                        {
+                            textBoxD4.Text = Item.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                        }
+                        else
+                        {
+                            textBoxD4.Text = Item.concentration.ToString();
+                        }
+                    }
+                    if (i == 5)
+                    {
+                        textBoxC5.Text = Item.name; if (Item.concentration > 100)
+                        {
+                            textBoxD5.Text = Item.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                        }
+                        else
+                        {
+                            textBoxD5.Text = Item.concentration.ToString();
+                        }
+                    }
+                    if (i == 6)
+                    {
+                        textBoxC6.Text = Item.name; if (Item.concentration > 100)
+                        {
+                            textBoxD6.Text = Item.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                        }
+                        else
+                        {
+                            textBoxD6.Text = Item.concentration.ToString();
+                        }
+                    }
+                    if (i == 7)
+                    {
+                        textBoxC7.Text = Item.name; if (Item.concentration > 100)
+                        {
+                            textBoxD7.Text = Item.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                        }
+                        else
+                        {
+                            textBoxD7.Text = Item.concentration.ToString();
+                        }
+                    }
+                    if (i == 8)
+                    {
+                        textBoxC8.Text = Item.name; if (Item.concentration > 100)
+                        {
+                            textBoxD8.Text = Item.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                        }
+                        else
+                        {
+                            textBoxD8.Text = Item.concentration.ToString();
+                        }
+                    }
+                    if (i == 9)
+                    {
+                        textBoxC9.Text = Item.name; if (Item.concentration > 100)
+                        {
+                            textBoxD9.Text = Item.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                        }
+                        else
+                        {
+                            textBoxD9.Text = Item.concentration.ToString();
+                        }
+                    }
+                    if (i == 10)
+                    {
+                        textBoxC10.Text = Item.name; if (Item.concentration > 100)
+                        {
+                            textBoxD10.Text = Item.concentration.ToString("0.00E0#", CultureInfo.InvariantCulture);
+                        }
+                        else
+                        {
+                            textBoxD10.Text = Item.concentration.ToString();
+                        }
+                    }
+                    i++;
+                }
+            }
+            aktual_pomer_items = pomer;
+        }
+
+        double Convertor(string Str)
+        {
+            double dou = 0;
+            string d = "";
+            try
+            {
+                dou = Convert.ToDouble(Str);
+            }
+            catch
+            {
+                d = "";
+                foreach (char ch in Str)
+                {
+                    if (ch == ',')
+                    {
+                        d += ".";
+                    }
+                    else
+                    {
+                        d += ch.ToString();
+                    }
+                }
+                try
+                {
+                    dou = Convert.ToDouble(d);
+                }
+                catch
+                {
+                    d = "";
+                    foreach (char ch in Str)
+                    {
+                        if (ch == '.')
+                        {
+                            d += ",";
+                        }
+                        else
+                        {
+                            d += ch.ToString();
+                        }
+                    }
+                    try
+                    {
+                        dou = Convert.ToDouble(d);
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
+            return dou;
+        }
+
+        #endregion
+
+        #region textBox_textChange
+
+        private void textBoxB1_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Reactions_used reaction in ReactionColection_used)
+            {
+                if (reaction.name == textBoxA1.Text)
+                {
+                    reaction.rate_konstant = Convertor(textBoxB1.Text);
+                }
+            }
+        }
+
+        private void textBoxB2_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Reactions_used reaction in ReactionColection_used)
+            {
+                if (reaction.name == textBoxA2.Text)
+                {
+                    reaction.rate_konstant = Convertor(textBoxB2.Text);
+                }
+            }
+        }
+
+        private void textBoxB3_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Reactions_used reaction in ReactionColection_used)
+            {
+                if (reaction.name == textBoxA3.Text)
+                {
+                    reaction.rate_konstant = Convertor(textBoxB3.Text);
+                }
+            }
+        }
+
+        private void textBoxB4_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Reactions_used reaction in ReactionColection_used)
+            {
+                if (reaction.name == textBoxA4.Text)
+                {
+                    reaction.rate_konstant = Convertor(textBoxB4.Text);
+                }
+            }
+        }
+
+        private void textBoxB5_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Reactions_used reaction in ReactionColection_used)
+            {
+                if (reaction.name == textBoxA5.Text)
+                {
+                    reaction.rate_konstant = Convertor(textBoxB5.Text);
+                }
+            }
+        }
+
+        private void textBoxB6_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Reactions_used reaction in ReactionColection_used)
+            {
+                if (reaction.name == textBoxA6.Text)
+                {
+                    reaction.rate_konstant = Convertor(textBoxB6.Text);
+                }
+            }
+        }
+
+        private void textBoxB7_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Reactions_used reaction in ReactionColection_used)
+            {
+                if (reaction.name == textBoxA7.Text)
+                {
+                    reaction.rate_konstant = Convertor(textBoxB7.Text);
+                }
+            }
+        }
+
+        private void textBoxB8_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Reactions_used reaction in ReactionColection_used)
+            {
+                if (reaction.name == textBoxA8.Text)
+                {
+                    reaction.rate_konstant = Convertor(textBoxB8.Text);
+                }
+            }
+        }
+
+        private void textBoxB9_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Reactions_used reaction in ReactionColection_used)
+            {
+                if (reaction.name == textBoxA9.Text)
+                {
+                    reaction.rate_konstant = Convertor(textBoxB9.Text);
+                }
+            }
+        }
+
+        private void textBoxB10_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Reactions_used reaction in ReactionColection_used)
+            {
+                if (reaction.name == textBoxA10.Text)
+                {
+                    reaction.rate_konstant = Convertor(textBoxB10.Text);
+                }
+            }
+        }
+
+        private void textBoxD1_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Items_used Item in ItemColection_used)
+            {
+                if (Item.name == textBoxC1.Text)
+                {
+                    Item.concentration = Convertor(textBoxD1.Text);
+                }
+            }
+        }
+
+        private void textBoxD2_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Items_used Item in ItemColection_used)
+            {
+                if (Item.name == textBoxC2.Text)
+                {
+                    Item.concentration = Convertor(textBoxD2.Text);
+                }
+            }
+        }
+
+        private void textBoxD3_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Items_used Item in ItemColection_used)
+            {
+                if (Item.name == textBoxC3.Text)
+                {
+                    Item.concentration = Convertor(textBoxD3.Text);
+                }
+            }
+        }
+
+        private void textBoxD4_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Items_used Item in ItemColection_used)
+            {
+                if (Item.name == textBoxC4.Text)
+                {
+                    Item.concentration = Convertor(textBoxD4.Text);
+                }
+            }
+        }
+
+        private void textBoxD5_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Items_used Item in ItemColection_used)
+            {
+                if (Item.name == textBoxC5.Text)
+                {
+                    Item.concentration = Convertor(textBoxD5.Text);
+                }
+            }
+        }
+
+        private void textBoxD6_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Items_used Item in ItemColection_used)
+            {
+                if (Item.name == textBoxC6.Text)
+                {
+                    Item.concentration = Convertor(textBoxD6.Text);
+                }
+            }
+        }
+
+        private void textBoxD7_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Items_used Item in ItemColection_used)
+            {
+                if (Item.name == textBoxC7.Text)
+                {
+                    Item.concentration = Convertor(textBoxD7.Text);
+                }
+            }
+        }
+
+        private void textBoxD8_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Items_used Item in ItemColection_used)
+            {
+                if (Item.name == textBoxC8.Text)
+                {
+                    Item.concentration = Convertor(textBoxD8.Text);
+                }
+            }
+        }
+
+        private void textBoxD9_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Items_used Item in ItemColection_used)
+            {
+                if (Item.name == textBoxC9.Text)
+                {
+                    Item.concentration = Convertor(textBoxD9.Text);
+                }
+            }
+        }
+
+        private void textBoxD10_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Items_used Item in ItemColection_used)
+            {
+                if (Item.name == textBoxC10.Text)
+                {
+                    Item.concentration = Convertor(textBoxD10.Text);
+                }
+            }
+        }
+
+        #endregion
+
+        //public string Popis_din { get; set; }
+        public bool dinamic_mode { get; set; }
+        public string name_din = Main.name_din;
+        private string Popis_X { get; set; }
+        private bool is_time = true;
+        public double _concentration = Main.conc_end;
+        public double _distance;
+        private bool conc_roll = false;
+        private bool dist_roll = false;
+        private bool convolution = false;
+        private List<string> titul;
+        private List<List<double[]>> export = new List<List<double[]>>();
+
+        private void draw_dinamic(bool Time)
+        {
+            if (Main.calc_type)
+            {
+                _distance = Main.Time_duration;
+            }
+            else
+            {
+                _distance = Main.Distance;
+            }
+            titul = new List<string>();
+            export = new List<List<double[]>>();
+            if (Time) // previest vystup na cas
+            {
+                int i = 0;
+                PlotModel model = new PlotModel() { LegendSymbolLength = 24, IsLegendVisible = true };
+                model.LegendTitle = "Legend";
+                model.LegendOrientation = LegendOrientation.Horizontal;
+                model.LegendPlacement = LegendPlacement.Inside;
+                model.LegendPosition = LegendPosition.RightTop;
+                foreach (string str in hlavicka)
+                {
+                    if (checkedListBox1.CheckedItems.Contains(str))
+                    {
+                        titul.Add(str);
+                        List<double[]> partial = new List<double[]>();
+                        FunctionSeries fs = new FunctionSeries();
+                        foreach (List<double[]> tabulka in data) // cez koncentracie
+                        {
+                            foreach (double[] dou in tabulka) // cez suradnicu
+                            {
+                                if (dou[dou.GetLength(0) - 2] == _distance) // set distance
+                                {
+                                    //double time_dou = (dou[(dou.GetLength(0) - 1)] * 1000000) / Main.Ion_velociy;
+                                    fs.Points.Add(new DataPoint(dou[(dou.GetLength(0) - 1)], dou[i]));
+                                    double[] bod = { dou[(dou.GetLength(0) - 1)], dou[i] };
+                                    partial.Add(bod);
+                                }
+                            }
+                        }
+                        fs.Title = str;
+                        model.Series.Add(fs);
+                        export.Add(partial);
+                    }
+                    i++;
+                }
+                model.Axes.Add(new LinearAxis() { Position = AxisPosition.Bottom, Title = Popis_X, MajorGridlineStyle = LineStyle.Dash });
+                if (checkBox_log.Checked)
+                {
+                    model.Axes.Add(new LogarithmicAxis() { Position = AxisPosition.Left, MajorGridlineStyle = LineStyle.Solid, MinorGridlineStyle = LineStyle.Dot, IntervalLength = 100, Title = "Concentration" });
+                }
+                else
+                {
+                    model.Axes.Add(new LinearAxis() { Position = AxisPosition.Left, MajorGridlineStyle = LineStyle.Solid, MinorGridlineStyle = LineStyle.Dot, IntervalLength = 100, Title = "Concentration" });
+                }
+                plot1.Model = model;
+            }
+            else
+            {
+                int i = 0;
+                PlotModel model = new PlotModel() { LegendSymbolLength = 24, IsLegendVisible = true };
+                model.LegendTitle = "Legend";
+                model.LegendOrientation = LegendOrientation.Horizontal;
+                model.LegendPlacement = LegendPlacement.Inside;
+                model.LegendPosition = LegendPosition.RightTop;
+                foreach (string str in hlavicka)
+                {
+                    if (checkedListBox1.CheckedItems.Contains(str))
+                    {
+                        titul.Add(str);
+                        List<double[]> partial = new List<double[]>();
+                        FunctionSeries fs = new FunctionSeries();
+                        foreach (List<double[]> tabulka in data) // cez koncentracie
+                        {
+                            foreach (double[] dou in tabulka) // cez suradnicu
+                            {
+                                if (dou[dou.GetLength(0) - 2] == _distance) // set distance
+                                {
+                                    fs.Points.Add(new DataPoint(dou[(dou.GetLength(0) - 1)], dou[i]));
+                                    double[] bod = { dou[(dou.GetLength(0) - 1)], dou[i] };
+                                    partial.Add(bod);
+                                }
+                            }
+                        }
+                        fs.Title = str;
+                        model.Series.Add(fs);
+                        export.Add(partial);
+                    }
+                    i++;
+                }
+                model.Axes.Add(new LinearAxis() { Position = AxisPosition.Bottom, Title = Popis_X, MajorGridlineStyle = LineStyle.Dash });
+                if (checkBox_log.Checked)
+                {
+                    model.Axes.Add(new LogarithmicAxis() { Position = AxisPosition.Left, MajorGridlineStyle = LineStyle.Solid, MinorGridlineStyle = LineStyle.Dot, IntervalLength = 100, Title = "Concentration" });
+                }
+                else
+                {
+                    model.Axes.Add(new LinearAxis() { Position = AxisPosition.Left, MajorGridlineStyle = LineStyle.Solid, MinorGridlineStyle = LineStyle.Dot, IntervalLength = 100, Title = "Concentration" });
+                } 
+                plot1.Model = model;
+            }
+        }
+
+        private void button_export_Click(object sender, EventArgs e)
+        {
+            saveFileDialog1.Title = "Output";
+            saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+            saveFileDialog1.FilterIndex = 2;
+            saveFileDialog1.RestoreDirectory = true;
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                this.Cursor = Cursors.WaitCursor;
+                int pocet_itemov = titul.Count;
+                List<double[]> _export = new List<double[]>();
+                string[] legenda = new string[pocet_itemov + 1];
+                if (dinamic_mode)
+                {
+                    legenda[0] = Main.name_din;
+
+                }
+                else
+                {
+                    legenda[0] = Popis_X;
+                }
+                int k = 1;
+                foreach (string str in titul)
+                {
+                    legenda[k] = str;
+                    k++;
+                }
+                double[] export_item;
+                foreach (List<double[]> Tabulka in export)
+                {
+                    foreach (double[] dou in Tabulka)
+                    {
+                        bool je_tu = false;
+                        foreach (double[] d in _export)
+                        {
+                            if (d[0] == dou[0])
+                            {
+                                je_tu = true;
+                            }
+                        }
+                        if (!je_tu)
+                        {
+                            export_item = new double[pocet_itemov + 1];
+                            export_item[0] = dou[0];
+                            _export.Add(export_item);
+                        }
+                    }
+                }
+                int i = 1;
+                foreach (List<double[]> Tabulka in export)
+                {
+                    foreach (double[] dou in Tabulka)
+                    {
+                        foreach (double[] d in _export)
+                        {
+                            if (dou[0] == d[0])
+                            {
+                                d[i] = dou[1];
+                            }
+                        }
+                    }
+                    i++;
+                }
+                if (saveFileDialog1.FileName != "")
+                {
+                    StreamWriter write = new StreamWriter(saveFileDialog1.OpenFile());
+                    write.Write(writer(legenda, _export));
+                    write.Dispose();
+                    write.Close();
+                }
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        string writer(string[] Hlavicka, List<double[]> Tabulka)
+        {
+            string writer = "";
+            foreach (string str in Hlavicka)
+            {
+                writer = writer + str + "\t";
+            }
+            writer = writer + "\r\n";
+            foreach (double[] dou in Tabulka)
+            {
+                foreach (double cislo in dou)
+                {
+                    writer = writer + cislo.ToString() + "\t";
+                }
+                writer = writer + "\r\n";
+            }
+            return writer;
+        }
+
+        private void button_t_x_Click(object sender, EventArgs e)
+        {
+            if (is_time)
+            {
+                is_time = false;
+                if (Popis_X == "Time [us]")
+                {
+                    Popis_X = "Distance [cm]";
+                }
+                label1.Text = "Distance [cm]:";
+               // label3.Text = "0";
+                //label4.Text = Main.Distance.ToString();
+                set_distanc((time() * Main.Ion_velociy) / 1000000 );
+                if (!textBox_dist.Enabled)
+                {
+                    textBox_dist.Text = "";
+                }
+                button_t_x.Text = "x --> t";
+            }
+            else
+            {
+                is_time = true;
+                if (Popis_X == "Distance [cm]")
+                {
+                    Popis_X = "Time [us]";
+                }
+                label1.Text = "Time [us]:";
+                //label3.Text = "0";
+                //label4.Text = Main.Time_duration.ToString();
+                set_time((distance() * 1000000) / Main.Ion_velociy);
+                if (!textBox_dist.Enabled)
+                {
+                    textBox_dist.Text = "";
+                }
+                button_t_x.Text = "t --> x";
+            }
+        }
+
+        private double concentration()
+        {
+            return _concentration;
+        }
+
+        private void set_time(double Time)
+        {
+            if (Main.calc_type)
+            {
+                double mmry;
+                double dif = Main.Time_duration / Main.NumberOfSteps;
+                double cnt = 0;
+                double real_time = 0;
+                while (cnt <= Main.Time_duration)
+                {
+                    mmry = Math.Abs(Time - real_time);
+                    if (Math.Abs(Time - cnt) < mmry)
+                    {
+                        real_time = cnt;
+                    }
+                    cnt += dif;
+                    cnt = Math.Round(cnt, 12);
+                }
+                _distance = real_time;
+                textBox_dist.Text = real_time.ToString();
+            }
+            else
+            {
+                double mmry;
+                double dif = Main.Time_duration / Main.NumberOfSteps;
+                double cnt = 0;
+                double real_time = 0;
+                while (cnt <= Main.Time_duration)
+                {
+                    mmry = Math.Abs(Time - real_time);
+                    if (Math.Abs(Time - cnt) < mmry)
+                    {
+                        real_time = cnt;
+                    }
+                    cnt += dif;
+                    cnt = Math.Round(cnt, 12);
+                }
+                _distance = (real_time * Main.Ion_velociy) / 1000000;
+                textBox_dist.Text = real_time.ToString();
+            }
+        }
+
+        private double time()
+        {
+            double Time = 0;
+            if (Main.calc_type)
+            {
+                Time = _distance;
+            }
+            else
+            {
+                Time = (_distance * 1000000) / Main.Ion_velociy;
+            }
+            return Time;
+        }
+
+        private void set_distanc(double Distance)
+        {
+            if (Main.calc_type)
+            {
+                double mmry;
+                double dif = Main.Distance / Main.NumberOfSteps;
+                double cnt = 0;
+                double real_distance = 0;
+                while (cnt <= Main.Distance)
+                {
+                    mmry = Math.Abs(Distance - real_distance);
+                    if (Math.Abs(Distance - cnt) < mmry)
+                    {
+                        real_distance = cnt;
+                    }
+                    cnt += dif;
+                    cnt = Math.Round(cnt, 12);
+                }
+                _distance = (real_distance * 1000000) / Main.Ion_velociy;
+                textBox_dist.Text = real_distance.ToString();
+            }
+            else
+            {
+                double mmry;
+                double dif = Main.Distance / Main.NumberOfSteps;
+                double cnt = 0;
+                double real_distance = 0;
+                while (cnt <= Main.Distance)
+                {
+                    mmry = Math.Abs(Distance - real_distance);
+                    if (Math.Abs(Distance - cnt) < mmry)
+                    {
+                        real_distance = cnt;
+                    }
+                    cnt += dif;
+                    cnt = Math.Round(cnt, 12);
+                }
+                _distance = real_distance;
+                textBox_dist.Text = real_distance.ToString();
+            }
+        }
+
+        private double distance()
+        {
+            double Distance = 0;
+            if (Main.calc_type)
+            {
+                Distance = (_distance * Main.Ion_velociy) / 1000000;
+            }
+            else
+            {
+                Distance = _distance;
+            }
+            return Distance;
+        }
+
+        private void textBox_dist_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (is_time)
+                {
+                    set_time(Main.Convertor(textBox_dist.Text));
+                }
+                else
+                {
+                    set_distanc(Main.Convertor(textBox_dist.Text));
+                }
+            }
+        }
+
+        private void textBox_dist_Leave(object sender, EventArgs e)
+        {
+            if (is_time)
+            {
+                set_time(Main.Convertor(textBox_dist.Text));
+            }
+            else
+            {
+                set_distanc(Main.Convertor(textBox_dist.Text));
+            }   
+        }
+
+        private List<double[]> isotope_analysis(string Str)
+        {
+            string value = "";
+            int enter_cnt = 0;
+            int position = 0;
+            bool start_transfer = false;
+            List<double[]> isotopes_prop_list = new List<double[]>();
+            double[] isotopes_prop = new double[3];
+            foreach (char c in Str)
+            {
+                if (start_transfer == true)
+                {
+                    if (c == '\t')
+                    {
+                        if (position == 0) { isotopes_prop[0] = Main.Convertor(value); }
+                        if (position == 1) { isotopes_prop[1] = Main.Convertor(value); }
+                        position++;
+                        value = "";
+                    }
+                    if (c == '\n')
+                    {
+                        isotopes_prop[2] = Main.Convertor(value);
+                        position = 0;
+                        value = "";
+                        isotopes_prop_list.Add(new double[] { isotopes_prop[0], isotopes_prop[1], isotopes_prop[2] });
+                    }
+                    else
+                    {
+                        value += Convert.ToString(c);
+                    }
+                }
+                if (c == '\n') { enter_cnt++; }
+                if (enter_cnt == 2) { start_transfer = true; }
+            }
+            foreach (double[] dou in isotopes_prop_list)
+            {
+                dou[0] = Math.Round(dou[0],2);
+                if (dou[2] == 100)
+                {
+                    foreach (double[] d in isotopes_prop_list)
+                    {
+                        d[2] = Math.Round((100 * d[2]) /dou[1], 5);
+                    }
+                }
+            }
+            return isotopes_prop_list;
+        }
+
+        private void button_plot_Click(object sender, EventArgs e)
+        {
+            draw_dinamic(is_time);
+        }
+  */
+    }
+}

@@ -1,0 +1,49 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Numerical_calculator
+{
+    public class Equation
+    {
+        private double _velocity;
+        private double _mobility;
+
+        public string name { get; set; }
+        public List<string[]> equation { get; set; }
+        public double koeficient_0 { get; set; }
+        public double koeficient_1 { get; set; }
+        public double koeficient_2 { get; set; }
+        public double koeficient_3 { get; set; }
+        public double value { get; set; }
+        public double velocity { get { return _velocity; } }
+        public double mobility { set { _mobility = value; } }
+
+        public void set_velocity_(double E)
+        {
+            _velocity = _mobility * ( (760 * Main.Temperature) / (273 * Main.Pressure)) * E;
+        }
+    }
+
+    public class Premenna
+    {
+        public string name { get; set; }
+        public double value { get; set; }
+        public double initial_value { get; set; }
+    }
+
+    public class Konstants
+    {
+        private double _value;
+        public string name { get; set; }
+        public double value { get { return _value; } set { _value = value; } }
+        public rate_functions function { get; set; }
+
+        public void set_field(double E)
+        {
+            _value = function.Value(E);
+        }
+    }
+}

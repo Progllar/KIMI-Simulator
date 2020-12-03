@@ -1,0 +1,284 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Numerical_calculator
+{
+    public partial class Resources : Form
+    {
+        public List<Items> ItemColection { get; set; }
+
+        public Resources()
+        {
+            InitializeComponent();
+        }
+
+        public void proceed()
+        {
+            foreach (Items Item in ItemColection)
+            {
+                this.listBox1.Items.Add(Item.name);
+            }
+        }
+
+        private void button_cancle_Click(object sender, EventArgs e)
+        {
+            this.Dispose();
+        }
+
+        private void button_OK_Click(object sender, EventArgs e)
+        {
+            Main.save_settings();
+            Main.load_settings();
+            this.Dispose();
+        }
+
+        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            foreach (Items Item in ItemColection)
+            {
+                if (Item.name == listBox1.GetItemText(listBox1.SelectedItem))
+                {
+                    textBox_name.Text = Item.name;
+                    textBox_formula.Text = Item.formula;
+                    textBox_shortname.Text = Item.s_name;
+                    textBox_concentration.Text = Item.concentration.ToString();
+                    textBox_mobility.Text = Item.mobility.ToString();
+                    textBox_mass.Text = Item.mass.ToString();
+                    textBox_difusion.Text = Item.diffusion.ToString();
+                    if(Item.cation)
+                    {
+                        radioButton_cation.Checked = true;
+                        radioButton_neutral.Checked = false;
+                    }
+                    else
+                    {
+                        radioButton_cation.Checked = false;
+                        radioButton_neutral.Checked = true;
+                    }
+                }
+            }
+        }
+
+        private void button_ClearElement_Click(object sender, EventArgs e)
+        {
+            textBox_name.Text = "";
+            textBox_formula.Text = "";
+            textBox_shortname.Text = "";
+            textBox_concentration.Text = "";
+            textBox_mobility.Text = "";
+            textBox_mass.Text = "";
+            textBox_difusion.Text = "";
+        }
+
+        private void button_DeleteElement_Click(object sender, EventArgs e)
+        {
+            Items removed_item = new Items();
+            bool nasiel_sa = false;
+            foreach (Items Item in ItemColection)
+            {
+                if (Item.name == textBox_name.Text)
+                {
+                    removed_item = Item;
+                    nasiel_sa = true;
+                }
+            }
+            if (!nasiel_sa)
+            {
+                MessageBox.Show("Item not found!");
+            }
+            else
+            {
+                textBox_name.Text = "";
+                textBox_formula.Text = "";
+                textBox_shortname.Text = "";
+                textBox_concentration.Text = "";
+                textBox_mobility.Text = "";
+                textBox_mass.Text = "";
+                textBox_difusion.Text = "";
+                ItemColection.Remove(removed_item);
+                listBox1.Items.Remove(removed_item.name);
+            }
+        }
+
+        private void button_ApplyElement_Click(object sender, EventArgs e)
+        {
+            bool pokracuj = true;
+            bool jetu = false;
+            foreach (Items Item in ItemColection)
+            {
+                if (Item.name == textBox_name.Text)
+                {
+                    jetu = true;
+                }
+            }
+            if (jetu)
+            {
+                if (MessageBox.Show("Do you want to continue?", "Name already exist.",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                        == DialogResult.No)
+                {
+                    pokracuj = false;
+                }
+            }
+            if (pokracuj)
+            {
+                if (jetu)
+                {
+                    Items removed_item = new Items();
+                    foreach (Items Item in ItemColection)
+                    {
+                        if (Item.name == textBox_name.Text)
+                        {
+                            removed_item = Item;
+                        }
+                    }
+                    ItemColection.Remove(removed_item);
+                    listBox1.Items.Remove(removed_item.name);
+                }
+                Items new_item = new Items();
+                new_item.name = textBox_name.Text;
+                new_item.formula = textBox_formula.Text;
+                new_item.s_name = textBox_shortname.Text;
+                new_item.concentration = Convertor(textBox_concentration.Text);
+                new_item.mobility = Convertor(textBox_mobility.Text);
+                new_item.mass = Convertor(textBox_mass.Text);
+                new_item.diffusion = Convertor(textBox_difusion.Text);
+                if (radioButton_cation.Checked)
+                {
+                    new_item.cation = true;
+                }
+                else
+                {
+                    new_item.cation = false;
+                }
+                ItemColection.Add(new_item);
+                this.listBox1.Items.Add(new_item.name);
+            }
+        }
+
+        private void radioButton_cation_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton_cation.Checked)
+            {
+                radioButton_neutral.Checked = false;
+            }
+            else
+            {
+                radioButton_neutral.Checked = true;
+            }
+        }
+
+        private void radioButton_neutral_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton_neutral.Checked)
+            {
+                radioButton_cation.Checked = false;
+            }
+            else
+            {
+                radioButton_cation.Checked = true;
+            }
+        }
+
+        private double Convertor(string Str)
+        {
+            double dou = 0;
+            string d = "";
+            try
+            {
+                dou = Convert.ToDouble(Str);
+            }
+            catch
+            {
+                d = "";
+                foreach (char ch in Str)
+                {
+                    if (ch == ',')
+                    {
+                        d += ".";
+                    }
+                    else
+                    {
+                        d += ch.ToString();
+                    }
+                }
+                try
+                {
+                    dou = Convert.ToDouble(d);
+                }
+                catch
+                {
+                    d = "";
+                    foreach (char ch in Str)
+                    {
+                        if (ch == '.')
+                        {
+                            d += ",";
+                        }
+                        else
+                        {
+                            d += ch.ToString();
+                        }
+                    }
+                    try
+                    {
+                        dou = Convert.ToDouble(d);
+                    }
+                    catch
+                    {
+                        MessageBox.Show("Unable to convert string to double !");
+                    }
+                }
+            }
+            return dou;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            textBox_filter.Text = "";
+            checkBox1.Checked = true;
+            checkBox2.Checked = true;
+            apply_filter();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            apply_filter();
+        }
+
+        private void apply_filter()
+        {
+            this.listBox1.Items.Clear();
+            if (textBox_filter.Text == "")
+            {
+                foreach (Items Item in ItemColection)
+                {
+                    if ((Item.cation && checkBox1.Checked) || (!Item.cation && checkBox2.Checked))
+                    {
+                        this.listBox1.Items.Add(Item.name);
+                    }
+                }
+            }
+            else
+            {
+                foreach (Items Item in ItemColection)
+                {
+                    if ((Item.cation && checkBox1.Checked) || (!Item.cation && checkBox2.Checked))
+                    {
+                        if (Item.name.Contains(textBox_filter.Text)) //  System.StringComparison.CurrentCultureIgnoreCase
+                        {
+                            this.listBox1.Items.Add(Item.name);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,236 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Drawing;
+
+namespace Numerical_calculator
+{
+    [Serializable]
+    public class Items
+    {
+        private string _name;
+        private string _formula;
+        private string _s_name;
+        private double _concentration;
+        private double _mobility;
+        private double _mass;
+        private double _diffusion;
+        private bool _cation;
+        private bool _association;
+        private List<Items> _associated_items;
+
+        public virtual string name          { get { return _name; }         set { _name = value; } }
+        public virtual string formula       { get { return _formula; }      set { _formula = value; } }
+        public virtual string s_name        { get { return _s_name; }       set { _s_name = value; } }
+        public virtual double concentration { get { return _concentration;} set { _concentration = value; } }
+        public virtual double mobility      { get { return _mobility; }     set { _mobility = value; } }
+        public virtual double mass          { get { return _mass; }         set { _mass = value; } }
+        public virtual bool cation          { get { return _cation; }       set { _cation = value; } }
+        public virtual double diffusion     { get { return _diffusion; }    set { _diffusion = value; } }
+
+        public virtual bool association             { get { return _association; }      set { _association = value; } }
+        public virtual List<Items> associated_items  { get { return _associated_items; }  set { _associated_items = value; } }
+
+        public override string ToString()
+        {
+            return name;
+        }
+
+        public Items() { }
+
+        public Items(string Name, string Formula, string S_name, double Concentration, double Mobility, double Mass, double Diffusion, bool Cation)
+        {
+            _name = Name;
+            _formula = Formula;
+            _s_name = S_name;
+            _concentration = Concentration;
+            _mobility = Mobility;
+            _mass = Mass;
+            _diffusion = Diffusion;
+            _cation = Cation;
+        }
+
+        public Items(Items Item)
+        {
+            _name = Item.name;
+            _formula = Item.formula;
+            _s_name = Item.s_name;
+            _concentration = Item.concentration;
+            _mobility = Item.mobility;
+            _mass = Item.mass;
+            _diffusion = Item.diffusion;
+            _cation = Item.cation;
+        }
+
+        public void Import_used(Items_used Item_used)
+        {
+            _name = Item_used.name;
+            _formula = Item_used.formula;
+            _s_name = Item_used.s_name;
+            _concentration = Item_used.concentration;
+            _mobility = Item_used.mobility;
+            _mass = Item_used.mass;
+            _diffusion = Item_used.diffusion;
+            _cation = Item_used.cation;
+        }
+    }
+
+    public class Items_used : Items
+    {
+        private Items _item;
+        private int _box_number;
+        private int _relative_x;
+        private int _relative_y;
+        private bool _used_control;
+
+        public int box_number { get { return _box_number; } set { _box_number = value; } }
+        public int relative_x { get { return _relative_x; } set { _relative_x = value; } }
+        public int relative_y { get { return _relative_y; } set { _relative_y = value; } }
+        public bool used_control { get { return _used_control; } set { _used_control = value; } }
+
+        public override double concentration { get { return _item.concentration; }   set { _item.concentration = value; } }
+        public override string name          { get { return _item.name; } }
+        public override string formula       { get { return _item.formula; } }
+        public override string s_name        { get { return _item.s_name; } }
+        public override double mobility      { get { return _item.mobility; } }
+        public override double mass          { get { return _item.mass; } }
+        public override bool cation          { get { return _item.cation; } }
+        public override double diffusion     { get { return _item.diffusion; } }
+
+        public override bool association { get { return _item.association; } set { _item.association = value; } }
+        public override List<Items> associated_items { get { return _item.associated_items; } set { _item.associated_items = value; } }
+
+        public Items_used() { }
+
+        public Items_used(Items Item, int Box_Number, int Relative_x, int Relative_y, bool Used_control)
+        {
+            _item = Item;
+            _box_number = Box_Number;
+            _relative_x = Relative_x;
+            _relative_y = Relative_y;
+            _used_control = Used_control;
+        }
+
+        public Items_used(Items Item, bool Used_control)
+        {
+            _item = Item;
+            _used_control = Used_control;
+        }
+
+        public override string ToString()
+        {
+            return name;
+        }
+
+        public void rewrite_Item(Items Item)
+        {
+            _item = Item;
+        }
+
+        public Items GetItem()
+        {
+            return _item;
+        }
+    }
+
+    [Serializable]
+    public class Reactions
+    {
+        private string _name;
+        private double _rate_konstant;
+        private double _rate_konstant_;
+        private int _reaction_type;
+        private Items _item_A;
+        private Items _item_B;
+        private Items _neutral_A;
+        private Items _neutral_B;
+
+        public virtual string name           { get { return _name; }           set { _name = value; } }
+        public virtual double rate_konstant  { get { return _rate_konstant; }  set { _rate_konstant = value; } }
+        public virtual double rate_konstant_ { get { return _rate_konstant_; } set { _rate_konstant_ = value; } }
+        public virtual int reaction_type     { get { return _reaction_type; }  set { _reaction_type = value; } }
+        public virtual Items item_A          { get { return _item_A; }         set { _item_A = value; } }
+        public virtual Items item_B          { get { return _item_B; }         set { _item_B = value; } }
+        public virtual Items neutral_A       { get { return _neutral_A; }      set { _neutral_A = value; } }
+        public virtual Items neutral_B       { get { return _neutral_B; }      set { _neutral_B = value; } }
+
+        public override string ToString()
+        {
+            return name;
+        }
+
+        public Reactions() { }
+
+        public Reactions(string Name, double Rate_konstant, double Rate_konstant_, int Reaction_type, Items Item_A, Items Item_B, Items Neutral_A, Items Neutral_B)
+        {
+            _name = Name;
+            _rate_konstant = Rate_konstant;
+            _rate_konstant_ = Rate_konstant_;
+            _reaction_type = Reaction_type;
+            _item_A = Item_A;
+            _item_B = Item_B;
+            _neutral_A = Neutral_A;
+            _neutral_B = Neutral_B;
+        }
+    }
+
+    public class Reactions_used : Reactions
+    {
+        private Reactions _reaction;
+        private Point _pointA;
+        private int _item_number_A;
+        private Point _pointB;
+        private int _item_number_B;
+        private Items_used _item_A;
+        private Items_used _item_B;
+        private Items_used _neutral_A;
+        private Items_used _neutral_B;
+
+
+        public Point pointA              { get { return _pointA; }        set { _pointA = value; } }
+        public int item_number_A         { get { return _item_number_A; } set { _item_number_A = value; } }
+        public Point pointB              { get { return _pointB; }        set { _pointB = value; } }
+        public int item_number_B         { get { return _item_number_B; } set { _item_number_B = value; } }
+        public Items_used item_used_A    { get { return _item_A; }        set { _item_A = value; } }
+        public Items_used item_used_B    { get { return _item_B; }        set { _item_B = value; } }
+        public Items_used neutral_used_A { get { return _neutral_A; }     set { _neutral_A = value; } }
+        public Items_used neutral_used_B { get { return _neutral_B; }     set { _neutral_B = value; } }
+
+        public override string name             { get { return _reaction.name; } }
+        public override double rate_konstant    { get { return _reaction.rate_konstant; }  set { _reaction.rate_konstant = value; } }
+        public override double rate_konstant_   { get { return _reaction.rate_konstant_; } set { _reaction.rate_konstant_ = value; } }
+        public override int reaction_type       { get { return _reaction.reaction_type; } }
+        public override Items item_A            { get { return _reaction.item_A; } }
+        public override Items item_B            { get { return _reaction.item_B; } }
+        public override Items neutral_A         { get { return _reaction.neutral_A; } }
+        public override Items neutral_B         { get { return _reaction.neutral_B; } }
+
+        public override string ToString()
+        {
+            return name;
+        }
+
+        public Reactions_used() { }
+
+        public Reactions_used(Reactions Reaction, Point PointA, int Item_number_A, Point PointB, int Item_number_B, Items_used Item_A, Items_used Item_B, Items_used Neutral_A, Items_used Neutral_B)
+        {
+            _reaction = Reaction;
+            _pointA = PointA;
+            _item_number_A = Item_number_A;
+            _pointB = PointB;
+            _item_number_B = Item_number_B;
+            _item_A = Item_A;
+            _item_B = Item_B;
+            _neutral_A = Neutral_A;
+            _neutral_B = Neutral_B;
+        }
+
+        public Reactions GetReaction()
+        {
+            return _reaction;
+        }
+    }
+
+}

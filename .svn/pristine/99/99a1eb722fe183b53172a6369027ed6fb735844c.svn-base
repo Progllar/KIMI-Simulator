@@ -1,0 +1,32 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Numerical_calculator
+{
+    public class Equation
+    {
+        public string name { get; set; }
+        public List<string[]> equation { get; set; }
+        public double koeficient_0 { get; set; }
+        public double koeficient_1 { get; set; }
+        public double koeficient_2 { get; set; }
+        public double koeficient_3 { get; set; }
+        public double value { get; set; }
+    }
+
+    public class Premenna
+    {
+        public string name { get; set; }
+        public double value { get; set; }
+        public double initial_value { get; set; }
+    }
+
+    public class Konstants
+    {
+        public string name { get; set; }
+        public double value { get; set; }
+    }
+}

@@ -1,0 +1,1166 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.IO;
+using OxyPlot;
+using OxyPlot.WindowsForms;
+using OxyPlot.Axes;
+using OxyPlot.Series;
+
+namespace Numerical_calculator
+{
+    public partial class Main_form : Form
+    {
+         public string input_total = "";
+         public List<string> input;
+         public double dt; // us
+         public double time_range;  //us
+         public List<Equation> equation = new List<Equation>();
+         public List<Premenna> premenna = new List<Premenna>();
+         public List<Konstants> konstanta = new List<Konstants>();
+         public string[] hlavicka;
+         public List<double[]> tabulka;
+         public int value { get; set; }
+         public int interval_pocet;
+         public double sirka_intervalu;
+         public int aktual_pomer = 0;
+         public bool calculation_complete = false;
+
+        public Main_form()
+        {
+            InitializeComponent();
+            this.Controls.Add(plot1);
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+
+        private void button_calculate_Click(object sender, EventArgs e)
+        {
+            interval();
+            Calculate();
+            checkedListBox1.Items.Clear();
+            foreach (string str in hlavicka)
+            {
+                checkedListBox1.Items.Add(str, true);
+            }
+            start_animation(hlavicka, tabulka);
+            button_plot.Enabled = true;
+            button_export.Enabled = true;
+        }
+
+        void initial_values_import()
+        {
+            int premenna_cnt = premenna.Count + konstanta.Count;
+            if (premenna_cnt <= 8)
+            { // nemusime posuvat
+                int i = 1;
+                foreach (Premenna pr in premenna)
+                {
+                    if (i == 1) { textBoxA1.Text = pr.name; textBoxB1.Text = pr.initial_value.ToString(); }
+                    if (i == 2) { textBoxA2.Text = pr.name; textBoxB2.Text = pr.initial_value.ToString(); }
+                    if (i == 3) { textBoxA3.Text = pr.name; textBoxB3.Text = pr.initial_value.ToString(); }
+                    if (i == 4) { textBoxA4.Text = pr.name; textBoxB4.Text = pr.initial_value.ToString(); }
+                    if (i == 5) { textBoxA5.Text = pr.name; textBoxB5.Text = pr.initial_value.ToString(); }
+                    if (i == 6) { textBoxA6.Text = pr.name; textBoxB6.Text = pr.initial_value.ToString(); }
+                    if (i == 7) { textBoxA7.Text = pr.name; textBoxB7.Text = pr.initial_value.ToString(); }
+                    if (i == 8) { textBoxA8.Text = pr.name; textBoxB8.Text = pr.initial_value.ToString(); }
+                    i++;
+                }
+                foreach (Konstants ko in konstanta)
+                {
+                    if (i == 1) { textBoxA1.Text = ko.name; textBoxB1.Text = ko.value.ToString(); }
+                    if (i == 2) { textBoxA2.Text = ko.name; textBoxB2.Text = ko.value.ToString(); }
+                    if (i == 3) { textBoxA3.Text = ko.name; textBoxB3.Text = ko.value.ToString(); }
+                    if (i == 4) { textBoxA4.Text = ko.name; textBoxB4.Text = ko.value.ToString(); }
+                    if (i == 5) { textBoxA5.Text = ko.name; textBoxB5.Text = ko.value.ToString(); }
+                    if (i == 6) { textBoxA6.Text = ko.name; textBoxB6.Text = ko.value.ToString(); }
+                    if (i == 7) { textBoxA7.Text = ko.name; textBoxB7.Text = ko.value.ToString(); }
+                    if (i == 8) { textBoxA8.Text = ko.name; textBoxB8.Text = ko.value.ToString(); }
+                    i++;
+                }
+            }
+            else
+            { // musime posuvat bar
+                int i = 1;
+                foreach (Premenna pr in premenna)
+                {
+                    if (i == 1) { textBoxA1.Text = pr.name; textBoxB1.Text = pr.initial_value.ToString(); }
+                    if (i == 2) { textBoxA2.Text = pr.name; textBoxB2.Text = pr.initial_value.ToString(); }
+                    if (i == 3) { textBoxA3.Text = pr.name; textBoxB3.Text = pr.initial_value.ToString(); }
+                    if (i == 4) { textBoxA4.Text = pr.name; textBoxB4.Text = pr.initial_value.ToString(); }
+                    if (i == 5) { textBoxA5.Text = pr.name; textBoxB5.Text = pr.initial_value.ToString(); }
+                    if (i == 6) { textBoxA6.Text = pr.name; textBoxB6.Text = pr.initial_value.ToString(); }
+                    if (i == 7) { textBoxA7.Text = pr.name; textBoxB7.Text = pr.initial_value.ToString(); }
+                    if (i == 8) { textBoxA8.Text = pr.name; textBoxB8.Text = pr.initial_value.ToString(); }
+                    i++;
+                }
+                foreach (Konstants ko in konstanta)
+                {
+                    if (i == 1) { textBoxA1.Text = ko.name; textBoxB1.Text = ko.value.ToString(); }
+                    if (i == 2) { textBoxA2.Text = ko.name; textBoxB2.Text = ko.value.ToString(); }
+                    if (i == 3) { textBoxA3.Text = ko.name; textBoxB3.Text = ko.value.ToString(); }
+                    if (i == 4) { textBoxA4.Text = ko.name; textBoxB4.Text = ko.value.ToString(); }
+                    if (i == 5) { textBoxA5.Text = ko.name; textBoxB5.Text = ko.value.ToString(); }
+                    if (i == 6) { textBoxA6.Text = ko.name; textBoxB6.Text = ko.value.ToString(); }
+                    if (i == 7) { textBoxA7.Text = ko.name; textBoxB7.Text = ko.value.ToString(); }
+                    if (i == 8) { textBoxA8.Text = ko.name; textBoxB8.Text = ko.value.ToString(); }
+                    i++;
+                }
+                vScrollBar1.LargeChange = 101 * 8 / premenna_cnt;
+                vScrollBar1.Value = 1;
+                interval_pocet = (premenna.Count + konstanta.Count) - 7;
+                double b = (8 / Convert.ToDouble(premenna.Count + konstanta.Count));
+                double a = 101 * (1 - b);
+                sirka_intervalu = a/interval_pocet; 
+            }
+        }
+
+        private void vbar_Scroll(object sender, ScrollEventArgs e)
+        {
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                string path = openFileDialog1.FileName;
+                string[] input_file;
+                input_file = System.IO.File.ReadAllLines(path);
+                string output = "";
+                foreach (string input_line in input_file)
+                {
+                    output += input_line + "\r\n";
+                }
+                textBox1.Text = output;
+            }
+        }
+
+        private void button_add_Click(object sender, EventArgs e)
+        {
+            clear();
+            input_sequence(); // vytvorime equations
+            // odoslanie dat
+            initial_values_import();
+            button_calculate.Enabled = true;
+        }
+
+         void interval()
+        {
+
+            string input_time = textBox2.Text;
+            double input_time_lenght = 1;
+            try
+            {
+                input_time_lenght = Convert.ToDouble(input_time);
+            }
+            catch
+            {
+                try
+                {
+                    string st = "";
+                    foreach (char ch in input_time)
+                    {
+                        if (ch == '.')
+                        {
+                            st = st + ",";
+                        }
+                        else
+                        {
+                            st = st + ch.ToString();
+                        }
+                    }
+                    input_time_lenght = Convert.ToDouble(st);
+                }
+                catch
+                {
+                    MessageBox.Show("Wrong time format!");
+                }
+            }
+            string input_density = textBox3.Text;
+            double input_density_lenght = 1;
+            try
+            {
+                input_density_lenght = Convert.ToDouble(input_density);
+            }
+            catch
+            {
+                try
+                {
+                    string st = "";
+                    foreach (char ch in input_density)
+                    {
+                        if (ch == '.')
+                        {
+                            st = st + ",";
+                        }
+                        else
+                        {
+                            st = st + ch.ToString();
+                        }
+                    }
+                    input_density_lenght = Convert.ToDouble(st);
+                }
+                catch
+                {
+                    MessageBox.Show("Wrong time format!");
+                }
+            }
+            dt = input_time_lenght / input_density_lenght; // us
+            time_range = input_time_lenght; // us
+        }
+
+         void novapremenna(string s)
+        {
+            bool tuje = false;
+            foreach (Premenna p in premenna)
+            {
+                if (p.name == s)
+                {
+                    tuje = true;
+                }
+            }
+            if (tuje == false)
+            {
+                premenna.Add(new Premenna() { name = s });
+            }
+        }
+
+         void novakonstanta(string s, bool Znamienko)
+        {
+            bool tuje = false;
+            foreach (Konstants k in konstanta)
+            {
+                if (k.name == s)
+                {
+                    tuje = true;
+                }
+            }
+            if (tuje == false)
+            {
+                konstanta.Add(new Konstants() { name = s });
+            }
+        }
+
+        public void input_sequence()
+        {
+            string str = "";
+            input = new List<string>();
+            string input_file = textBox1.Text;
+            foreach (char input_char in input_file)
+            {
+                if (input_char == '\n')
+                {
+                    input.Add(str);
+                    str = "";
+                }
+                else
+                {
+                    str += input_char.ToString();
+                }
+            }
+            try
+            {
+                preklad_vstupu(input);
+            }
+            catch
+            {
+                MessageBox.Show("Input string error. Please, check input formula.");
+            }
+        }
+
+        void preklad_vstupu(List<string> Input)
+        {
+            foreach (string s in Input)
+            { /// rozlozenie rovnic na cleny
+                bool konst = false;
+                List<string[]> listofequation = new List<String[]>();
+                string[] partofequation = new string[3];
+                string nameofequation = "";
+                bool diferencial = true;
+                bool premenna = false;
+                bool znamienko = false;
+                bool koef = false;
+                string koeficient = "";
+                string data = "";
+                int i = 0;
+                foreach (char ch in s)
+                {
+                    if (koef == true)
+                    {
+                        data = data + Convert.ToString(ch);
+                    }
+                    if (ch == '*')
+                    {
+                        if (koef == true)
+                        {
+                            koef = false;
+                            koeficient = data;
+                            data = "";
+                        }
+                        else
+                        {
+                            koef = true;
+                        }
+                    }
+                    if (ch == ']')
+                    {
+                        premenna = false;
+                        novapremenna(data);
+                        if (diferencial == true)
+                        {
+                            nameofequation = data;
+                        }
+                        else
+                        {
+                            partofequation[i] = data;
+                            i++;
+                        }
+                        data = "";
+                    }
+                    if (premenna == true)
+                    {
+                        data = data + Convert.ToString(ch);
+                    }
+                    if (ch == '[')
+                    {
+                        premenna = true;
+                    }
+                    if (ch == '=')
+                    {
+                        diferencial = false;
+                    }
+                    if (ch == '-')
+                    {
+                        znamienko = true;
+                    }
+                    if (ch == ')')
+                    {
+                        if (konst == true)
+                        {
+                            konst = false;
+                            data = data + ")";
+                            novakonstanta("k" + data, znamienko);
+                            if (diferencial == false)
+                            {
+                                partofequation[i] = "k" + data;
+                                i++;
+                            }
+                            data = "";
+                        }
+                    }
+                    if (konst == true)
+                    {
+                        data = data + Convert.ToString(ch);
+                    }
+                    if (ch == 'k')
+                    {
+                        konst = true;
+                    }
+                    if (i > 2)
+                    {
+                        i = 0;
+                        listofequation.Add(new string[] { partofequation[0], partofequation[1], partofequation[2], znamienko.ToString(), koeficient });
+                        znamienko = false;
+                    }
+                }
+                equation.Add(new Equation() { name = nameofequation, equation = listofequation });
+            }
+        }
+
+        public void vScrollBar1_Scroll(object sender, ScrollEventArgs e)
+        {
+            int value = vScrollBar1.Value;
+            if (vScrollBar1.Value > 101 - vScrollBar1.LargeChange)
+            {
+                value = 101 - vScrollBar1.LargeChange;
+            }
+            int pomer = value/Convert.ToInt16(sirka_intervalu);
+            if (pomer > interval_pocet - 1)
+            {
+                pomer = interval_pocet - 1;
+            }
+            if (pomer != aktual_pomer)
+            {
+                int i = 1 - pomer;
+                foreach (Premenna pr in premenna)
+                {
+                    if (i == 1) { textBoxA1.Text = pr.name; textBoxB1.Text = pr.initial_value.ToString(); }
+                    if (i == 2) { textBoxA2.Text = pr.name; textBoxB2.Text = pr.initial_value.ToString(); }
+                    if (i == 3) { textBoxA3.Text = pr.name; textBoxB3.Text = pr.initial_value.ToString(); }
+                    if (i == 4) { textBoxA4.Text = pr.name; textBoxB4.Text = pr.initial_value.ToString(); }
+                    if (i == 5) { textBoxA5.Text = pr.name; textBoxB5.Text = pr.initial_value.ToString(); }
+                    if (i == 6) { textBoxA6.Text = pr.name; textBoxB6.Text = pr.initial_value.ToString(); }
+                    if (i == 7) { textBoxA7.Text = pr.name; textBoxB7.Text = pr.initial_value.ToString(); }
+                    if (i == 8) { textBoxA8.Text = pr.name; textBoxB8.Text = pr.initial_value.ToString(); }
+                    i++;
+                }
+                foreach (Konstants ko in konstanta)
+                {
+                    if (i == 1) { textBoxA1.Text = ko.name; textBoxB1.Text = ko.value.ToString(); }
+                    if (i == 2) { textBoxA2.Text = ko.name; textBoxB2.Text = ko.value.ToString(); }
+                    if (i == 3) { textBoxA3.Text = ko.name; textBoxB3.Text = ko.value.ToString(); }
+                    if (i == 4) { textBoxA4.Text = ko.name; textBoxB4.Text = ko.value.ToString(); }
+                    if (i == 5) { textBoxA5.Text = ko.name; textBoxB5.Text = ko.value.ToString(); }
+                    if (i == 6) { textBoxA6.Text = ko.name; textBoxB6.Text = ko.value.ToString(); }
+                    if (i == 7) { textBoxA7.Text = ko.name; textBoxB7.Text = ko.value.ToString(); }
+                    if (i == 8) { textBoxA8.Text = ko.name; textBoxB8.Text = ko.value.ToString(); }
+                    i++;
+                }
+            }
+            aktual_pomer = pomer;
+        }
+
+        private void textBoxB1_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Premenna pr in premenna)
+            {
+                if (pr.name == textBoxA1.Text)
+                {
+                    try
+                    {
+                        pr.value = Convert.ToDouble(textBoxB1.Text);
+                        pr.initial_value = Convert.ToDouble(textBoxB1.Text);
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            string st = "";
+                            foreach (char ch in textBoxB1.Text)
+                            {
+                                if (ch == '.')
+                                {
+                                    st = st + ",";
+                                }
+                                else
+                                {
+                                    st = st + ch.ToString();
+                                }
+                            }
+                            pr.value = Convert.ToDouble(st);
+                            pr.initial_value = Convert.ToDouble(st);
+                        }
+                        catch { }
+                    }
+                }
+            }
+            foreach (Konstants ko in konstanta)
+            {
+                if (ko.name == textBoxA1.Text)
+                {
+                    try
+                    {
+                        ko.value = Convert.ToDouble(textBoxB1.Text);
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            string st = "";
+                            foreach (char ch in textBoxB1.Text)
+                            {
+                                if (ch == '.')
+                                {
+                                    st = st + ",";
+                                }
+                                else
+                                {
+                                    st = st + ch.ToString();
+                                }
+                            }
+                            ko.value = Convert.ToDouble(st);
+                        }
+                        catch { }
+                    }
+                }
+            }
+        }
+
+        private void textBoxB2_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Premenna pr in premenna)
+            {
+                if (pr.name == textBoxA2.Text)
+                {
+                    try
+                    {
+                        pr.value = Convert.ToDouble(textBoxB2.Text);
+                        pr.initial_value = Convert.ToDouble(textBoxB2.Text);
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            string st = "";
+                            foreach (char ch in textBoxB2.Text)
+                            {
+                                if (ch == '.')
+                                {
+                                    st = st + ",";
+                                }
+                                else
+                                {
+                                    st = st + ch.ToString();
+                                }
+                            }
+                            pr.value = Convert.ToDouble(st);
+                            pr.initial_value = Convert.ToDouble(st);
+                        }
+                        catch { }
+                    }
+                }
+            }
+            foreach (Konstants ko in konstanta)
+            {
+                if (ko.name == textBoxA2.Text)
+                {
+                    try
+                    {
+                        ko.value = Convert.ToDouble(textBoxB2.Text);
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            string st = "";
+                            foreach (char ch in textBoxB2.Text)
+                            {
+                                if (ch == '.')
+                                {
+                                    st = st + ",";
+                                }
+                                else
+                                {
+                                    st = st + ch.ToString();
+                                }
+                            }
+                            ko.value = Convert.ToDouble(st);
+                        }
+                        catch { }
+                    }
+                }
+            }
+        }
+
+        private void textBoxB3_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Premenna pr in premenna)
+            {
+                if (pr.name == textBoxA3.Text)
+                {
+                    try
+                    {
+                        pr.value = Convert.ToDouble(textBoxB3.Text);
+                        pr.initial_value = Convert.ToDouble(textBoxB3.Text);
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            string st = "";
+                            foreach (char ch in textBoxB3.Text)
+                            {
+                                if (ch == '.')
+                                {
+                                    st = st + ",";
+                                }
+                                else
+                                {
+                                    st = st + ch.ToString();
+                                }
+                            }
+                            pr.value = Convert.ToDouble(st);
+                            pr.initial_value = Convert.ToDouble(st);
+                        }
+                        catch { }
+                    }
+                }
+            }
+            foreach (Konstants ko in konstanta)
+            {
+                if (ko.name == textBoxA3.Text)
+                {
+                    try
+                    {
+                        ko.value = Convert.ToDouble(textBoxB3.Text);
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            string st = "";
+                            foreach (char ch in textBoxB3.Text)
+                            {
+                                if (ch == '.')
+                                {
+                                    st = st + ",";
+                                }
+                                else
+                                {
+                                    st = st + ch.ToString();
+                                }
+                            }
+                            ko.value = Convert.ToDouble(st);
+                        }
+                        catch { }
+                    }
+                }
+            }
+        }
+
+        private void textBoxB4_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Premenna pr in premenna)
+            {
+                if (pr.name == textBoxA4.Text)
+                {
+                    try
+                    {
+                        pr.value = Convert.ToDouble(textBoxB4.Text);
+                        pr.initial_value = Convert.ToDouble(textBoxB4.Text);
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            string st = "";
+                            foreach (char ch in textBoxB4.Text)
+                            {
+                                if (ch == '.')
+                                {
+                                    st = st + ",";
+                                }
+                                else
+                                {
+                                    st = st + ch.ToString();
+                                }
+                            }
+                            pr.value = Convert.ToDouble(st);
+                            pr.initial_value = Convert.ToDouble(st);
+                        }
+                        catch { }
+                    }
+                }
+            } foreach (Konstants ko in konstanta)
+            {
+                if (ko.name == textBoxA4.Text)
+                {
+                    try
+                    {
+                        ko.value = Convert.ToDouble(textBoxB4.Text);
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            string st = "";
+                            foreach (char ch in textBoxB4.Text)
+                            {
+                                if (ch == '.')
+                                {
+                                    st = st + ",";
+                                }
+                                else
+                                {
+                                    st = st + ch.ToString();
+                                }
+                            }
+                            ko.value = Convert.ToDouble(st);
+                        }
+                        catch { }
+                    }
+                }
+            }
+        }
+
+        private void textBoxB5_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Premenna pr in premenna)
+            {
+                if (pr.name == textBoxA5.Text)
+                {
+                    try
+                    {
+                        pr.value = Convert.ToDouble(textBoxB5.Text);
+                        pr.initial_value = Convert.ToDouble(textBoxB5.Text);
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            string st = "";
+                            foreach (char ch in textBoxB5.Text)
+                            {
+                                if (ch == '.')
+                                {
+                                    st = st + ",";
+                                }
+                                else
+                                {
+                                    st = st + ch.ToString();
+                                }
+                            }
+                            pr.value = Convert.ToDouble(st);
+                            pr.initial_value = Convert.ToDouble(st);
+                        }
+                        catch { }
+                    }
+                }
+            }
+            foreach (Konstants ko in konstanta)
+            {
+                if (ko.name == textBoxA5.Text)
+                {
+                    try
+                    {
+                        ko.value = Convert.ToDouble(textBoxB5.Text);
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            string st = "";
+                            foreach (char ch in textBoxB5.Text)
+                            {
+                                if (ch == '.')
+                                {
+                                    st = st + ",";
+                                }
+                                else
+                                {
+                                    st = st + ch.ToString();
+                                }
+                            }
+                            ko.value = Convert.ToDouble(st);
+                        }
+                        catch { }
+                    }
+                }
+            }
+        }
+
+        private void textBoxB6_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Premenna pr in premenna)
+            {
+                if (pr.name == textBoxA6.Text)
+                {
+                    try
+                    {
+                        pr.value = Convert.ToDouble(textBoxB6.Text);
+                        pr.initial_value = Convert.ToDouble(textBoxB6.Text);
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            string st = "";
+                            foreach (char ch in textBoxB6.Text)
+                            {
+                                if (ch == '.')
+                                {
+                                    st = st + ",";
+                                }
+                                else
+                                {
+                                    st = st + ch.ToString();
+                                }
+                            }
+                            pr.value = Convert.ToDouble(st);
+                            pr.initial_value = Convert.ToDouble(st);
+                        }
+                        catch { }
+                    }
+                }
+            }
+            foreach (Konstants ko in konstanta)
+            {
+                if (ko.name == textBoxA6.Text)
+                {
+                    try
+                    {
+                        ko.value = Convert.ToDouble(textBoxB6.Text);
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            string st = "";
+                            foreach (char ch in textBoxB6.Text)
+                            {
+                                if (ch == '.')
+                                {
+                                    st = st + ",";
+                                }
+                                else
+                                {
+                                    st = st + ch.ToString();
+                                }
+                            }
+                            ko.value = Convert.ToDouble(st);
+                        }
+                        catch { }
+                    }
+                }
+            }
+        }
+
+        private void textBoxB7_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Premenna pr in premenna)
+            {
+                if (pr.name == textBoxA7.Text)
+                {
+                    try
+                    {
+                        pr.value = Convert.ToDouble(textBoxB7.Text);
+                        pr.initial_value = Convert.ToDouble(textBoxB7.Text);
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            string st = "";
+                            foreach (char ch in textBoxB7.Text)
+                            {
+                                if (ch == '.')
+                                {
+                                    st = st + ",";
+                                }
+                                else
+                                {
+                                    st = st + ch.ToString();
+                                }
+                            }
+                            pr.value = Convert.ToDouble(st);
+                            pr.initial_value = Convert.ToDouble(st);
+                        }
+                        catch { }
+                    }
+                }
+            }
+            foreach (Konstants ko in konstanta)
+            {
+                if (ko.name == textBoxA7.Text)
+                {
+                    try
+                    {
+                        ko.value = Convert.ToDouble(textBoxB7.Text);
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            string st = "";
+                            foreach (char ch in textBoxB7.Text)
+                            {
+                                if (ch == '.')
+                                {
+                                    st = st + ",";
+                                }
+                                else
+                                {
+                                    st = st + ch.ToString();
+                                }
+                            }
+                            ko.value = Convert.ToDouble(st);
+                        }
+                        catch { }
+                    }
+                }
+            }
+        }
+
+        private void textBoxB8_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Premenna pr in premenna)
+            {
+                if (pr.name == textBoxA8.Text)
+                {
+                    try
+                    {
+                        pr.value = Convert.ToDouble(textBoxB8.Text);
+                        pr.initial_value = Convert.ToDouble(textBoxB8.Text);
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            string st = "";
+                            foreach (char ch in textBoxB8.Text)
+                            {
+                                if (ch == '.')
+                                {
+                                    st = st + ",";
+                                }
+                                else
+                                {
+                                    st = st + ch.ToString();
+                                }
+                            }
+                            pr.value = Convert.ToDouble(st);
+                            pr.initial_value = Convert.ToDouble(st);
+                        }
+                        catch { }
+                    }
+                }
+            } foreach (Konstants ko in konstanta)
+            {
+                if (ko.name == textBoxA8.Text)
+                {
+                    try
+                    {
+                        ko.value = Convert.ToDouble(textBoxB8.Text);
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            string st = "";
+                            foreach (char ch in textBoxB8.Text)
+                            {
+                                if (ch == '.')
+                                {
+                                    st = st + ",";
+                                }
+                                else
+                                {
+                                    st = st + ch.ToString();
+                                }
+                            }
+                            ko.value = Convert.ToDouble(st);
+                        }
+                        catch { }
+                    }
+                }
+            }
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            if (textBox1.Text != "")
+            {
+                button_add.Enabled = true;
+                button_clear.Enabled = true;
+            }
+            else
+            {
+                button_add.Enabled = false;
+                button_clear.Enabled = false;
+            }
+        }
+
+        void Calculate()
+        {
+            int cnt = equation.Count;
+            int i = 0;
+            double t = 0;
+            hlavicka = new string[cnt];
+            foreach (Equation eq in equation)
+            {
+                hlavicka[i] = eq.name;
+                i++;
+            }
+            double[] d = new double[cnt + 1];
+            tabulka = new List<double[]>();
+            i = 0;
+            foreach (Equation eq in equation)
+            {
+                foreach (Premenna pr in premenna)
+                {
+                    if (pr.name == eq.name)
+                    {
+                        d[i] = pr.value;
+                        i++;
+                    }
+                }
+            }
+            d[cnt] = t;
+            tabulka.Add(d);
+            while (t <= time_range)
+            {
+                double[] dou = new double[cnt + 1];
+                Calculation calculation = new Calculation();
+                calculation.dt = dt / 1000000; // s
+                calculation.calculate_step(equation, konstanta, premenna);
+                premenna = calculation.new_premenna;
+                int j = 0;
+                foreach (Equation eq in equation)
+                {
+                    foreach (Premenna pr in premenna)
+                    {
+                        if (pr.name == eq.name)
+                        {
+                            dou[j] = pr.value;
+                            j++;
+                        }
+                    }
+                }
+                t = t + dt;
+                dou[cnt] = t;
+                tabulka.Add(dou);
+                if (t > time_range)
+                {
+                    progressBar1.Value = 100;
+                }
+                else
+                {
+                    progressBar1.Value = Convert.ToInt16(100 * t / time_range);
+                }
+            }
+            
+        }
+
+        string writer(string[] Hlavicka, List<double[]> Tabulka)
+        {
+            string writer = "";
+            foreach (string str in Hlavicka)
+            {
+                writer = writer + str + "\t";
+            }
+            writer = writer + "\r\n";
+            foreach (double[] dou in Tabulka)
+            {
+                foreach (double cislo in dou)
+                {
+                    writer = writer + cislo.ToString() + "\t";
+                }
+                writer = writer + "\r\n";
+            }
+            return writer;
+        }
+
+        void start_animation(string[] Hlavicka, List<double[]> Tabulka)
+        {
+            int i = 0;
+            PlotModel model = new PlotModel() {LegendSymbolLength = 24, IsLegendVisible = true };
+            model.LegendTitle = "Legend";
+            model.LegendOrientation = LegendOrientation.Horizontal;
+            model.LegendPlacement = LegendPlacement.Inside;
+            model.LegendPosition = LegendPosition.RightTop;
+            foreach (string str in Hlavicka)
+            {
+                if (checkedListBox1.CheckedItems.Contains(str))
+                {
+                    FunctionSeries fs = new FunctionSeries();
+                    foreach (double[] dou in Tabulka)
+                    {
+                        fs.Points.Add(new DataPoint(dou[(dou.GetLength(0) - 1)], dou[i]));
+                    }
+                    fs.Title = str;
+                    model.Series.Add(fs);
+                }
+                i++;
+            }
+            model.Axes.Add(new LinearAxis() { Position = AxisPosition.Bottom, Title = "Time [us]" , MajorGridlineStyle = LineStyle.Dash});
+            model.Axes.Add(new LogarithmicAxis() {Position = AxisPosition.Left, MajorGridlineStyle = LineStyle.Solid, MinorGridlineStyle = LineStyle.Dot, IntervalLength = 100, Title = "Concentration" });       
+            plot1.Model = model;
+
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            textBox1.Text = "";
+            clear();
+
+        }
+
+        private void button_plot_Click(object sender, EventArgs e)
+        {
+            start_animation(hlavicka, tabulka);
+        }
+
+        private void button_export_Click(object sender, EventArgs e)
+        {
+            saveFileDialog1.Title = "Output";
+            saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+            saveFileDialog1.FilterIndex = 2;
+            saveFileDialog1.RestoreDirectory = true;
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                int pocet_itemov = checkedListBox1.CheckedItems.Count + 1;
+                List<double[]> export = new List<double[]>();
+                string[] legenda = new string[pocet_itemov];
+                legenda[0] = "Time [us]";
+                int k = 1;
+                foreach (string str in hlavicka)
+                {            
+                    if (checkedListBox1.CheckedItems.Contains(str))
+                    {
+                        legenda[k] = str;
+                        k++;
+                    }
+                }
+                double[] export_item;
+                foreach (double[] dou in tabulka)
+                {
+                    int i = 0, j = 0;
+                    export_item = new double[pocet_itemov];
+                    export_item[0] = dou[dou.GetLength(0)-1];
+                    foreach (string str in hlavicka)
+                    {
+                        if (checkedListBox1.CheckedItems.Contains(str))
+                        {  
+                            export_item[i + 1] = dou[j]; 
+                            i++;
+                        }
+                        j++;
+                    }
+                    export.Add(export_item);
+                }               
+                if (saveFileDialog1.FileName != "")
+                {
+                    StreamWriter write = new StreamWriter(saveFileDialog1.OpenFile());
+                    write.Write(writer(legenda, export));
+                    write.Dispose();
+                    write.Close();
+                }
+
+            }
+        }
+
+        private void clear()
+        {
+            textBoxA1.Text = "";
+            textBoxB1.Text = "";
+            textBoxA2.Text = "";
+            textBoxB2.Text = "";
+            textBoxA3.Text = "";
+            textBoxB3.Text = "";
+            textBoxA4.Text = "";
+            textBoxB4.Text = "";
+            textBoxA5.Text = "";
+            textBoxB5.Text = "";
+            textBoxA6.Text = "";
+            textBoxB6.Text = "";
+            textBoxA7.Text = "";
+            textBoxB7.Text = "";
+            textBoxA8.Text = "";
+            textBoxB8.Text = "";
+            equation.Clear();
+            konstanta.Clear();
+            premenna.Clear();
+            calculation_complete = false;
+            button_calculate.Enabled = false;
+            button_plot.Enabled = false;
+            button_calculate.Enabled = false;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Test test = new Test();
+            test.Show();
+        }
+    }
+}

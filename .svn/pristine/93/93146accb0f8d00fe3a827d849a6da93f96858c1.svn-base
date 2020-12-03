@@ -1,0 +1,31 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Drawing;
+
+
+namespace Numerical_calculator
+{
+    public class Reactions_used
+    {
+        public string name { get; set; }
+        public Point pointA { get; set; }
+        public string Item_name_A { get; set; }
+        public string Item_s_name_A { get; set; }
+        public int Item_number_A { get; set; }
+        public Point pointB { get; set; }
+        public string Item_name_B { get; set; }
+        public string Item_s_name_B { get; set; }
+        public int Item_number_B { get; set; }
+        public string neutral_A { get; set; }
+        public string neutral_s_A { get; set; }
+        public string neutral_B { get; set; }
+        public string neutral_s_B { get; set; }
+        public double rate_konstant { get; set; }
+        public double rate_konstant_ { get; set; }
+        public int reaction_type { get; set; }
+
+    }
+}

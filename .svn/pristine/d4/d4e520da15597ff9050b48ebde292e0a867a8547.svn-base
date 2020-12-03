@@ -1,0 +1,802 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Numerical_calculator
+{
+    /// <summary>
+    /// Racapitulacia parametrov
+    /// Umoznenie zmeny / prip doplnenia pociatocnych hodnot, bez zmeny zadania a ulozenia
+    /// Pripravenie vstupu pre Calculation_control
+    /// 
+    /// obojstranne reakcie musia uz byt rozdelene na dve jednostranne
+    /// </summary>
+    public partial class Calculation_control : Form
+    {
+        public List<Items_used> ItemColection_used { get; set; }
+        public List<Reactions_used> ReactionColection_used { get; set; }
+        public int interval_pocet_reaction;
+        public double sirka_intervalu_rection;
+        public int aktual_pomer_reaction = 0;
+        public int interval_pocet_items;
+        public double sirka_intervalu_items;
+        public int aktual_pomer_items = 0;
+
+        public Calculation_control()
+        {
+            InitializeComponent();
+        }
+
+        #region Calculation
+
+        public double dt = Main.Time_duration / Main.NumberOfSteps; // us
+        public double time_range = Main.Time_duration; //us
+        public List<Equation> equation = new List<Equation>();
+        public List<Premenna> premenna = new List<Premenna>();
+        public List<Konstants> konstanta = new List<Konstants>();
+        public string[] hlavicka;
+        public List<double[]> tabulka;
+        public int value { get; set; }
+        public int interval_pocet;
+        public double sirka_intervalu;
+        public int aktual_pomer = 0;
+        public bool calculation_complete = false;
+        private int progress = 1;
+
+
+        public void proceed()
+        {
+            // premenit rekcie na equation a konstanty
+            foreach (Items_used Item in ItemColection_used)
+            {
+                novapremenna(Item.name, Item.concentration, Item.concentration);
+                equation.Add(new Equation { name = Item.name, equation = new List<string[]>() });
+            }
+            int k = 0;
+            foreach (Reactions_used Reaction in ReactionColection_used)
+            {
+
+                string k_name = "k(" + k.ToString() + ")";
+                string[] s = new string[4];
+                novakonstanta(k_name, Reaction.rate_konstant);
+                s[0] = k_name;//konst
+                foreach(Premenna pr in premenna) 
+                {
+                    if (Reaction.item_A.name == pr.name)
+                    {
+                        s[1] = pr.name;
+                    }
+                }
+                foreach (Premenna pr in premenna)
+                {
+                    try
+                    {
+                        if (Reaction.neutral_A.name == pr.name)
+                        {
+                            s[2] = pr.name;
+                        }
+                    }
+                    catch
+                    {
+                        // null exception
+                    }
+                }
+                foreach (Equation eq in equation)
+                {
+                    if (Reaction.item_A.name == eq.name) { if (Reaction.reaction_type == 0) { s[3] = "True"; eq.equation.Add(new string[] { s[0], s[1], s[2], s[3] }); } else { s[3] = "False"; eq.equation.Add(new string[] { s[0], s[1], s[2], s[3] }); } }
+                    if (Reaction.item_B.name == eq.name) { if (Reaction.reaction_type == 0) { s[3] = "False"; eq.equation.Add(new string[] { s[0], s[1], s[2], s[3] }); } else { s[3] = "True"; eq.equation.Add(new string[] { s[0], s[1], s[2], s[3] }); } }
+                    try
+                    {
+                        if (Reaction.neutral_B.name == eq.name) { if (Reaction.reaction_type == 0) { s[3] = "False"; eq.equation.Add(new string[] { s[0], s[1], s[2], s[3] }); } else { s[3] = "True"; eq.equation.Add(new string[] { s[0], s[1], s[2], s[3] }); } }
+                    }
+                    catch { }
+                    try
+                    {
+                        if (Reaction.neutral_A.name == eq.name) { if (Reaction.reaction_type == 0) { s[3] = "True"; eq.equation.Add(new string[] { s[0], s[1], s[2], s[3] }); } else { s[3] = "False"; eq.equation.Add(new string[] { s[0], s[1], s[2], s[3] }); } }
+                    }
+                    catch { }
+                }
+                k++;
+            }
+            // calculation s dt
+            if (time_range != 0)
+            {
+                Calculate();
+                Main.hlavicka_time = hlavicka;
+                Main.tabulka_time = tabulka;
+                progress++;
+            }
+            if ((Main.Ion_velociy != 0) && (Main.Distance != 0))
+            {
+                foreach (Premenna pr in premenna)
+                {
+                    pr.value = pr.initial_value;
+                }
+                time_range = (Main.Distance * 1000000) / Main.Ion_velociy; // us
+                dt = time_range / Main.NumberOfSteps; // us
+                Calculate();
+                foreach (double[] dou in tabulka)
+                {
+                    dou[dou.GetLength(0) - 1] = (dou[dou.GetLength(0) - 1] * Main.Ion_velociy) / 1000000;
+                }
+                Main.hlavicka_dist = hlavicka;
+                Main.tabulka_dist = tabulka;
+                progress++;
+            }
+            if (this.checkBox1.Checked && (this.comboBox1.SelectedItem != null))
+            {
+                time_range = (Main.Distance * 1000000) / Main.Ion_velociy; // us
+                dt = time_range / Main.NumberOfSteps; // us
+                int steps = Convert.ToInt32(Convertor(this.textBox3.Text));
+                double conc_fin = Convertor(this.textBox2.Text);
+                string name = "";
+                double conc = 0;
+                if ((Main.Ion_velociy != 0) && (Main.Distance != 0))
+                {
+                    foreach (Items_used Item in ItemColection_used)
+                    {
+                        if (Item == (Items_used)comboBox1.SelectedItem)
+                        {
+                            name = Item.name;
+                            conc = Item.concentration;
+                        }
+                    }
+                    if (name != "")
+                    {
+                        foreach (Premenna pr in premenna)
+                        {
+                            if (pr.name == name)
+                            {
+                                double diff = conc_fin - conc;
+                                double step = diff / steps;
+                                double dep = 0;
+                                List<List<double[]>> data = new List<List<double[]>>();
+                                while (diff >= dep)
+                                {
+                                    Calculate();
+                                    foreach (double[] dou in tabulka)
+                                    {
+                                        dou[dou.GetLength(0) - 1] = (dou[dou.GetLength(0) - 1] * Main.Ion_velociy) / 1000000;
+                                    }
+                                    data.Add(tabulka);
+                                    pr.initial_value = pr.initial_value + step;
+                                    dep += step;
+                                    if (dep > diff)
+                                    {
+                                        progressBar1.Value = 100;
+                                    }
+                                    else
+                                    {
+                                        progressBar1.Value = Convert.ToInt32(33 * dep / diff) + 66;
+                                    }
+                                }
+                                // export do main
+                                Main.hlavicka_din = hlavicka;
+                                Main.data_din = data;
+                            }
+                        }                       
+                    }
+                    else
+                    {
+                        MessageBox.Show("Unable to iniciate 'Dinamic concentration' action.");
+                    }
+                }
+            }
+            Main.calculation_done();
+            this.Dispose();
+        }
+
+        void novapremenna(string s, double Value, double Init_val)
+        {
+            bool tuje = false;
+            foreach (Premenna p in premenna)
+            {
+                if (p.name == s)
+                {
+                    tuje = true;
+                }
+            }
+            if (tuje == false)
+            {
+                premenna.Add(new Premenna() { name = s, value = Value, initial_value = Init_val });
+            }
+        }
+
+        void novakonstanta(string s, double Value)
+        {
+            bool tuje = false;
+            foreach (Konstants k in konstanta)
+            {
+                if (k.name == s)
+                {
+                    tuje = true;
+                }
+            }
+            if (tuje == false)
+            {
+                konstanta.Add(new Konstants() { name = s, value = Value });
+            }
+        }
+
+        void Calculate()
+        {
+            int cnt = equation.Count;
+            int i = 0;
+            double t = 0;
+            hlavicka = new string[cnt];
+            foreach (Equation eq in equation)
+            {
+                hlavicka[i] = eq.name;
+                i++;
+            }
+            double[] d = new double[cnt + 1];
+            tabulka = new List<double[]>();
+            i = 0;
+            foreach (Equation eq in equation)
+            {
+                foreach (Premenna pr in premenna)
+                {
+                    if (pr.name == eq.name)
+                    {
+                        d[i] = pr.value;
+                        i++;
+                    }
+                }
+            }
+            d[cnt] = t;
+            tabulka.Add(d);
+            while (t < time_range)
+            {
+                double[] dou = new double[cnt + 1];
+                Calculation calculation = new Calculation();
+                calculation.dt = dt / 1000000; // s
+                calculation.calculate_step(equation, konstanta, premenna);
+                premenna = calculation.new_premenna;
+                int j = 0;
+                foreach (Equation eq in equation)
+                {
+                    foreach (Premenna pr in premenna)
+                    {
+                        if (pr.name == eq.name)
+                        {
+                            dou[j] = pr.value;
+                            j++;
+                        }
+                    }
+                }
+                t = t + dt;
+                dou[cnt] = t;
+                tabulka.Add(dou);
+                if(progress == 1)
+                {
+                    if (t > time_range)
+                    {
+                        progressBar1.Value = 33;
+                    }
+                    else
+                    {
+                        progressBar1.Value = Convert.ToInt32(33 * t / time_range);
+                    }
+                }
+                if (progress == 2)
+                {
+                    if (t > time_range)
+                    {
+                        progressBar1.Value = 66;
+                    }
+                    else
+                    {
+                        progressBar1.Value = Convert.ToInt32(33 * t / time_range) + 33;
+                    }
+                }
+            }
+        }
+
+        #endregion
+
+        #region Fill boxes
+
+        public void show_values()
+        {
+            fill_items();
+            fill_reaction();
+        }
+
+        public void fill_items()
+        {
+            int premenna_cnt = ItemColection_used.Count;
+            if (premenna_cnt <= 10)
+            { // nemusime posuvat
+                int i = 1;
+                foreach (Items_used Item in ItemColection_used)
+                {
+                    if (i == 1) { textBoxC1.Text = Item.name; textBoxD1.Text = Item.concentration.ToString(); }
+                    if (i == 2) { textBoxC2.Text = Item.name; textBoxD2.Text = Item.concentration.ToString(); }
+                    if (i == 3) { textBoxC3.Text = Item.name; textBoxD3.Text = Item.concentration.ToString(); }
+                    if (i == 4) { textBoxC4.Text = Item.name; textBoxD4.Text = Item.concentration.ToString(); }
+                    if (i == 5) { textBoxC5.Text = Item.name; textBoxD5.Text = Item.concentration.ToString(); }
+                    if (i == 6) { textBoxC6.Text = Item.name; textBoxD6.Text = Item.concentration.ToString(); }
+                    if (i == 7) { textBoxC7.Text = Item.name; textBoxD7.Text = Item.concentration.ToString(); }
+                    if (i == 8) { textBoxC8.Text = Item.name; textBoxD8.Text = Item.concentration.ToString(); }
+                    if (i == 9) { textBoxC9.Text = Item.name; textBoxD9.Text = Item.concentration.ToString(); }
+                    if (i == 10) { textBoxC10.Text = Item.name; textBoxD10.Text = Item.concentration.ToString(); }
+                    i++;
+                }
+            }
+            else
+            { // musime posuvat bar
+                int i = 1;
+                foreach (Items_used Item in ItemColection_used)
+                {
+                    if (i == 1) { textBoxC1.Text = Item.name; textBoxD1.Text = Item.concentration.ToString(); }
+                    if (i == 2) { textBoxC2.Text = Item.name; textBoxD2.Text = Item.concentration.ToString(); }
+                    if (i == 3) { textBoxC3.Text = Item.name; textBoxD3.Text = Item.concentration.ToString(); }
+                    if (i == 4) { textBoxC4.Text = Item.name; textBoxD4.Text = Item.concentration.ToString(); }
+                    if (i == 5) { textBoxC5.Text = Item.name; textBoxD5.Text = Item.concentration.ToString(); }
+                    if (i == 6) { textBoxC6.Text = Item.name; textBoxD6.Text = Item.concentration.ToString(); }
+                    if (i == 7) { textBoxC7.Text = Item.name; textBoxD7.Text = Item.concentration.ToString(); }
+                    if (i == 8) { textBoxC8.Text = Item.name; textBoxD8.Text = Item.concentration.ToString(); }
+                    if (i == 9) { textBoxC9.Text = Item.name; textBoxD9.Text = Item.concentration.ToString(); }
+                    if (i == 10) { textBoxC10.Text = Item.name; textBoxD10.Text = Item.concentration.ToString(); }
+                    i++;
+                }
+                vScrollBar2.LargeChange = 101 * 10 / premenna_cnt;
+                vScrollBar2.Value = 1;
+                interval_pocet_items = (ItemColection_used.Count) - 9;
+                double b = (8 / Convert.ToDouble(ItemColection_used.Count));
+                double a = 101 * (1 - b);
+                sirka_intervalu_items = a / interval_pocet_items;
+            }
+        }
+
+        public void fill_reaction()
+        {
+            int premenna_cnt = ReactionColection_used.Count;
+            if (premenna_cnt <= 10)
+            { // nemusime posuvat
+                int i = 1;
+                foreach (Reactions_used rection in ReactionColection_used)
+                {
+                    if (i == 1) { textBoxA1.Text = rection.name; textBoxB1.Text = rection.rate_konstant.ToString(); }
+                    if (i == 2) { textBoxA2.Text = rection.name; textBoxB2.Text = rection.rate_konstant.ToString(); }
+                    if (i == 3) { textBoxA3.Text = rection.name; textBoxB3.Text = rection.rate_konstant.ToString(); }
+                    if (i == 4) { textBoxA4.Text = rection.name; textBoxB4.Text = rection.rate_konstant.ToString(); }
+                    if (i == 5) { textBoxA5.Text = rection.name; textBoxB5.Text = rection.rate_konstant.ToString(); }
+                    if (i == 6) { textBoxA6.Text = rection.name; textBoxB6.Text = rection.rate_konstant.ToString(); }
+                    if (i == 7) { textBoxA7.Text = rection.name; textBoxB7.Text = rection.rate_konstant.ToString(); }
+                    if (i == 8) { textBoxA8.Text = rection.name; textBoxB8.Text = rection.rate_konstant.ToString(); }
+                    if (i == 9) { textBoxA9.Text = rection.name; textBoxB9.Text = rection.rate_konstant.ToString(); }
+                    if (i == 10) { textBoxA10.Text = rection.name; textBoxB10.Text = rection.rate_konstant.ToString(); }
+                    i++;
+                }
+            }
+            else
+            { // musime posuvat bar
+                int i = 1;
+                foreach (Reactions_used rection in ReactionColection_used)
+                {
+                    if (i == 1) { textBoxA1.Text = rection.name; textBoxB1.Text = rection.rate_konstant.ToString(); }
+                    if (i == 2) { textBoxA2.Text = rection.name; textBoxB2.Text = rection.rate_konstant.ToString(); }
+                    if (i == 3) { textBoxA3.Text = rection.name; textBoxB3.Text = rection.rate_konstant.ToString(); }
+                    if (i == 4) { textBoxA4.Text = rection.name; textBoxB4.Text = rection.rate_konstant.ToString(); }
+                    if (i == 5) { textBoxA5.Text = rection.name; textBoxB5.Text = rection.rate_konstant.ToString(); }
+                    if (i == 6) { textBoxA6.Text = rection.name; textBoxB6.Text = rection.rate_konstant.ToString(); }
+                    if (i == 7) { textBoxA7.Text = rection.name; textBoxB7.Text = rection.rate_konstant.ToString(); }
+                    if (i == 8) { textBoxA8.Text = rection.name; textBoxB8.Text = rection.rate_konstant.ToString(); }
+                    if (i == 9) { textBoxA9.Text = rection.name; textBoxB9.Text = rection.rate_konstant.ToString(); }
+                    if (i == 10) { textBoxA10.Text = rection.name; textBoxB10.Text = rection.rate_konstant.ToString(); }
+                    i++;
+                }
+                vScrollBar1.LargeChange = 101 * 10/ premenna_cnt;
+                vScrollBar1.Value = 1;
+                interval_pocet_reaction = (ReactionColection_used.Count) - 9;
+                double b = (8 / Convert.ToDouble(ReactionColection_used.Count));
+                double a = 101 * (1 - b);
+                sirka_intervalu_rection = a / interval_pocet_reaction;
+            }
+        }
+
+        private void button_OK_Click(object sender, EventArgs e)
+        {
+            // spustenie vypoctu
+            proceed();
+        }
+
+        private void button_cancle_Click(object sender, EventArgs e)
+        {
+            this.Dispose();
+        }
+
+        private void vScrollBar1_Scroll(object sender, ScrollEventArgs e)
+        {
+            int value = vScrollBar1.Value;
+            if (vScrollBar1.Value > 101 - vScrollBar1.LargeChange)
+            {
+                value = 101 - vScrollBar1.LargeChange;
+            }
+            int pomer = value / Convert.ToInt16(sirka_intervalu_rection);
+            if (pomer > interval_pocet_reaction - 1)
+            {
+                pomer = interval_pocet_reaction - 1;
+            }
+            if (pomer != aktual_pomer_reaction)
+            {
+                int i = 1 - pomer;
+                foreach (Reactions_used rection in ReactionColection_used)
+                {
+                    if (i == 1) { textBoxA1.Text = rection.name; textBoxB1.Text = rection.rate_konstant.ToString(); }
+                    if (i == 2) { textBoxA2.Text = rection.name; textBoxB2.Text = rection.rate_konstant.ToString(); }
+                    if (i == 3) { textBoxA3.Text = rection.name; textBoxB3.Text = rection.rate_konstant.ToString(); }
+                    if (i == 4) { textBoxA4.Text = rection.name; textBoxB4.Text = rection.rate_konstant.ToString(); }
+                    if (i == 5) { textBoxA5.Text = rection.name; textBoxB5.Text = rection.rate_konstant.ToString(); }
+                    if (i == 6) { textBoxA6.Text = rection.name; textBoxB6.Text = rection.rate_konstant.ToString(); }
+                    if (i == 7) { textBoxA7.Text = rection.name; textBoxB7.Text = rection.rate_konstant.ToString(); }
+                    if (i == 8) { textBoxA8.Text = rection.name; textBoxB8.Text = rection.rate_konstant.ToString(); }
+                    if (i == 9) { textBoxA9.Text = rection.name; textBoxB9.Text = rection.rate_konstant.ToString(); }
+                    if (i == 10) { textBoxA10.Text = rection.name; textBoxB10.Text = rection.rate_konstant.ToString(); }
+                    i++;
+                }
+            }
+            aktual_pomer_reaction = pomer;
+        }
+
+        private void vScrollBar2_Scroll(object sender, ScrollEventArgs e)
+        {
+            int value = vScrollBar2.Value;
+            if (vScrollBar2.Value > 101 - vScrollBar2.LargeChange)
+            {
+                value = 101 - vScrollBar2.LargeChange;
+            }
+            int pomer = value / Convert.ToInt16(sirka_intervalu_items);
+            if (pomer > interval_pocet_items - 1)
+            {
+                pomer = interval_pocet_items - 1;
+            }
+            if (pomer != aktual_pomer_items)
+            {
+                int i = 1 - pomer;
+                foreach (Items_used Item in ItemColection_used)
+                {
+                    if (i == 1) { textBoxC1.Text = Item.name; textBoxD1.Text = Item.concentration.ToString(); }
+                    if (i == 2) { textBoxC2.Text = Item.name; textBoxD2.Text = Item.concentration.ToString(); }
+                    if (i == 3) { textBoxC3.Text = Item.name; textBoxD3.Text = Item.concentration.ToString(); }
+                    if (i == 4) { textBoxC4.Text = Item.name; textBoxD4.Text = Item.concentration.ToString(); }
+                    if (i == 5) { textBoxC5.Text = Item.name; textBoxD5.Text = Item.concentration.ToString(); }
+                    if (i == 6) { textBoxC6.Text = Item.name; textBoxD6.Text = Item.concentration.ToString(); }
+                    if (i == 7) { textBoxC7.Text = Item.name; textBoxD7.Text = Item.concentration.ToString(); }
+                    if (i == 8) { textBoxC8.Text = Item.name; textBoxD8.Text = Item.concentration.ToString(); }
+                    if (i == 9) { textBoxC9.Text = Item.name; textBoxD9.Text = Item.concentration.ToString(); }
+                    if (i == 10) { textBoxC10.Text = Item.name; textBoxD10.Text = Item.concentration.ToString(); }
+                    i++;
+                }
+            }
+            aktual_pomer_items = pomer;
+        }
+
+        double Convertor(string Str)
+        {
+            double dou = 0;
+            string d = "";
+            try
+            {
+                dou = Convert.ToDouble(Str);
+            }
+            catch
+            {
+                d = "";
+                foreach (char ch in Str)
+                {
+                    if (ch == ',')
+                    {
+                        d += ".";
+                    }
+                    else
+                    {
+                        d += ch.ToString();
+                    }
+                }
+                try
+                {
+                    dou = Convert.ToDouble(d);
+                }
+                catch
+                {
+                    d = "";
+                    foreach (char ch in Str)
+                    {
+                        if (ch == '.')
+                        {
+                            d += ",";
+                        }
+                        else
+                        {
+                            d += ch.ToString();
+                        }
+                    }
+                    try
+                    {
+                        dou = Convert.ToDouble(d);
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
+            return dou;
+        }
+
+        #endregion
+
+        #region textBox_textChange
+
+        private void textBoxB1_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Reactions_used reaction in ReactionColection_used)
+            {
+                if (reaction.name == textBoxA1.Text)
+                {
+                    reaction.rate_konstant = Convertor(textBoxB1.Text);
+                }
+            }
+        }
+
+        private void textBoxB2_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Reactions_used reaction in ReactionColection_used)
+            {
+                if (reaction.name == textBoxA2.Text)
+                {
+                    reaction.rate_konstant = Convertor(textBoxB2.Text);
+                }
+            }
+        }
+
+        private void textBoxB3_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Reactions_used reaction in ReactionColection_used)
+            {
+                if (reaction.name == textBoxA3.Text)
+                {
+                    reaction.rate_konstant = Convertor(textBoxB3.Text);
+                }
+            }
+        }
+
+        private void textBoxB4_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Reactions_used reaction in ReactionColection_used)
+            {
+                if (reaction.name == textBoxA4.Text)
+                {
+                    reaction.rate_konstant = Convertor(textBoxB4.Text);
+                }
+            }
+        }
+
+        private void textBoxB5_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Reactions_used reaction in ReactionColection_used)
+            {
+                if (reaction.name == textBoxA5.Text)
+                {
+                    reaction.rate_konstant = Convertor(textBoxB5.Text);
+                }
+            }
+        }
+
+        private void textBoxB6_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Reactions_used reaction in ReactionColection_used)
+            {
+                if (reaction.name == textBoxA6.Text)
+                {
+                    reaction.rate_konstant = Convertor(textBoxB6.Text);
+                }
+            }
+        }
+
+        private void textBoxB7_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Reactions_used reaction in ReactionColection_used)
+            {
+                if (reaction.name == textBoxA7.Text)
+                {
+                    reaction.rate_konstant = Convertor(textBoxB7.Text);
+                }
+            }
+        }
+
+        private void textBoxB8_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Reactions_used reaction in ReactionColection_used)
+            {
+                if (reaction.name == textBoxA8.Text)
+                {
+                    reaction.rate_konstant = Convertor(textBoxB8.Text);
+                }
+            }
+        }
+
+        private void textBoxB9_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Reactions_used reaction in ReactionColection_used)
+            {
+                if (reaction.name == textBoxA9.Text)
+                {
+                    reaction.rate_konstant = Convertor(textBoxB9.Text);
+                }
+            }
+        }
+
+        private void textBoxB10_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Reactions_used reaction in ReactionColection_used)
+            {
+                if (reaction.name == textBoxA10.Text)
+                {
+                    reaction.rate_konstant = Convertor(textBoxB10.Text);
+                }
+            }
+        }
+
+        private void textBoxD1_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Items_used Item in ItemColection_used)
+            {
+                if (Item.name == textBoxC1.Text)
+                {
+                    Item.concentration = Convertor(textBoxD1.Text);
+                }
+            }
+        }
+
+        private void textBoxD2_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Items_used Item in ItemColection_used)
+            {
+                if (Item.name == textBoxC2.Text)
+                {
+                    Item.concentration = Convertor(textBoxD2.Text);
+                }
+            }
+        }
+
+        private void textBoxD3_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Items_used Item in ItemColection_used)
+            {
+                if (Item.name == textBoxC3.Text)
+                {
+                    Item.concentration = Convertor(textBoxD3.Text);
+                }
+            }
+        }
+
+        private void textBoxD4_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Items_used Item in ItemColection_used)
+            {
+                if (Item.name == textBoxC4.Text)
+                {
+                    Item.concentration = Convertor(textBoxD4.Text);
+                }
+            }
+        }
+
+        private void textBoxD5_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Items_used Item in ItemColection_used)
+            {
+                if (Item.name == textBoxC5.Text)
+                {
+                    Item.concentration = Convertor(textBoxD5.Text);
+                }
+            }
+        }
+
+        private void textBoxD6_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Items_used Item in ItemColection_used)
+            {
+                if (Item.name == textBoxC6.Text)
+                {
+                    Item.concentration = Convertor(textBoxD6.Text);
+                }
+            }
+        }
+
+        private void textBoxD7_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Items_used Item in ItemColection_used)
+            {
+                if (Item.name == textBoxC7.Text)
+                {
+                    Item.concentration = Convertor(textBoxD7.Text);
+                }
+            }
+        }
+
+        private void textBoxD8_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Items_used Item in ItemColection_used)
+            {
+                if (Item.name == textBoxC8.Text)
+                {
+                    Item.concentration = Convertor(textBoxD8.Text);
+                }
+            }
+        }
+
+        private void textBoxD9_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Items_used Item in ItemColection_used)
+            {
+                if (Item.name == textBoxC9.Text)
+                {
+                    Item.concentration = Convertor(textBoxD9.Text);
+                }
+            }
+        }
+
+        private void textBoxD10_TextChanged(object sender, EventArgs e)
+        {
+            foreach (Items_used Item in ItemColection_used)
+            {
+                if (Item.name == textBoxC10.Text)
+                {
+                    Item.concentration = Convertor(textBoxD10.Text);
+                }
+            }
+        }
+
+        #endregion
+
+        private void label7_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox1.Checked)
+            {
+                comboBox1.Enabled = true;
+                textBox2.Enabled = true;
+                textBox3.Enabled = true;
+                comboBox1.Items.Clear();
+                foreach (Items_used Item in ItemColection_used)
+                {
+                    comboBox1.Items.Add(Item);
+                }
+            }
+            else
+            {
+                comboBox1.Text = "";
+                textBox2.Text = "";
+                textBox3.Text = "";
+                comboBox1.Enabled = false;
+                textBox2.Enabled = false;
+                textBox3.Enabled = false;
+            }
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            foreach (Items_used Item in ItemColection_used)
+            {
+                if (Item == (Items_used)comboBox1.SelectedItem)
+                {
+                    textBox1.Text = Item.concentration.ToString();
+                    textBox2.Text = Item.concentration.ToString();
+                }
+            }
+        }
+
+    }
+}

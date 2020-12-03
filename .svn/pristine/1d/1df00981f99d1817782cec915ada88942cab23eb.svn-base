@@ -1,0 +1,652 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.IO;
+using OxyPlot;
+using OxyPlot.WindowsForms;
+using OxyPlot.Axes;
+using OxyPlot.Series;
+
+namespace Numerical_calculator
+{
+    public partial class Results_KineticModel : Form
+    {
+        public string[] hlavicka_time { get; set; }
+        public string[] hlavicka_dist { get; set; }
+        public string[] hlavicka_din { get; set; }
+        public List<double[]> tabulka_time { get; set; }
+        public List<double[]> tabulka_dist { get; set; }
+        public List<List<double[]>> data_din { get; set; }
+
+        public string Popis_din { get; set; }
+        public bool dinamic_mode { get; set; }
+        public string name_din { get; set; }
+        double real_distance = 0, real_conc = 0;
+        private string Popis_X { get; set; }
+        private bool is_kinetick = true;
+        private bool is_time = true;
+
+        public Results_KineticModel()
+        {
+            InitializeComponent();
+            if (Main.results_kin)
+            {
+                radioButton_kinetic.Checked = true;
+                is_kinetick = true;
+            }
+            if (Main.results_dis)
+            {
+                button_t_x.Enabled = true;
+            }
+            if (Main.results_din)
+            {
+                radioButton_dinamic.Enabled = true;
+                textBox_conc.Enabled = true;
+                trackBar_conc.Enabled = true;
+            }
+        }
+
+        private void button_plot_Click(object sender, EventArgs e)
+        {
+            start_animation();
+        }      
+
+        public void start_animation()
+        {
+            if (radioButton_kinetic.Checked)
+            {
+                draw_kinetic(is_time);
+            }
+            if (radioButton_ms.Checked)
+            {
+                draw_ms(is_time);
+            }
+            if (radioButton_dinamic.Checked)
+            {
+                draw_dinamic(is_time);
+            }
+        }
+
+        private void draw_dinamic(bool Time)
+        {
+            if (Time) // previest vystup na cas
+            {
+                double mmry;
+                double dif = Main.Distance / Main.NumberOfSteps;
+                double cnt = 0;
+                double set_distance = (Main.Convertor(textBox_dist.Text) * Main.Ion_velociy) / 1000000; // set time (us) to cm
+                while (cnt <= Main.Distance)
+                {
+                    mmry = Math.Abs(set_distance - real_distance);
+                    if (Math.Abs(set_distance - cnt) < mmry)
+                    {
+                        real_distance = cnt;
+                    }
+                    cnt += dif;
+                    cnt = Math.Round(cnt, 12);
+                }
+                set_time(real_distance);
+                int i = 0;
+                PlotModel model = new PlotModel() { LegendSymbolLength = 24, IsLegendVisible = true };
+                model.LegendTitle = "Legend";
+                model.LegendOrientation = LegendOrientation.Horizontal;
+                model.LegendPlacement = LegendPlacement.Inside;
+                model.LegendPosition = LegendPosition.RightTop;
+                foreach (string str in hlavicka_din)
+                {
+                    if (checkedListBox1.CheckedItems.Contains(str))
+                    {
+                        FunctionSeries fs = new FunctionSeries();
+                        foreach (List<double[]> tabulka in data_din) // cez koncentracie
+                        {
+                            foreach (double[] dou in tabulka) // cez suradnicu
+                            {
+                                if (dou[dou.GetLength(0) - 2] == real_distance) // set distance
+                                {
+                                    double time_dou = (dou[(dou.GetLength(0) - 1)] * 1000000) / Main.Ion_velociy;
+                                    fs.Points.Add(new DataPoint(time_dou, dou[i]));
+                                }
+                            }
+                        }
+                        fs.Title = str;
+                        model.Series.Add(fs);
+                    }
+                    i++;
+                }
+                model.Axes.Add(new LinearAxis() { Position = AxisPosition.Bottom, Title = Popis_X, MajorGridlineStyle = LineStyle.Dash });
+                model.Axes.Add(new LogarithmicAxis() { Position = AxisPosition.Left, MajorGridlineStyle = LineStyle.Solid, MinorGridlineStyle = LineStyle.Dot, IntervalLength = 100, Title = "Concentration" });
+                plot1.Model = model;
+            }
+            else
+            {
+                double mmry;
+                double dif = Main.Distance / Main.NumberOfSteps;
+                double cnt = 0;
+                double set_distance = Main.Convertor(textBox_dist.Text); // set distance
+                while (cnt <= Main.Distance)
+                {
+                    mmry = Math.Abs(set_distance - real_distance);
+                    if (Math.Abs(set_distance - cnt) < mmry)
+                    {
+                        real_distance = cnt;
+                    }
+                    cnt += dif;
+                    cnt = Math.Round(cnt, 12);
+                }
+                set_distanc(real_distance);
+                int i = 0;
+                PlotModel model = new PlotModel() { LegendSymbolLength = 24, IsLegendVisible = true };
+                model.LegendTitle = "Legend";
+                model.LegendOrientation = LegendOrientation.Horizontal;
+                model.LegendPlacement = LegendPlacement.Inside;
+                model.LegendPosition = LegendPosition.RightTop;
+                foreach (string str in hlavicka_din)
+                {
+                    if (checkedListBox1.CheckedItems.Contains(str))
+                    {
+                        FunctionSeries fs = new FunctionSeries();
+                        foreach (List<double[]> tabulka in data_din) // cez koncentracie
+                        {
+                            foreach (double[] dou in tabulka) // cez suradnicu
+                            {
+                                if (dou[dou.GetLength(0) - 2] == real_distance) // set distance
+                                {
+                                    fs.Points.Add(new DataPoint(dou[(dou.GetLength(0) - 1)], dou[i]));
+                                }
+                            }
+                        }
+                        fs.Title = str;
+                        model.Series.Add(fs);
+                    }
+                    i++;
+                }
+                model.Axes.Add(new LinearAxis() { Position = AxisPosition.Bottom, Title = Popis_X, MajorGridlineStyle = LineStyle.Dash });
+                model.Axes.Add(new LogarithmicAxis() { Position = AxisPosition.Left, MajorGridlineStyle = LineStyle.Solid, MinorGridlineStyle = LineStyle.Dot, IntervalLength = 100, Title = "Concentration" });
+                plot1.Model = model;
+            }
+        }
+
+        private void draw_ms(bool Time)
+        {
+
+        }
+
+        private void draw_kinetic(bool Time)
+        {
+            if (Main.results_din == false) // koncentracia je nepodstatna
+            {
+                if (Time)
+                {
+                    int i = 0;
+                    PlotModel model = new PlotModel() { LegendSymbolLength = 24, IsLegendVisible = true };
+                    model.LegendTitle = "Legend";
+                    model.LegendOrientation = LegendOrientation.Horizontal;
+                    model.LegendPlacement = LegendPlacement.Inside;
+                    model.LegendPosition = LegendPosition.RightTop;
+                    foreach (string str in hlavicka_time)
+                    {
+                        if (checkedListBox1.CheckedItems.Contains(str))
+                        {
+                            FunctionSeries fs = new FunctionSeries();
+                            foreach (double[] dou in tabulka_time)
+                            {
+                                fs.Points.Add(new DataPoint(dou[(dou.GetLength(0) - 1)], dou[i]));
+                            }
+                            fs.Title = str;
+                            model.Series.Add(fs);
+                        }
+                        i++;
+                    }
+                    model.Axes.Add(new LinearAxis() { Position = AxisPosition.Bottom, Title = Popis_X, MajorGridlineStyle = LineStyle.Dash });
+                    model.Axes.Add(new LogarithmicAxis() { Position = AxisPosition.Left, MajorGridlineStyle = LineStyle.Solid, MinorGridlineStyle = LineStyle.Dot, IntervalLength = 100, Title = "Concentration" });
+                    plot1.Model = model;
+                }
+                else
+                {
+                    int i = 0;
+                    PlotModel model = new PlotModel() { LegendSymbolLength = 24, IsLegendVisible = true };
+                    model.LegendTitle = "Legend";
+                    model.LegendOrientation = LegendOrientation.Horizontal;
+                    model.LegendPlacement = LegendPlacement.Inside;
+                    model.LegendPosition = LegendPosition.RightTop;
+                    foreach (string str in hlavicka_dist)
+                    {
+                        if (checkedListBox1.CheckedItems.Contains(str))
+                        {
+                            FunctionSeries fs = new FunctionSeries();
+                            foreach (double[] dou in tabulka_dist)
+                            {
+                                fs.Points.Add(new DataPoint(dou[(dou.GetLength(0) - 1)], dou[i]));
+                            }
+                            fs.Title = str;
+                            model.Series.Add(fs);
+                        }
+                        i++;
+                    }
+                    model.Axes.Add(new LinearAxis() { Position = AxisPosition.Bottom, Title = Popis_X, MajorGridlineStyle = LineStyle.Dash });
+                    model.Axes.Add(new LogarithmicAxis() { Position = AxisPosition.Left, MajorGridlineStyle = LineStyle.Solid, MinorGridlineStyle = LineStyle.Dot, IntervalLength = 100, Title = "Concentration" });
+                    plot1.Model = model;
+                }
+            }
+            else
+            { // existuje moznoist menit v zavislosti od koncentracie
+                if (Time)
+                {
+                    double mmry;
+                    double step = (Main.conc_end - Main.conc_start) / (Main.conc_steps - 1);
+                    double cnt = Main.conc_start;
+                    double set_conc = Main.Convertor(textBox_conc.Text); // set distance
+                    while (cnt <= Main.conc_end)
+                    {
+                        mmry = Math.Abs(set_conc - real_conc);
+                        if (Math.Abs(set_conc - cnt) < mmry)
+                        {
+                            real_conc = cnt;
+                        }
+                        cnt += step;
+                        cnt = Math.Round(cnt, 10);
+                    }
+                    set_concentration(real_conc);
+                    int i = 0;
+                    PlotModel model = new PlotModel() { LegendSymbolLength = 24, IsLegendVisible = true };
+                    model.LegendTitle = "Legend";
+                    model.LegendOrientation = LegendOrientation.Horizontal;
+                    model.LegendPlacement = LegendPlacement.Inside;
+                    model.LegendPosition = LegendPosition.RightTop;
+                    foreach (string str in hlavicka_din)
+                    {
+                        if (checkedListBox1.CheckedItems.Contains(str))
+                        {
+                            FunctionSeries fs = new FunctionSeries();
+                            foreach (List<double[]> tabulka in data_din) // cez koncentracie
+                            {
+                                foreach (double[] dou in tabulka) // cez suradnicu
+                                {
+                                    if (dou[dou.GetLength(0) - 1] == real_conc) // set concentration
+                                    {
+                                        double time_dou = (dou[(dou.GetLength(0) - 2)] * 1000000) / Main.Ion_velociy;
+                                        fs.Points.Add(new DataPoint(time_dou, dou[i]));
+                                    }
+                                }
+                            }
+                            fs.Title = str;
+                            model.Series.Add(fs);
+                        }
+                        i++;
+                    }
+                    model.Axes.Add(new LinearAxis() { Position = AxisPosition.Bottom, Title = Popis_X, MajorGridlineStyle = LineStyle.Dash });
+                    model.Axes.Add(new LogarithmicAxis() { Position = AxisPosition.Left, MajorGridlineStyle = LineStyle.Solid, MinorGridlineStyle = LineStyle.Dot, IntervalLength = 100, Title = "Concentration" });
+                    plot1.Model = model;
+                }
+                else
+                {
+                    double mmry;
+                    double step = (Main.conc_end - Main.conc_start) / (Main.conc_steps - 1);
+                    double cnt = Main.conc_start;
+                    double set_conc = Main.Convertor(textBox_conc.Text); // set distance
+                    while (cnt <= Main.conc_end)
+                    {
+                        mmry = Math.Abs(set_conc - real_conc);
+                        if (Math.Abs(set_conc - cnt) < mmry)
+                        {
+                            real_conc = cnt;
+                        }
+                        cnt += step;
+                        cnt = Math.Round(cnt, 10);
+                    }
+                    set_concentration(real_conc);
+                    int i = 0;
+                    PlotModel model = new PlotModel() { LegendSymbolLength = 24, IsLegendVisible = true };
+                    model.LegendTitle = "Legend";
+                    model.LegendOrientation = LegendOrientation.Horizontal;
+                    model.LegendPlacement = LegendPlacement.Inside;
+                    model.LegendPosition = LegendPosition.RightTop;
+                    foreach (string str in hlavicka_din)
+                    {
+                        if (checkedListBox1.CheckedItems.Contains(str))
+                        {
+                            FunctionSeries fs = new FunctionSeries();
+                            foreach (List<double[]> tabulka in data_din) // cez koncentracie
+                            {
+                                foreach (double[] dou in tabulka) // cez suradnicu
+                                {
+                                    if (dou[dou.GetLength(0) - 1] == real_conc) // set concentration
+                                    {
+                                        fs.Points.Add(new DataPoint(dou[(dou.GetLength(0) - 2)], dou[i]));
+                                    }
+                                }
+                            }
+                            fs.Title = str;
+                            model.Series.Add(fs);
+                        }
+                        i++;
+                    }
+                    model.Axes.Add(new LinearAxis() { Position = AxisPosition.Bottom, Title = Popis_X, MajorGridlineStyle = LineStyle.Dash });
+                    model.Axes.Add(new LogarithmicAxis() { Position = AxisPosition.Left, MajorGridlineStyle = LineStyle.Solid, MinorGridlineStyle = LineStyle.Dot, IntervalLength = 100, Title = "Concentration" });
+                    plot1.Model = model;
+                }
+            }
+        }
+
+        private void button_export_Click(object sender, EventArgs e)
+        {
+            /*if (dinamic_mode)
+            {
+                saveFileDialog1.Title = "Output";
+                saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+                saveFileDialog1.FilterIndex = 2;
+                saveFileDialog1.RestoreDirectory = true;
+                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    int pocet_itemov = checkedListBox1.CheckedItems.Count + 1;
+                    List<double[]> export = new List<double[]>();
+                    string[] legenda = new string[pocet_itemov];
+                    legenda[0] = Popis_din;
+                    int k = 1;
+                    foreach (string str in hlavicka)
+                    {
+                        if (checkedListBox1.CheckedItems.Contains(str))
+                        {
+                            legenda[k] = str;
+                            k++;
+                        }
+                    }
+                    double[] export_item;
+                    foreach (List<double[]> Tabulka in data_din)
+                    {
+                        foreach (double[] dou in Tabulka)
+                        {
+                            if (dou[dou.GetLength(0) - 2] == real_distance)
+                            {
+                                int i = 0, j = 0;
+                                export_item = new double[pocet_itemov];
+                                export_item[0] = dou[dou.GetLength(0) - 1];
+                                foreach (string str in hlavicka)
+                                {
+                                    if (checkedListBox1.CheckedItems.Contains(str))
+                                    {
+                                        export_item[i + 1] = dou[j];
+                                        i++;
+                                    }
+                                    j++;
+                                }
+                            export.Add(export_item);
+                            }
+                        }
+                    }
+                    if (saveFileDialog1.FileName != "")
+                    {
+                        StreamWriter write = new StreamWriter(saveFileDialog1.OpenFile());
+                        write.Write(writer(legenda, export));
+                        write.Dispose();
+                        write.Close();
+                    }
+
+                }
+            }
+            else
+            {
+                saveFileDialog1.Title = "Output";
+                saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+                saveFileDialog1.FilterIndex = 2;
+                saveFileDialog1.RestoreDirectory = true;
+                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    int pocet_itemov = checkedListBox1.CheckedItems.Count + 1;
+                    List<double[]> export = new List<double[]>();
+                    string[] legenda = new string[pocet_itemov];
+                    legenda[0] = Popis_din;
+                    int k = 1;
+                    foreach (string str in hlavicka)
+                    {
+                        if (checkedListBox1.CheckedItems.Contains(str))
+                        {
+                            legenda[k] = str;
+                            k++;
+                        }
+                    }
+                    double[] export_item;
+                    foreach (double[] dou in tabulka)
+                    {
+                        int i = 0, j = 0;
+                        export_item = new double[pocet_itemov];
+                        export_item[0] = dou[dou.GetLength(0) - 1];
+                        foreach (string str in hlavicka)
+                        {
+                            if (checkedListBox1.CheckedItems.Contains(str))
+                            {
+                                export_item[i + 1] = dou[j];
+                                i++;
+                            }
+                            j++;
+                        }
+                        export.Add(export_item);
+                    }
+                    if (saveFileDialog1.FileName != "")
+                    {
+                        StreamWriter write = new StreamWriter(saveFileDialog1.OpenFile());
+                        write.Write(writer(legenda, export));
+                        write.Dispose();
+                        write.Close();
+                    }
+
+                }
+            }*/
+        }
+
+        public void iniciate()
+        {
+            checkedListBox1.Items.Clear();
+            if (radioButton_kinetic.Checked)
+            {
+                foreach (string str in hlavicka_time)
+                {
+                    checkedListBox1.Items.Add(str, true);
+                }
+            }
+            if (radioButton_ms.Checked)
+            {
+                foreach (string str in hlavicka_dist)
+                {
+                    checkedListBox1.Items.Add(str, true);
+                }
+            }
+            if (radioButton_dinamic.Checked)
+            {
+                foreach (string str in hlavicka_din)
+                {
+                    checkedListBox1.Items.Add(str, true);
+                }
+            }
+        }
+
+        string writer(string[] Hlavicka, List<double[]> Tabulka)
+        {
+            string writer = "";
+            foreach (string str in Hlavicka)
+            {
+                writer = writer + str + "\t";
+            }
+            writer = writer + "\r\n";
+            foreach (double[] dou in Tabulka)
+            {
+                foreach (double cislo in dou)
+                {
+                    writer = writer + cislo.ToString() + "\t";
+                }
+                writer = writer + "\r\n";
+            }
+            return writer;
+        }
+
+        private void radioButton_kinetic_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton_kinetic.Checked)
+            {
+                textBox_dist.Enabled = false;
+                trackBar_dist.Enabled = false;
+                button_ms.Enabled = false;
+                if (Main.results_din)
+                {
+                    textBox_conc.Enabled = true;
+                    trackBar_conc.Enabled = true;
+                }
+                // draw kinetic
+                Popis_X = "Time [us]";
+                iniciate();
+                start_animation();
+
+            }
+        }
+
+        private void radioButton_ms_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton_ms.Checked)
+            {
+                textBox_dist.Enabled = true;
+                trackBar_dist.Enabled = true;
+                button_ms.Enabled = true;
+                if (Main.results_din)
+                {
+                    textBox_conc.Enabled = true;
+                    trackBar_conc.Enabled = true;
+                }
+                // draw ms
+                Popis_X = "m/z";
+                iniciate();
+                start_animation();
+            }
+        }
+
+        private void radioButton_dinamic_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton_dinamic.Checked)
+            {
+                textBox_dist.Enabled = true;
+                trackBar_dist.Enabled = true;
+                textBox_conc.Enabled = false;
+                trackBar_conc.Enabled = false;
+                button_ms.Enabled = false;
+                // draw din
+                Popis_X = "Concentration [" + name_din  + "]";
+                iniciate();
+                start_animation();
+            }
+        }
+
+        private void button_t_x_Click(object sender, EventArgs e)
+        {
+            if (is_time)
+            {
+                is_time = false;
+                if (Popis_X == "Time [us]")
+                {
+                    Popis_X = "Distance [cm]";
+                }
+                set_distanc((time() * Main.Ion_velociy) / 1000000 );
+                button_t_x.Text = "x --> t";
+            }
+            else
+            {
+                is_time = true;
+                if (Popis_X == "Distance [cm]")
+                {
+                    Popis_X = "Time [us]";
+                }
+                set_time((distance() * 1000000) / Main.Ion_velociy);
+                button_t_x.Text = "t --> x";
+            }
+            start_animation();
+        }
+
+        private void set_concentration(double Concentration)
+        {
+
+        }
+
+        private double concentration()
+        {
+            double Concentration = 0;
+
+            return Concentration;
+        }
+
+        private void set_time(double Time)
+        {
+
+        }
+
+        private double time()
+        {
+            double Time = 0;
+
+            return Time;
+        }
+
+        private void set_distanc(double Distance)
+        {
+
+        }
+
+        private double distance()
+        {
+            double Distance = 0;
+
+            return Distance;
+        }
+    }
+}
+
+
+/* public void start_animation_din()
+       {
+           double mmry;
+           double dif = Main.Distance / Main.NumberOfSteps;
+           double cnt = 0;
+           double set_distance = Main.Convertor(textBox_dist.Text);
+           while(cnt <= Main.Distance)
+           {
+               mmry = Math.Abs(set_distance - real_distance);
+               if( Math.Abs(set_distance - cnt) < mmry)
+               {
+                   real_distance = cnt;               
+               }
+               cnt += dif;
+               cnt = Math.Round(cnt,12);
+           }
+           int i = 0;
+           PlotModel model = new PlotModel() { LegendSymbolLength = 24, IsLegendVisible = true };
+           model.LegendTitle = "Legend";
+           model.LegendOrientation = LegendOrientation.Horizontal;
+           model.LegendPlacement = LegendPlacement.Inside;
+           model.LegendPosition = LegendPosition.RightTop;
+           foreach (string str in hlavicka)
+           {
+               if (checkedListBox1.CheckedItems.Contains(str))
+               {
+                   FunctionSeries fs = new FunctionSeries();
+                   foreach (List<double[]> tabulka in data_din) // cez koncentracie
+                   {
+                       foreach (double[] dou in tabulka) // cez suradnicu
+                       {
+                           if (dou[dou.GetLength(0) - 2] == real_distance)
+                           {
+                               fs.Points.Add(new DataPoint(dou[(dou.GetLength(0) - 1)], dou[i]));
+                           }
+                       }
+                   }
+                   fs.Title = str;
+                   model.Series.Add(fs);
+               }
+               i++;
+           }
+           model.Axes.Add(new LinearAxis() { Position = AxisPosition.Bottom, Title = Popis_X, MajorGridlineStyle = LineStyle.Dash });
+           model.Axes.Add(new LogarithmicAxis() { Position = AxisPosition.Left, MajorGridlineStyle = LineStyle.Solid, MinorGridlineStyle = LineStyle.Dot, IntervalLength = 100, Title = "Concentration" });
+           plot1.Model = model;
+       }*/

@@ -20,11 +20,10 @@ using System.Runtime.Serialization.Formatters.Binary;
 namespace KIMI_Sim
 {
     /// <summary>
-    /// Racapitulacia parametrov
-    /// Umoznenie zmeny / prip doplnenia pociatocnych hodnot, bez zmeny zadania a ulozenia
-    /// Pripravenie vstupu pre Calculation_control
-    /// 
-    /// obojstranne reakcie musia uz byt rozdelene na dve jednostranne
+    /// Recapitulation of parameters
+    /// save changes/ modification on initial values, wintout changing of assignment
+    /// output preparation for Calculation_control
+    /// both-way reactions has to be splited into two one-side reactions
     /// </summary>
     public partial class Calculation_control : Form
     {
@@ -2648,14 +2647,14 @@ namespace KIMI_Sim
                         }
                         if ((is_con_din && !is_ele_din) || (!is_con_din && is_ele_din))
                         {
-                            foreach (List<double[,]> tabulka in data_D2) // cez koncentracie
+                            foreach (List<double[,]> tabulka in data_D2) // concentraion 
                             {
-                                foreach (double[,] dou in tabulka) // cez suradnicu
+                                foreach (double[,] dou in tabulka) // coordinates
                                 {
                                     double comparation_paramenter = 0;
                                     if (is_con_din)
                                     {
-                                        comparation_paramenter = _concentration; // set concentration
+                                        comparation_paramenter = _concentration; // concentraion
                                     }
                                     if (is_ele_din)
                                     {
@@ -2674,9 +2673,9 @@ namespace KIMI_Sim
                         {
                             foreach (List<List<double[,]>> tabulka_2D in data_D3)
                             {
-                                foreach (List<double[,]> tabulka in tabulka_2D) // cez koncentracie
+                                foreach (List<double[,]> tabulka in tabulka_2D) // concentraion
                                 {
-                                    foreach (double[,] dou in tabulka) // cez suradnicu
+                                    foreach (double[,] dou in tabulka) // coordinates
                                     {
                                         if ((dou[dou.GetLength(0) - 2, r] == _concentration) && (dou[dou.GetLength(0) - 1, r] == _E_field))
                                         {
@@ -3183,9 +3182,9 @@ namespace KIMI_Sim
                     {
                         foreach (List<List<double[,]>> tabulka_2d in data_D3)
                         {
-                            foreach (List<double[,]> tabulka in tabulka_2d) // cez koncentracie
+                            foreach (List<double[,]> tabulka in tabulka_2d) // concentration
                             {
-                                foreach (double[,] dou in tabulka) // cez suradnicu
+                                foreach (double[,] dou in tabulka) //  coordinates
                                 {
                                     if (type)
                                     {
@@ -3195,7 +3194,7 @@ namespace KIMI_Sim
                                             {
                                                 if (Load_type == 1)
                                                 {
-                                                    // upravenie x pre profile 3 merania
+                                                    //  x modification for profile 3 measurements
                                                     int c = 0;
                                                     double suma = 0;
                                                     double H3O = 0;
@@ -3213,7 +3212,7 @@ namespace KIMI_Sim
                                                     }
                                                     double X_coord = -1.0 * Math.Log((H3O / suma), Math.E);
 
-                                                    if (Time) // previest vystup na cas
+                                                    if (Time) // to time coordinates
                                                     {
                                                         double time_dou = (dou[(dou.GetLength(0) - 2), r] * 1000000) / Main.Ion_velociy;
                                                         fs.Points.Add(new DataPoint(X_coord, dou[i, r]));
@@ -3257,7 +3256,7 @@ namespace KIMI_Sim
                                                 }
                                                 else
                                                 {
-                                                    if (Time) // previest vystup na cas
+                                                    if (Time) // to time coordinates
                                                     {
                                                         double time_dou = (dou[(dou.GetLength(0) - 2), r] * 1000000) / Main.Ion_velociy;
                                                         fs.Points.Add(new DataPoint(dou[(dou.GetLength(0) - 2), r], dou[i, r]));
@@ -3308,7 +3307,7 @@ namespace KIMI_Sim
                                         {
                                             if (dou[dou.GetLength(0) - 3, r] == _distance) // set distance
                                             {
-                                                if (Time) // previest vystup na cas
+                                                if (Time) // to time coordinates
                                                 {
                                                     double time_dou = (dou[(dou.GetLength(0) - 1), r] * 1000000) / Main.Ion_velociy;
                                                     fs.Points.Add(new DataPoint(dou[(dou.GetLength(0) - 1), r], dou[i, r]));
@@ -3358,9 +3357,9 @@ namespace KIMI_Sim
                     }
                     if ((is_ele_din && !is_con_din) || (!is_ele_din && is_con_din)) // 2D pole
                     {
-                        foreach (List<double[,]> tabulka in data_D2) // cez koncentracie
+                        foreach (List<double[,]> tabulka in data_D2) // concentration
                         {
-                            foreach (double[,] dou in tabulka) // cez suradnicu
+                            foreach (double[,] dou in tabulka) // coordinates
                             {
                                 if (type) // concentration
                                 {
@@ -3368,7 +3367,7 @@ namespace KIMI_Sim
                                     {
                                         if (Load_type == 1)
                                         {
-                                            // upravenie x pre profile 3 merania
+                                            //  x modification for profile 3
                                             int c = 0;
                                             double suma = 0;
                                             double H3O = 0;
@@ -3430,7 +3429,7 @@ namespace KIMI_Sim
                                         }
                                         else
                                         {
-                                            if (Time) // previest vystup na cas
+                                            if (Time) // to time coordinates
                                             {
                                                 double time_dou = (dou[(dou.GetLength(0) - 1), r] * 1000000) / Main.Ion_velociy;
                                                 fs.Points.Add(new DataPoint(dou[(dou.GetLength(0) - 1), r], dou[i, r]));
@@ -3478,7 +3477,7 @@ namespace KIMI_Sim
                                 {
                                     if (dou[dou.GetLength(0) - 2, r] == _distance) // set distance
                                     {
-                                        if (Time) // previest vystup na cas
+                                        if (Time) // to time coordinates
                                         {
                                             double time_dou = (dou[(dou.GetLength(0) - 1), r] * 1000000) / Main.Ion_velociy;
                                             fs.Points.Add(new DataPoint(dou[(dou.GetLength(0) - 1), r], dou[i, r]));

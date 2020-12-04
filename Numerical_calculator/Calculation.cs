@@ -15,9 +15,9 @@ namespace KIMI_Sim
 
         public void calculate_step(List<Equation> equation, List<Konstants> konstants, List<Premenna> premenna)
         {
-            // pre kazdu rovnicu vypocitaj nultu, prvu druhu a tretiu konstantu postupne
+            // for each equation calculate zero, first, second and third constatn one by one
 
-            foreach (Equation eq in equation) // pocitaj nulty koeficient
+            foreach (Equation eq in equation) // calcuate zero coeficient
             {
                 double vysledok = 0;
                 foreach (Equation_element partial_eq in eq.equation)
@@ -59,7 +59,7 @@ namespace KIMI_Sim
                 }
                 eq.koeficient_0 = vysledok; // f(x,y,t)*dt             
             }
-            foreach (Equation eq in equation) // pocitaj prvy koeficient
+            foreach (Equation eq in equation) // calculate first coeficient
             {
                 double vysledok = 0;
                 foreach (Equation_element partial_eq in eq.equation)
@@ -106,7 +106,7 @@ namespace KIMI_Sim
                 }
                 eq.koeficient_1 = vysledok; // f(x,y,t)*dt   
             }
-            foreach (Equation eq in equation) // pocitaj druhy koeficient
+            foreach (Equation eq in equation) // calculate second coeficient
             {
                 double vysledok = 0;
                 foreach (Equation_element partial_eq in eq.equation)
@@ -153,7 +153,7 @@ namespace KIMI_Sim
                 }
                 eq.koeficient_2 = vysledok; // f(x,y,t)*dt   
             }
-            foreach (Equation eq in equation) // pocitaj treti koeficient
+            foreach (Equation eq in equation) // calculate third coeficient
             {
                 double vysledok = 0;
                 foreach (Equation_element partial_eq in eq.equation)

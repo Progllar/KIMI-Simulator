@@ -55,7 +55,7 @@ namespace KIMI_Sim
             _formula = Item.formula;
             _s_name = Item.s_name;
             _concentration = Item.concentration;
-            _mobility = Item.mobility;
+            _mobility = new_function(Item.mobility);
             _mass = Item.mass;
             _diffusion = Item.diffusion;
             _cation = Item.cation;
@@ -71,6 +71,55 @@ namespace KIMI_Sim
             _mass = Item_used.mass;
             _diffusion = Item_used.diffusion;
             _cation = Item_used.cation;
+        }
+
+        private rate_functions new_function(rate_functions old_function)
+        {
+            rate_functions _new_function = new rate_functions();
+            if (old_function != null)
+            {
+                if (old_function.name == "A")
+                {
+                    _new_function = new Constant(old_function);
+                }
+                if (old_function.name == "A + B*(E/N)")
+                {
+                    _new_function = new Linear(old_function);
+                }
+                if (old_function.name == "A + B*(E/N) + C*(E/N)^2")
+                {
+                    _new_function = new Quadratic(old_function);
+                }
+                if (old_function.name == "A + B*(E/N) + C*(E/N)^2 + D*(E/N)^3")
+                {
+                    _new_function = new Cubic(old_function);
+                }
+                if (old_function.name == "A*EXP(B*(E/N))")
+                {
+                    _new_function = new Exponencional(old_function);
+                }
+                if (old_function.name == "A*EXP(B/Er(E/N))")
+                {
+                    _new_function = new Exponencional2(old_function);
+                }
+                if (old_function.name == "C + A*EXP(B/(E/N))")
+                {
+                    _new_function = new Exponencional3(old_function);
+                }
+                if (old_function.name == "A/(1+(E/N))^B")
+                {
+                    _new_function = new Exponencional4(old_function);
+                }
+                if (old_function.name == "A*EXP(B*(E/N)^2)")
+                {
+                    _new_function = new Exponencional5(old_function);
+                }
+                if (old_function.name == "A/Er(E/N)^B")
+                {
+                    _new_function = new Association(old_function);
+                }
+            }
+            return _new_function;
         }
     }
 
@@ -98,6 +147,15 @@ namespace KIMI_Sim
         public override double diffusion     { get { return _item.diffusion; } }
 
         public Items_used() { }
+
+        public Items_used(Items_used items_used)
+        {
+            _item = new Items(items_used.GetItem());
+            _box_number = items_used.box_number;
+            _relative_x = items_used.relative_x;
+            _relative_y = items_used.relative_y;
+            _used_control = items_used.used_control;
+        }
 
         public Items_used(Items Item, int Box_Number, int Relative_x, int Relative_y, bool Used_control)
         {
@@ -168,11 +226,11 @@ namespace KIMI_Sim
         public Reactions(Reactions Reaction)
         {
             _name = Reaction.name;
-            _rate_konstant = Reaction.rate_konstant;
-            _rate_konstant_ = Reaction.rate_konstant_;
+            _rate_konstant = new_function(Reaction.rate_konstant);
+            _rate_konstant_ = new_function(Reaction.rate_konstant_);
             _reaction_type = Reaction.reaction_type;
-            _item_A = Reaction.item_A;
-            _item_B = Reaction.item_B;
+            _item_A = new Items(Reaction.item_A);
+            _item_B = new Items(Reaction.item_B);
             _neutrals_A = Reaction.neutrals_A;
             _neutrals_B = Reaction.neutrals_B;
         }
@@ -187,6 +245,55 @@ namespace KIMI_Sim
             _item_B = Item_B;
             _neutrals_A = Neutrals_A;
             _neutrals_B = Neutrals_B;
+        }
+
+        private rate_functions new_function(rate_functions old_function)
+        {
+            rate_functions _new_function = new rate_functions();
+            if (old_function != null)
+            {
+                if (old_function.name == "A")
+                {
+                    _new_function = new Constant(old_function);
+                }
+                if (old_function.name == "A + B*(E/N)")
+                {
+                    _new_function = new Linear(old_function);
+                }
+                if (old_function.name == "A + B*(E/N) + C*(E/N)^2")
+                {
+                    _new_function = new Quadratic(old_function);
+                }
+                if (old_function.name == "A + B*(E/N) + C*(E/N)^2 + D*(E/N)^3")
+                {
+                    _new_function = new Cubic(old_function);
+                }
+                if (old_function.name == "A*EXP(B*(E/N))")
+                {
+                    _new_function = new Exponencional(old_function);
+                }
+                if (old_function.name == "A*EXP(B/Er(E/N))")
+                {
+                    _new_function = new Exponencional2(old_function);
+                }
+                if (old_function.name == "C + A*EXP(B/(E/N))")
+                {
+                    _new_function = new Exponencional3(old_function);
+                }
+                if (old_function.name == "A/(1+(E/N))^B")
+                {
+                    _new_function = new Exponencional4(old_function);
+                }
+                if (old_function.name == "A*EXP(B*(E/N)^2)")
+                {
+                    _new_function = new Exponencional5(old_function);
+                }
+                if (old_function.name == "A/Er(E/N)^B")
+                {
+                    _new_function = new Association(old_function);
+                }
+            }
+            return _new_function;
         }
     }
 
@@ -270,6 +377,19 @@ namespace KIMI_Sim
 
         public Reactions_used() { }
 
+        public Reactions_used(Reactions_used reactions_used)
+        {
+            _reaction = new Reactions(reactions_used.GetReaction());
+            _pointA = reactions_used.pointA;
+            _item_number_A = reactions_used.item_number_A;
+            _pointB = reactions_used.pointB;
+            _item_number_B = reactions_used.item_number_B;
+            _item_A = new Items_used(reactions_used.item_used_A);
+            _item_B = new Items_used(reactions_used.item_used_B);
+            _neutrals_A = new List<Items_used>(reactions_used.neutrals_used_A);
+            _neutrals_B = new List<Items_used>(reactions_used.neutrals_used_B);
+        }
+
         public Reactions_used(Reactions Reaction, Point PointA, int Item_number_A, Point PointB, int Item_number_B, Items_used Item_A, Items_used Item_B, List<Items_used> Neutrals_A, List<Items_used> Neutrals_B)
         {
             _reaction = Reaction;
@@ -290,7 +410,7 @@ namespace KIMI_Sim
     }
 
     [Serializable]
-    public class rate_functions                        
+    public class rate_functions 
      {
         private string _name = "";
         private int _dimension = 0;
@@ -306,6 +426,8 @@ namespace KIMI_Sim
         private double _B_int;
         private double _C_int;
         private double _D_int;
+        // _mass_element and _reactant_mobility are special parameters used only for calcualtion of collision energy for specific type of rate constatnt
+        // if used, they are estimated durig the data_trasformation in calculation_control for every calculation and thus dont haveto be memorized in data_storage
         private double _mass_element;
         private rate_functions _reactant_mobility;
 
@@ -341,20 +463,448 @@ namespace KIMI_Sim
 
         public rate_functions()
         { }
+        /*
+        public rate_functions(rate_functions Rate_function) // create a copy of rate function from another rate function
+        {
+            if (Rate_function != null)
+            {
+                _name = Rate_function.name;
+                _dimension = Rate_function.dimension;
+                _A = Rate_function.A;
+                _A_lock = Rate_function.A_lock;
+                _B = Rate_function.B;
+                _B_lock = Rate_function.B_lock;
+                _C = Rate_function.C;
+                _C_lock = Rate_function.C_lock;
+                _D = Rate_function.D;
+                _D_lock = Rate_function.C_lock;
+                _A_int = Rate_function.A_int;
+                _B_int = Rate_function.B_int;
+                _C_int = Rate_function.C_int;
+                _D_int = Rate_function.D_int;
+            }
+        }*/
 
         public rate_functions(string Name, string Representation)
         {
             if (Name == "A")
             {
-
+                try
+                {
+                    _name = Name;
+                    A = Main.Convertor(Representation);
+                }
+                catch
+                { }
             }
-            if (Name == "A + B*E")
+            if (Name == "A + B*(E/N)")
             {
-
+                try
+                {
+                    _name = Name;
+                    double new_a = 0;
+                    double new_b = 0;
+                    string data = "";
+                    foreach (char ch in Representation)
+                    {
+                        if (ch == '+')
+                        {
+                            new_a = Main.Convertor(data);
+                            data = "";
+                        }
+                        else
+                        {
+                            if (ch == '*')
+                            {
+                                new_b = Main.Convertor(data);
+                            }
+                            else
+                            {
+                                data += ch.ToString();
+                            }
+                        }
+                    }
+                    A = new_a;
+                    B = new_b;
+                }
+                catch
+                { }
             }
-            if (Name == "A*EXP(B*E)")
+            if (Name == "A + B*(E/N) + C*(E/N)^2")
             {
-
+                try
+                {
+                    _name = Name;
+                    double new_a = 0;
+                    bool a_done = false;
+                    double new_b = 0;
+                    bool b_done = false;
+                    double new_c = 0;
+                    string data = "";
+                    foreach (char ch in Representation)
+                    {
+                        if (ch == '+')
+                        {
+                            if (!a_done)
+                            {
+                                new_a = Main.Convertor(data);
+                                data = "";
+                                a_done = true;
+                            }
+                            else
+                            {
+                                data = "";
+                            }
+                        }
+                        else
+                        {
+                            if (ch == '*')
+                            {
+                                if (!b_done)
+                                {
+                                    new_b = Main.Convertor(data);
+                                    data = "";
+                                    b_done = true;
+                                }
+                                else
+                                {
+                                    new_c = Main.Convertor(data);
+                                }
+                            }
+                            else
+                            {
+                                data += ch.ToString();
+                            }
+                        }
+                    }
+                    A = new_a;
+                    B = new_b;
+                    C = new_c;
+                }
+                catch
+                { }
+            }
+            if (Name == "A + B*(E/N) + C*(E/N)^2 + D*(E/N)^3")
+            {
+                try
+                {
+                    _name = Name;
+                    double new_a = 0;
+                    bool a_done = false;
+                    double new_b = 0;
+                    bool b_done = false;
+                    double new_c = 0;
+                    bool c_done = false;
+                    double new_d = 0;
+                    string data = "";
+                    foreach (char ch in Representation)
+                    {
+                        if (ch == '+')
+                        {
+                            if (!a_done)
+                            {
+                                new_a = Main.Convertor(data);
+                                data = "";
+                                a_done = true;
+                            }
+                            else
+                            {
+                                data = "";
+                            }
+                        }
+                        else
+                        {
+                            if (ch == '*')
+                            {
+                                if (!b_done)
+                                {
+                                    new_b = Main.Convertor(data);
+                                    data = "";
+                                    b_done = true;
+                                }
+                                else
+                                {
+                                    if (!c_done)
+                                    {
+                                        new_c = Main.Convertor(data);
+                                        data = "";
+                                        c_done = true;
+                                    }
+                                    else
+                                    {
+                                        new_d = Main.Convertor(data);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                data += ch.ToString();
+                            }
+                        }
+                    }
+                    A = new_a;
+                    B = new_b;
+                    C = new_c;
+                    D = new_d;
+                }
+                catch
+                { }
+            }
+            if (Name == "A*EXP(B*(E/N))")
+            {
+                try
+                {
+                    _name = Name;
+                    double new_a = 0;
+                    double new_b = 0;
+                    string data = "";
+                    short v = 0;
+                    foreach (char ch in Representation)
+                    {
+                        if (ch == '*' && v == 0)
+                        {
+                            new_a = Main.Convertor(data);
+                            data = "";
+                            v++;
+                        }
+                        else
+                        {
+                            if (ch == '[')
+                            {
+                                data = "";
+                            }
+                            else
+                            {
+                                if (ch == '*')
+                                {
+                                    new_b = Main.Convertor(data);
+                                }
+                                else
+                                {
+                                    data += ch.ToString();
+                                }
+                            }
+                        }
+                    }
+                    A = new_a;
+                    B = new_b;
+                }
+                catch
+                {
+                }
+            }
+            if (Name == "A*EXP(B/Er(E/N))")
+            {
+                try
+                {
+                    _name = Name;
+                    double new_a = 0;
+                    double new_b = 0;
+                    string data = "";
+                    short v = 0;
+                    foreach (char ch in Representation)
+                    {
+                        if (ch == '*' && v == 0)
+                        {
+                            new_a = Main.Convertor(data);
+                            data = "";
+                            v++;
+                        }
+                        else
+                        {
+                            if (ch == '[')
+                            {
+                                data = "";
+                            }
+                            else
+                            {
+                                if (ch == '/')
+                                {
+                                    if (new_b == 0)
+                                    {
+                                        new_b = Main.Convertor(data);
+                                    }
+                                }
+                                else
+                                {
+                                    data += ch.ToString();
+                                }
+                            }
+                        }
+                    }
+                    A = new_a;
+                    B = new_b;
+                }
+                catch
+                {
+                }
+            }
+            if (Name == "C + A*EXP(B/(E/N))")
+            {
+                try
+                {
+                    _name = Name;
+                    double new_a = 0;
+                    double new_b = 0;
+                    double new_c = 0;
+                    string data = "";
+                    short v = 0;
+                    foreach (char ch in Representation)
+                    {
+                        if (ch == '+' && v == 0)
+                        {
+                            new_c = Main.Convertor(data);
+                            data = "";
+                            v++;
+                        }
+                        else
+                        {
+                            if (ch == '*' && v == 1)
+                            {
+                                new_a = Main.Convertor(data);
+                                data = "";
+                                v++;
+                            }
+                            else
+                            {
+                                if (ch == '[')
+                                {
+                                    data = "";
+                                }
+                                else
+                                {
+                                    if (ch == '/')
+                                    {
+                                        new_b = Main.Convertor(data);
+                                    }
+                                    else
+                                    {
+                                        data += ch.ToString();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    A = new_a;
+                    B = new_b;
+                    C = new_c;
+                }
+                catch
+                {
+                }
+            }
+            if (Name == "A/(1+(E/N))^B")
+            {
+                try
+                {
+                    _name = Name;
+                    double new_a = 0;
+                    string data = "";
+                    short v = 0;
+                    foreach (char ch in Representation)
+                    {
+                        if (ch == '/' && v == 0)
+                        {
+                            new_a = Main.Convertor(data);
+                            data = "";
+                            v++;
+                        }
+                        else
+                        {
+                            if (ch == '^')
+                            {
+                                data = "";
+                            }
+                            else
+                            {
+                                data += ch.ToString();
+                            }
+                        }
+                    }
+                    A = new_a;
+                    B = Main.Convertor(data);
+                }
+                catch
+                {
+                }
+            }
+            if (Name == "A*EXP(B*(E/N)^2)")
+            {
+                try
+                {
+                    _name = Name;
+                    double new_a = 0;
+                    double new_b = 0;
+                    string data = "";
+                    short v = 0;
+                    foreach (char ch in Representation)
+                    {
+                        if (ch == '*' && v == 0)
+                        {
+                            new_a = Main.Convertor(data);
+                            data = "";
+                            v++;
+                        }
+                        else
+                        {
+                            if (ch == '[')
+                            {
+                                data = "";
+                            }
+                            else
+                            {
+                                if (ch == '*')
+                                {
+                                    new_b = Main.Convertor(data);
+                                }
+                                else
+                                {
+                                    data += ch.ToString();
+                                }
+                            }
+                        }
+                    }
+                    A = new_a;
+                    B = new_b;
+                }
+                catch
+                {
+                }
+            }
+            if (Name == "A/Er(E/N)^B")
+            {
+                try
+                {
+                    _name = Name;
+                    double new_a = 0;
+                    string data = "";
+                    short v = 0;
+                    foreach (char ch in Representation)
+                    {
+                        if (ch == '/' && v == 0)
+                        {
+                            new_a = Main.Convertor(data);
+                            data = "";
+                            v++;
+                        }
+                        else
+                        {
+                            if (ch == '^')
+                            {
+                                data = "";
+                            }
+                            else
+                            {
+                                data += ch.ToString();
+                            }
+                        }
+                    }
+                    A = new_a;
+                    B = Main.Convertor(data);
+                }
+                catch
+                {
+                }
             }
         }
 
@@ -779,6 +1329,7 @@ namespace KIMI_Sim
         private int _dimension = 0;
         private double _A;
         private bool _A_lock;
+        private double _A_int;
 
         public override string name { get { return _name; } }
         public override int dimension { get { return _dimension; } }
@@ -786,6 +1337,7 @@ namespace KIMI_Sim
         public override string representation { get { return _A.ToString(); } }
         public override double A { get { return _A; } set { _A = value; } }
         public override bool A_lock { get { return _A_lock; } set { _A_lock = value; } }
+        public double A_int { get { return _A_int; } set { _A_int = value; } }
 
         public override string ToString()
         {
@@ -802,10 +1354,24 @@ namespace KIMI_Sim
         public Constant()
         { }
 
+        public Constant(Constant constant)
+        {
+            _A = constant.A;
+            _A_lock = constant.A_lock;
+            _A_int = constant.A_int;
+        }
+        public Constant(rate_functions constant)
+        {
+            _A = constant.A;
+            _A_lock = constant.A_lock;
+            _A_int = constant.A_int;
+        }
+
         public Constant(double A, bool A_lock)
         {
             _A = A;
             _A_lock = A_lock;
+            _A_int = A;
         }
 
         public override double Value(double E)
@@ -852,6 +1418,26 @@ namespace KIMI_Sim
         public Linear()
         { }
 
+        public Linear(Linear linear)
+        {
+            _A = linear.A;
+            _B = linear.B;
+            _A_lock = linear.A_lock;
+            _B_lock = linear.B_lock;
+            _A_int = linear.A_int;
+            _B_int = linear.B_int;
+        }
+
+        public Linear(rate_functions linear)
+        {
+            _A = linear.A;
+            _B = linear.B;
+            _A_lock = linear.A_lock;
+            _B_lock = linear.B_lock;
+            _A_int = linear.A_int;
+            _B_int = linear.B_int;
+        }
+
         public Linear(double A, double B, bool A_lock, bool B_lock)
         {
             _A = A;
@@ -882,6 +1468,7 @@ namespace KIMI_Sim
         private bool _C_lock;
         private double _A_int;
         private double _B_int;
+        private double _C_int;
 
         public override string name { get { return _name; } }
         public override int dimension { get { return _dimension; } }
@@ -893,6 +1480,10 @@ namespace KIMI_Sim
         public override bool B_lock { get { return _B_lock; } set { _B_lock = value; } }
         public override double C { get { return _C; } set { _C = value; } }
         public override bool C_lock { get { return _C_lock; } set { _C_lock = value; } }
+        public double A_int { get { return _A_int; } set { _A_int = value; } }
+        public double B_int { get { return _B_int; } set { _B_int = value; } }
+        public double C_int { get { return _C_int; } set { _C_int = value; } }
+
 
         public override string ToString()
         {
@@ -908,6 +1499,30 @@ namespace KIMI_Sim
 
         public Quadratic()
         { }
+        public Quadratic(Quadratic quadratic)
+        {
+            _A = quadratic.A;
+            _B = quadratic.B;
+            _C = quadratic.C;
+            _A_lock = quadratic.A_lock;
+            _B_lock = quadratic.B_lock;
+            _C_lock = quadratic.C_lock;
+            _A_int = quadratic.A_int;
+            _B_int = quadratic.B_int;
+            _C_int = quadratic.C_int;
+        }
+        public Quadratic(rate_functions quadratic)
+        {
+            _A = quadratic.A;
+            _B = quadratic.B;
+            _C = quadratic.C;
+            _A_lock = quadratic.A_lock;
+            _B_lock = quadratic.B_lock;
+            _C_lock = quadratic.C_lock;
+            _A_int = quadratic.A_int;
+            _B_int = quadratic.B_int;
+            _C_int = quadratic.C_int;
+        }
 
         public Quadratic(double A, double B, double C, bool A_lock, bool B_lock, bool C_lock)
         {
@@ -917,6 +1532,9 @@ namespace KIMI_Sim
             _A_lock = A_lock;
             _B_lock = B_lock;
             _C_lock = C_lock;
+            _A_int = A;
+            _B_int = B;
+            _C_int = C;
         }
 
         public override double Value(double E)
@@ -941,6 +1559,8 @@ namespace KIMI_Sim
         private bool _D_lock;
         private double _A_int;
         private double _B_int;
+        private double _C_int;
+        private double _D_int;
 
         public override string name { get { return _name; } }
         public override int dimension { get { return _dimension; } }
@@ -954,6 +1574,11 @@ namespace KIMI_Sim
         public override bool C_lock { get { return _C_lock; } set { _C_lock = value; } }
         public override double D { get { return _D; } set { _D = value; } }
         public override bool D_lock { get { return _D_lock; } set { _D_lock = value; } }
+        public double A_int { get { return _A_int; } set { _A_int = value; } }
+        public double B_int { get { return _B_int; } set { _B_int = value; } }
+        public double C_int { get { return _C_int; } set { _C_int = value; } }
+        public double D_int { get { return _D_int; } set { _D_int = value; } }
+
 
         public override string ToString()
         {
@@ -970,6 +1595,37 @@ namespace KIMI_Sim
         public Cubic()
         { }
 
+        public Cubic(Cubic cubic)
+        {
+            _A = cubic.A;
+            _B = cubic.B;
+            _C = cubic.C;
+            _D = cubic.D;
+            _A_lock = cubic.A_lock;
+            _B_lock = cubic.B_lock;
+            _C_lock = cubic.C_lock;
+            _D_lock = cubic.D_lock;
+            _A_int = cubic.A_int;
+            _B_int = cubic.B_int;
+            _C_int = cubic.C_int;
+            _D_int = cubic.D_int;
+        }
+        public Cubic(rate_functions cubic)
+        {
+            _A = cubic.A;
+            _B = cubic.B;
+            _C = cubic.C;
+            _D = cubic.D;
+            _A_lock = cubic.A_lock;
+            _B_lock = cubic.B_lock;
+            _C_lock = cubic.C_lock;
+            _D_lock = cubic.D_lock;
+            _A_int = cubic.A_int;
+            _B_int = cubic.B_int;
+            _C_int = cubic.C_int;
+            _D_int = cubic.D_int;
+        }
+
         public Cubic(double A, double B, double C, double D, bool A_lock, bool B_lock, bool C_lock, bool D_lock)
         {
             _A = A;
@@ -980,6 +1636,10 @@ namespace KIMI_Sim
             _B_lock = B_lock;
             _C_lock = C_lock;
             _D_lock = D_lock;
+            _A_int = A;
+            _B_int = B;
+            _C_int = C;
+            _D_int = D;
         }
 
         public override double Value(double E)
@@ -1027,6 +1687,24 @@ namespace KIMI_Sim
 
         public Exponencional()
         { }
+        public Exponencional(Exponencional exponentional)
+        {
+            _A = exponentional.A;
+            _B = exponentional.B;
+            _A_lock = exponentional.A_lock;
+            _B_lock = exponentional.B_lock;
+            _A_int = exponentional.A_int;
+            _B_int = exponentional.B_int;
+        }
+        public Exponencional(rate_functions exponentional)
+        {
+            _A = exponentional.A;
+            _B = exponentional.B;
+            _A_lock = exponentional.A_lock;
+            _B_lock = exponentional.B_lock;
+            _A_int = exponentional.A_int;
+            _B_int = exponentional.B_int;
+        }
 
         public Exponencional(double A, double B, bool A_lock, bool B_lock)
         {
@@ -1086,6 +1764,25 @@ namespace KIMI_Sim
 
         public Exponencional2()
         { }
+
+        public Exponencional2(Exponencional2 exponencional2)
+        {
+            _A = exponencional2.A;
+            _B = exponencional2.B;
+            _A_lock = exponencional2.A_lock;
+            _B_lock = exponencional2.B_lock;
+            _A_int = exponencional2.A_int;
+            _B_int = exponencional2.B_int;
+        }
+        public Exponencional2(rate_functions exponencional2)
+        {
+            _A = exponencional2.A;
+            _B = exponencional2.B;
+            _A_lock = exponencional2.A_lock;
+            _B_lock = exponencional2.B_lock;
+            _A_int = exponencional2.A_int;
+            _B_int = exponencional2.B_int;
+        }
 
         public Exponencional2(double A, double B, bool A_lock, bool B_lock)
         {
@@ -1161,6 +1858,31 @@ namespace KIMI_Sim
         public Exponencional3()
         { }
 
+        public Exponencional3(Exponencional3 exponencional3)
+        {
+            _A = exponencional3.A;
+            _B = exponencional3.B;
+            _C = exponencional3.C;
+            _A_lock = exponencional3.A_lock;
+            _B_lock = exponencional3.B_lock;
+            _C_lock = exponencional3.C_lock;
+            _A_int = exponencional3.A_int;
+            _B_int = exponencional3.B_int;
+            _C_int = exponencional3.C_int;
+        }
+        public Exponencional3(rate_functions exponencional3)
+        {
+            _A = exponencional3.A;
+            _B = exponencional3.B;
+            _C = exponencional3.C;
+            _A_lock = exponencional3.A_lock;
+            _B_lock = exponencional3.B_lock;
+            _C_lock = exponencional3.C_lock;
+            _A_int = exponencional3.A_int;
+            _B_int = exponencional3.B_int;
+            _C_int = exponencional3.C_int;
+        }
+
         public Exponencional3(double A, double B, double C, bool A_lock, bool B_lock, bool C_lock)
         {
             _A = A;
@@ -1219,6 +1941,25 @@ namespace KIMI_Sim
         public Exponencional4()
         { }
 
+        public Exponencional4(Exponencional4 exponencional4)
+        {
+            _A = exponencional4.A;
+            _B = exponencional4.B;
+            _A_lock = exponencional4.A_lock;
+            _B_lock = exponencional4.B_lock;
+            _A_int = exponencional4.A_int;
+            _B_int = exponencional4.B_int;
+        }
+        public Exponencional4(rate_functions exponencional4)
+        {
+            _A = exponencional4.A;
+            _B = exponencional4.B;
+            _A_lock = exponencional4.A_lock;
+            _B_lock = exponencional4.B_lock;
+            _A_int = exponencional4.A_int;
+            _B_int = exponencional4.B_int;
+        }
+
         public Exponencional4(double A, double B, bool A_lock, bool B_lock)
         {
             _A = A;
@@ -1274,6 +2015,25 @@ namespace KIMI_Sim
 
         public Exponencional5()
         { }
+
+        public Exponencional5(Exponencional5 exponencional5)
+        {
+            _A = exponencional5.A;
+            _B = exponencional5.B;
+            _A_lock = exponencional5.A_lock;
+            _B_lock = exponencional5.B_lock;
+            _A_int = exponencional5.A_int;
+            _B_int = exponencional5.B_int;
+        }
+        public Exponencional5(rate_functions exponencional5)
+        {
+            _A = exponencional5.A;
+            _B = exponencional5.B;
+            _A_lock = exponencional5.A_lock;
+            _B_lock = exponencional5.B_lock;
+            _A_int = exponencional5.A_int;
+            _B_int = exponencional5.B_int;
+        }
 
         public Exponencional5(double A, double B, bool A_lock, bool B_lock)
         {
@@ -1333,6 +2093,25 @@ namespace KIMI_Sim
 
         public Association()
         { }
+
+        public Association(Association association)
+        {
+            _A = association.A;
+            _B = association.B;
+            _A_lock = association.A_lock;
+            _B_lock = association.B_lock;
+            _A_int = association.A_int;
+            _B_int = association.B_int;
+        }
+        public Association(rate_functions association)
+        {
+            _A = association.A;
+            _B = association.B;
+            _A_lock = association.A_lock;
+            _B_lock = association.B_lock;
+            _A_int = association.A_int;
+            _B_int = association.B_int;
+        }
 
         public Association(double A, double B, bool A_lock, bool B_lock)
         {

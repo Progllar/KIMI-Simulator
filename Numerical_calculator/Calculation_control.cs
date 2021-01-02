@@ -36,7 +36,6 @@ namespace KIMI_Sim
         public double sirka_intervalu_items;
         public int aktual_pomer_items = 0;
         public bool Experimental_input_status;
-        public List<string[]> Experimental_input;
         static bool log_lin;
 
         // data storage,3
@@ -73,6 +72,8 @@ namespace KIMI_Sim
         private int actual_cycle = 1;
         private int total_cycle = 1;
         private bool calculation_running = false;
+        bool visualtization_started = false;
+        bool update_axis = true;
 
         public Calculation_control()
         {
@@ -702,9 +703,12 @@ namespace KIMI_Sim
                 // save data
                 save_data_to_memory();
                 Main.calculation_done();
-                // start animation         
+                // start animation  
+                visualtization_started = true;
                 start_vizualization();
                 iniciate_listbox();
+                estimate_relative_values();
+                visualtization_started = false;
                 start_animation();
                 this.UseWaitCursor = false;
                 Cursor.Current = Cursors.Default;
@@ -742,8 +746,18 @@ namespace KIMI_Sim
                 Calculation_memory = data_D3;
             }
             //save data
+            List<Reactions_used> reactions_used_to_memory = new List<Reactions_used>();
+            foreach(Reactions_used reactions_used in ReactionColection_used)
+            {
+                reactions_used_to_memory.Add(new Reactions_used(reactions_used));
+            }
+            List<Items_used> items_used_to_memory = new List<Items_used>();
+            foreach (Items_used items_used in ItemColection_used)
+            {
+                items_used_to_memory.Add(new Items_used(items_used));
+            }
             Calculation_setings used_settings = new Calculation_setings();
-            Data_storage new_data_storage = new Data_storage(start_time, data_dim, ReactionColection_used, ItemColection_used, Concentration_name, current_electric_field, hlavicka, Calculation_memory, used_settings);
+            Data_storage new_data_storage = new Data_storage(start_time, data_dim, reactions_used_to_memory, items_used_to_memory, Concentration_name, current_electric_field, hlavicka, Calculation_memory, used_settings);
             new_data_storage.Calculation_type(is_time, is_con_din, is_ele, is_ele_din);
             Main.data_storage.Add(new_data_storage);
             Show_data_colection();
@@ -783,7 +797,7 @@ namespace KIMI_Sim
 
         void Calculate(bool E_field, double Differencial, double Step, double Lenght, bool Calc_type)
         {
-            // calculation of density distribution across the drift tube 
+            // calculation of density distribution across the tube 
             int cnt = equation.Count;
             int i = 0;
             double t = 0;
@@ -806,46 +820,7 @@ namespace KIMI_Sim
                         i++;
                     }
                 }
-            }
-            if (checkBox3.Checked)
-            {
-                i = 0;
-                foreach (Equation eq in equation)
-                {
-                    foreach (Premenna pr in premenna)
-                    {
-                        if (pr.name == eq.name)
-                        {
-                            double sum = 0;
-                            foreach (Items_used Item_A in ItemColection_used)
-                            {
-                                if (Item_A.name == pr.name)
-                                {
-                                    List<string> mmry = new List<string>();
-                                    foreach (Items_used Item_B in ItemColection_used)
-                                    {
-                                        if ((Item_A.group_ID == Item_B.group_ID) && (!mmry.Contains(Item_B.name)))
-                                        {
-                                            foreach (Premenna pre in premenna)
-                                            {
-                                                if (pre.name == Item_B.name)
-                                                {
-                                                    sum += pre.value;
-                                                }
-                                            }
-                                        }
-                                        mmry.Add(Item_B.name);
-                                    }
-                                    break;
-                                }
-                            }
-                            d[i, 1] = pr.value / sum; // relative value based on ID
-                            i++;
-                        }
-                    }
-                }
-            }
-
+            }          
             d[cnt, 0] = t;
             d[cnt, 1] = t;
             tabulka.Add(d);
@@ -869,48 +844,7 @@ namespace KIMI_Sim
                             j++;
                         }
                     }
-                }
-                if (checkBox3.Checked)
-                {
-                    i = 0;
-                    foreach (Equation eq in equation)
-                    {
-                        foreach (Premenna pr in premenna)
-                        {
-                            if (pr.name == eq.name)
-                            {
-                                double sum = 0;
-                                foreach (Items_used Item_A in ItemColection_used)
-                                {
-                                    if (Item_A.name == pr.name)
-                                    {
-                                        List<string> mmry = new List<string>();
-                                        foreach (Items_used Item_B in ItemColection_used)
-                                        {
-                                            if ((Item_A.group_ID == Item_B.group_ID) && (!mmry.Contains(Item_B.name)))
-                                            {
-                                                foreach (Premenna pre in premenna)
-                                                {
-                                                    if (pre.name == Item_B.name)
-                                                    {
-                                                        sum += pre.value;
-                                                    }
-
-                                                }
-                                            }
-                                            mmry.Add(Item_B.name);
-                                        }
-                                        break;
-                                    }
-                                }
-
-
-                                dou[i, 1] = pr.value / sum; // relative value based on ID
-                                i++;
-                            }
-                        }
-                    }
-                }
+                }                
                 t = t + Step;
                 t = Math.Round(t, 12);
                 dou[cnt, 0] = t;
@@ -1028,6 +962,14 @@ namespace KIMI_Sim
         {
             fill_items();
             fill_reaction();
+            foreach (Items_used items_ in ItemColection_used)
+            {
+                if (items_.cation == true)
+                {
+                    comboBox2.Items.Add((Items_used)items_);
+                }
+            }
+            check_button();
         }
 
         public void fill_items()
@@ -1451,8 +1393,15 @@ namespace KIMI_Sim
             else
             {
                 // spustenie vypoctu
-                calculation_running = true;
-                proceed_settings();
+                if (Load_type == 1 && (comboBox2.SelectedItem == null || listBox1.Items == null))
+                {
+                    MessageBox.Show(" For this type of experiemntal data, PRI and SRI must be specified!");
+                }
+                else
+                {
+                    calculation_running = true;
+                    proceed_settings();
+                }
             }
         } 
 
@@ -2398,10 +2347,13 @@ namespace KIMI_Sim
         private List<string> titul;
         private List<List<double[]>> export = new List<List<double[]>>();
         public static int[] Load_hlavicka;
+        public static string[] Load_hlavicka_str; 
         public static double[,] Loaded_data;
         public static bool relative_values = false;
-        public static int Load_type = 0;
+        public static int Load_type = -1;
         public static bool Load_relative = false;
+        public static int Marker_Size = 2;
+        public static MarkerType marker_type = MarkerType.Square;
 
         public void Results_KineticModel()
         {
@@ -2431,16 +2383,24 @@ namespace KIMI_Sim
             if (Main.calc_type) // && !is_ele
             {
                 radioButton_kinetic.Checked = true;
+                radioButton_dinamic.Enabled = false;
+                radioButton_ms.Enabled = true;
+                radioButton3.Enabled = false;
+                radioButton_kinetic.Checked = true;
                 is_time = true;
-                label1.Text = "Time [us]:";
+                label16.Text = "Time [us]:";
                 Popis_X = "Time [us]";
                 button_t_x.Enabled = true;
             }
             if (!Main.calc_type)
             {
                 radioButton_kinetic.Checked = true;
+                radioButton_dinamic.Enabled = false;
+                radioButton_ms.Enabled = true;
+                radioButton3.Enabled = false;
+                radioButton_kinetic.Checked = true;
                 is_time = false;
-                label1.Text = "Distance [cm]:";
+                label16.Text = "Distance [cm]:";
                 Popis_X = "Distance [cm]";
                 if(!is_ele || !is_ele_din)
                 {
@@ -2455,6 +2415,7 @@ namespace KIMI_Sim
             {
                 radioButton_dinamic.Checked = true;
                 radioButton_dinamic.Enabled = true;
+
                 if (!is_ele_din)
                 {
                     radioButton3.Checked = false;
@@ -2475,16 +2436,20 @@ namespace KIMI_Sim
                     radioButton_dinamic.Enabled = false;
                 }
             }
-            if (Load_type == 1)
+            if (Load_type == 1) // SIFT MIM data
             {
                 radioButton_kinetic.Enabled = false;
+                radioButton_dinamic.Enabled = true;
+                radioButton_ms.Enabled = false;
                 radioButton3.Enabled = false;
                 radioButton_dinamic.Checked = true;
             }
-            if (Load_type == 2)
+            if (Load_type == 2) // E/N data
             {
                 radioButton_kinetic.Enabled = false;
                 radioButton_dinamic.Enabled = false;
+                radioButton_ms.Enabled = false;
+                radioButton3.Enabled = true;
                 radioButton3.Checked = true;
             }
         }
@@ -2566,11 +2531,11 @@ namespace KIMI_Sim
                     }
                 }
             }
-            if (Load_type != 0)
+            if (Load_type != -1)
             {
                 for (int i = 1; i < Load_hlavicka.GetLength(0); i++)
                 {
-                    string str = "Exp: m/z " + Load_hlavicka[i].ToString();
+                    string str = Load_hlavicka_str[i].ToString();
                     bool done = false;
                     foreach (Legend_entity entity in Legend_list)
                     {
@@ -2588,23 +2553,145 @@ namespace KIMI_Sim
             }
         }
 
+        public void estimate_relative_values()
+        {
+            // reclaculation of absolute values to relative if requested
+            if (checkBox3.Checked)
+            {
+                if (hlavicka != null)
+                {
+                    // creation of index field
+                    int[] index_matrix = new int[hlavicka.Length];
+                    int i = 0;
+                    List<string> doubler_check = new List<string>(); // check for doublers 
+                    foreach (string name in hlavicka)
+                    {
+                        foreach (Items_used Item in ItemColection_used)
+                        {
+                            if ((name == Item.name) && !doubler_check.Contains(name))
+                            {
+                                index_matrix[i] = Item.group_ID;
+                                doubler_check.Add(name);
+                                i++;
+                            }
+                        }
+                    }
+                    List<int> index_list = new List<int>();
+                    foreach (int ID in index_matrix)
+                    {
+                        if (!index_list.Contains(ID))
+                        {
+                            index_list.Add(ID);
+                        }
+                    }
+                    if ((index_matrix.Length > 0) && (index_list != null))
+                    {
+                        if (is_ele_din && is_con_din) // 3D pole
+                        {
+                            foreach (List<List<double[,]>> table_2D in data_D3)
+                            {
+                                foreach (List<double[,]> table in table_2D) // concentraion
+                                {
+                                    foreach (double[,] dou in table) // coordinates
+                                    {
+                                        foreach (int index in index_list)
+                                        {
+                                            double sum = 0;
+                                            for (int j = 0; j < index_matrix.Length; j++)
+                                            {
+                                                if (index == index_matrix[j])
+                                                {
+                                                    sum += dou[j, 0];
+                                                }
+                                            }
+                                            for (int j = 0; j < index_matrix.Length; j++)
+                                            {
+                                                if (index == index_matrix[j])
+                                                {
+                                                    dou[j, 1] = dou[j, 0] / sum;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if ((is_ele_din && !is_con_din) || (!is_ele_din && is_con_din)) // 2D pole
+                        {
+                            foreach (List<double[,]> table in data_D2) // concentraion 
+                            {
+                                foreach (double[,] dou in table) // coordinates
+                                {
+                                    foreach (int index in index_list)
+                                    {
+                                        double sum = 0;
+                                        for (int j = 0; j < index_matrix.Length; j++)
+                                        {
+                                            if (index == index_matrix[j])
+                                            {
+                                                sum += dou[j, 0];
+                                            }
+                                        }
+                                        for (int j = 0; j < index_matrix.Length; j++)
+                                        {
+                                            if (index == index_matrix[j])
+                                            {
+                                                dou[j, 1] = dou[j, 0] / sum;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if (!is_con_din && !is_ele_din) //1D pole
+                        {
+                            foreach (double[,] dou in tabulka)
+                            {
+                                foreach(int index in index_list)
+                                {
+                                    double sum = 0;
+                                    for(int j = 0; j < index_matrix.Length; j++)
+                                    {
+                                        if(index == index_matrix[j])
+                                        {
+                                            sum += dou[j,0];
+                                        }
+                                    }
+                                    for (int j = 0; j < index_matrix.Length; j++)
+                                    {
+                                        if (index == index_matrix[j])
+                                        {
+                                            dou[j,1] = dou[j, 0]/sum;
+                                        }
+                                    }
+                                }
+                            }                            
+                        }
+                    }
+                }
+            }
+        }
+
         public void start_animation()
         {
-            if (radioButton_kinetic.Checked)
+            if (!visualtization_started)
             {
-                draw_kinetic(is_time);
-            }
-            if (radioButton_ms.Checked)
-            {
-                draw_ms(is_time);
-            }
-            if (radioButton_dinamic.Checked)
-            {
-                draw_dinamic(is_time, true);
-            }
-            if (radioButton3.Checked)
-            {
-                draw_dinamic(is_time, false);
+                if (radioButton_kinetic.Checked)
+                {
+                    draw_kinetic(is_time);
+                }
+                if (radioButton_ms.Checked)
+                {
+                    draw_ms(is_time);
+                }
+                if (radioButton_dinamic.Checked)
+                {
+                    draw_dinamic(is_time, true);
+                }
+                if (radioButton3.Checked)
+                {
+                    draw_dinamic(is_time, false);
+                }
             }
         }
 
@@ -2612,14 +2699,14 @@ namespace KIMI_Sim
         {
             titul = new List<string>();
             export = new List<List<double[]>>();
-            int i = 0;
+            int i = 0, cnt = 0;
             PlotModel model = new PlotModel() { LegendSymbolLength = 24, IsLegendVisible = true };
             model.LegendTitle = "Legend";
             model.LegendOrientation = LegendOrientation.Horizontal;
             model.LegendPlacement = LegendPlacement.Inside;
             model.LegendPosition = LegendPosition.RightTop;
             int r = 0;
-            if (checkBox3.Checked)
+            if (relative_values)
             {
                 r = 1;
             }
@@ -2636,6 +2723,7 @@ namespace KIMI_Sim
                         titul.Add(str);
                         List<double[]> partial = new List<double[]>();
                         FunctionSeries fs = new FunctionSeries();
+                        fs.Color = New_color_for_series(cnt);
                         if (!is_con_din && !is_ele_din)
                         {
                             foreach (double[,] dou in tabulka)
@@ -2690,16 +2778,28 @@ namespace KIMI_Sim
                         export.Add(partial);
                         fs.Title = str;
                         model.Series.Add(fs);
+                        cnt++;
                     }
                     i++;
                 }
-                if (Load_type != 0)
+                if (Load_type != -1)
                 {
                     foreach (ScatterSeries series in Loaded_model())
-                    {
+                    {   
                         if (checkedListBox1.CheckedItems.Contains(series.Title))
                         {
                             model.Series.Add(series);
+                        }
+                    }
+                    if (update_axis == true)
+                    {
+                        if (Load_type == 0)
+                        {
+                            Popis_X += "  /  " + Load_hlavicka_str[0];
+                        }
+                        else
+                        {
+                            Popis_X = Load_hlavicka_str[0];
                         }
                     }
                 }
@@ -2735,7 +2835,7 @@ namespace KIMI_Sim
 
             titul = new List<string>();
             export = new List<List<double[]>>();
-            int i = 0;
+            int i = 0, cnt = 0;
             PlotModel model = new PlotModel() { LegendSymbolLength = 24, IsLegendVisible = true };
             model.LegendTitle = "Legend";
             model.LegendOrientation = LegendOrientation.Horizontal;
@@ -2764,6 +2864,7 @@ namespace KIMI_Sim
 
                 ColumnSeries fs = new ColumnSeries();
                 LineSeries ls = new LineSeries();
+                ls.Color = New_color_for_series(cnt);
                 List<double[]> partial = new List<double[]>();
                 List<List<double[]>> partial_con = new List<List<double[]>>();
                 fs.BaseValue = 1;
@@ -3017,6 +3118,7 @@ namespace KIMI_Sim
                             export.Add(partial);
                             titul.Add(str);
                         }
+                        cnt++;
                     }
                 }
                 i++;
@@ -3105,13 +3207,24 @@ namespace KIMI_Sim
                     model.Series.Add(fs);
                 }
                 }
-            if (Load_type != 0)
+            if (Load_type != -1)
             {
                 foreach (ScatterSeries series in Loaded_model())
                 {
                     if (checkedListBox1.CheckedItems.Contains(series.Title))
                     {
                         model.Series.Add(series);
+                    }
+                }
+                if (update_axis == true)
+                {
+                    if (Load_type == 0)
+                    {
+                        Popis_X += "  /  " + Load_hlavicka_str[0];
+                    }
+                    else
+                    {
+                        Popis_X = Load_hlavicka_str[0];
                     }
                 }
             }
@@ -3154,14 +3267,14 @@ namespace KIMI_Sim
         {
             titul = new List<string>();
             export = new List<List<double[]>>();
-            int i = 0;
+            int i = 0, cnt = 0;
             PlotModel model = new PlotModel() { LegendSymbolLength = 24, IsLegendVisible = true };
             model.LegendTitle = "Legend";
             model.LegendOrientation = LegendOrientation.Horizontal;
             model.LegendPlacement = LegendPlacement.Inside;
             model.LegendPosition = LegendPosition.RightTop;
             int r = 0;
-            if (checkBox3.Checked)
+            if (relative_values)
             {
                 r = 1;
             }
@@ -3169,7 +3282,7 @@ namespace KIMI_Sim
             {
                 r = 0;
             }
-            // suma
+            // sum
             List<double[]> sigma = new List<double[]>();
             foreach (string str in hlavicka)
             {
@@ -3178,6 +3291,7 @@ namespace KIMI_Sim
                     titul.Add(str);
                     List<double[]> partial = new List<double[]>();
                     FunctionSeries fs = new FunctionSeries();
+                    fs.Color = New_color_for_series(cnt);
                     if (is_ele_din && is_con_din) // 3D pole
                     {
                         foreach (List<List<double[,]>> tabulka_2d in data_D3)
@@ -3192,7 +3306,7 @@ namespace KIMI_Sim
                                         {
                                             if (dou[dou.GetLength(0) - 3, r] == _distance) // set distance
                                             {
-                                                if (Load_type == 1)
+                                                if (Load_type == 1) // Are data loaded ?
                                                 {
                                                     //  x modification for profile 3 measurements
                                                     int c = 0;
@@ -3200,12 +3314,16 @@ namespace KIMI_Sim
                                                     double H3O = 0;
                                                     foreach (string st in hlavicka)
                                                     {
-                                                        if (st == "Hydronium" || st == "Hydronium dimer" || st == "Hydronium trimer" || st == "Hydronium quatromer")
+                                                        if(st == comboBox2.SelectedItem.ToString())
                                                         {
+                                                            H3O = dou[c, 0];
                                                             suma += dou[c, 0];
-                                                            if (st == "Hydronium")
+                                                        }
+                                                        foreach (string items_name in listBox1.Items)
+                                                        {
+                                                            if(st == items_name)
                                                             {
-                                                                H3O = dou[c, 0];
+                                                                suma += dou[c, 0];
                                                             }
                                                         }
                                                         c++;
@@ -3373,12 +3491,16 @@ namespace KIMI_Sim
                                             double H3O = 0;
                                             foreach (string st in hlavicka)
                                             {
-                                                if (st == "Hydronium" || st == "Hydronium dimer" || st == "Hydronium trimer" || st == "Hydronium quatromer")
+                                                if (st == comboBox2.SelectedItem.ToString())
                                                 {
+                                                    H3O = dou[c, 0];
                                                     suma += dou[c, 0];
-                                                    if (st == "Hydronium")
+                                                }
+                                                foreach (Object items_ in listBox1.Items)
+                                                {
+                                                    if (st == items_.ToString())
                                                     {
-                                                        H3O = dou[c, 0];
+                                                        suma += dou[c, 0];
                                                     }
                                                 }
                                                 c++;
@@ -3526,6 +3648,7 @@ namespace KIMI_Sim
                     fs.Title = str;
                     model.Series.Add(fs);
                     export.Add(partial);
+                    cnt++;
                 }
                 i++;
             }
@@ -3552,13 +3675,24 @@ namespace KIMI_Sim
             fs_sum.Title = "Sum";
             model.Series.Add(fs_sum);
             */
-            if (Load_type != 0)
+            if (Load_type != -1)
             {
                 foreach (ScatterSeries series in Loaded_model())
                 {
                     if (checkedListBox1.CheckedItems.Contains(series.Title))
                     {
                         model.Series.Add(series);
+                    }
+                }
+                if (update_axis == true)
+                {
+                    if (Load_type == 0)
+                    {
+                        Popis_X += "  /  " + Load_hlavicka_str[0];
+                    }
+                    else
+                    {
+                        Popis_X = Load_hlavicka_str[0];
                     }
                 }
             }
@@ -3704,17 +3838,23 @@ namespace KIMI_Sim
             model.LegendOrientation = LegendOrientation.Horizontal;
             model.LegendPlacement = LegendPlacement.Inside;
             model.LegendPosition = LegendPosition.RightTop;
-            for (int i = 1; i < Load_hlavicka.GetLength(0); i++)
+            Popis_X = Load_hlavicka_str[0];
+            checkedListBox1.Items.Clear();
+            int cnt = 0;
+            for (int i = 1; i < Load_hlavicka_str.GetLength(0); i++)
             {
                 ScatterSeries sc = new ScatterSeries();
-                sc.MarkerSize = 2;
-                sc.Title = "Exp: m/z " + Load_hlavicka[i].ToString();
+                sc.MarkerSize = Marker_Size;
+                sc.MarkerType = marker_type;
+                sc.MarkerStroke = New_color_for_series(cnt);
+                sc.Title = Load_hlavicka_str[i].ToString();
                 for (int j = 1; j < Loaded_data.GetLength(1); j++)
                 {
                     sc.Points.Add(new ScatterPoint(Loaded_data[0, j], Loaded_data[i, j]));
                 }
                 model.Series.Add(sc);
-                checkedListBox1.Items.Add("Exp: m/z " + Load_hlavicka[i].ToString(), true);
+                checkedListBox1.Items.Add(Load_hlavicka_str[i].ToString(), true);
+                cnt++;
             }
             model.Axes.Add(new LinearAxis() { Position = AxisPosition.Bottom, Title = Popis_X, MajorGridlineStyle = LineStyle.Dash });
             if (log_lin)
@@ -3724,52 +3864,64 @@ namespace KIMI_Sim
             else
             {
                 model.Axes.Add(new LinearAxis() { Position = AxisPosition.Left, MajorGridlineStyle = LineStyle.Solid, MinorGridlineStyle = LineStyle.Dot, IntervalLength = 100, Title = "Concentration" });
-            }
+            } 
             plot1.Model = model;
             label26.Text = "Load code: " + Load_type.ToString();
             Load_type_change();
-            relative_values = true;
-        }
+            }
 
         public List<ScatterSeries> Loaded_model()
         {
             List<ScatterSeries> list = new List<ScatterSeries>();
+            int cnt = 0;
             for (int i = 1; i < Load_hlavicka.GetLength(0); i++)
             {
                 ScatterSeries sc = new ScatterSeries();
-                sc.MarkerSize = 2;
-                sc.Title = "Exp: m/z " + Load_hlavicka[i].ToString();
+                sc.MarkerSize = Marker_Size;
+                sc.MarkerType = marker_type;
+                sc.MarkerStroke = New_color_for_series(cnt);
+                sc.Title = Load_hlavicka_str[i].ToString();
                 for (int j = 0; j < Loaded_data.GetLength(1); j++)
                 {
                     sc.Points.Add(new ScatterPoint(Loaded_data[0, j], Loaded_data[i, j]));
                 }
                 list.Add(sc);
+                cnt++;
             }
             return list;
         }
-
+          
         private static void Load_type_change()
         {
+            if(Load_type == 0)
+            {
+                // universal input - no restrictions
+                if (Load_relative)
+                {
+                    checkBox3.Checked = true;
+                }
+                groupBox3.Enabled = false;
+            }
             if (Load_type == 1)
             {
                 // profile 3 measurement, dependece rel or not, x = -ln(H3O/H2O_total)
                 if (Load_relative)
                 {
-                    // checkBox3.Checked = true;
-                    // checkBox3.Enabled = false;                   
+                    checkBox3.Checked = true;
                 }
                 groupBox2.Enabled = true;
                 groupBox5.Enabled = true;
+                groupBox3.Enabled = true;
             }
             if (Load_type == 2)
-            { // Electric field id dynamic
+            { // Electric field id dynamic0
                 if (Load_relative)
                 {
-                    // checkBox3.Checked = true;
-                    // checkBox3.Enabled = false;
+                    checkBox3.Checked = true;
                 }
                 groupBox2.Enabled = true;
                 groupBox5.Enabled = true;
+                groupBox3.Enabled = false;
             }
 
         }
@@ -3944,6 +4096,23 @@ namespace KIMI_Sim
                 }
             }
             return _formula;
+        }
+
+        private static OxyColor New_color_for_series(int n)
+        {
+            OxyColor new_color = new OxyColor();
+            PlotModel model = new PlotModel();
+            IList<OxyColor> color_list = model.DefaultColors;
+            int i = 0;
+            foreach( OxyColor color in color_list)
+            {
+                if(i == n || ( n > 11 && ( n % 11) == i))
+                {
+                    new_color = color;
+                }
+                i++;
+            }
+            return new_color;
         }
 
         # region Private graph methods
@@ -4324,7 +4493,7 @@ namespace KIMI_Sim
                 }
             }
         }
-
+         
         private double distance()
         {
             double Distance = 0;
@@ -4426,7 +4595,9 @@ namespace KIMI_Sim
                 {
                     set_distanc(Main.Convertor(textBox_dist.Text));
                 }
+                update_axis = false;
                 start_animation();
+                update_axis = true;
             }
         }
 
@@ -4435,7 +4606,9 @@ namespace KIMI_Sim
             if (e.KeyCode == Keys.Enter)
             {
                 set_concentration(Main.Convertor(textBox_conc.Text));
+                update_axis = false;
                 start_animation();
+                update_axis = true;
             }
         }
 
@@ -4444,7 +4617,9 @@ namespace KIMI_Sim
             if (e.KeyCode == Keys.Enter)
             {
                 set_e_field(Main.Convertor(textBox_ele.Text));
+                update_axis = false;
                 start_animation();
+                update_axis = true;
             }
         }
 
@@ -4548,17 +4723,23 @@ namespace KIMI_Sim
 
         private void trackBar_ele_Leave(object sender, EventArgs e)
         {
+            update_axis = false;
             start_animation();
+            update_axis = true;
         }
 
         private void trackBar_conc_Leave(object sender, EventArgs e)
         {
+            update_axis = false;
             start_animation();
+            update_axis = true;
         }
 
         private void trackBar_dist_Leave(object sender, EventArgs e)
         {
+            update_axis = false;
             start_animation();
+            update_axis = true;
         }
 
         private void trackBar_ele_Scroll(object sender, EventArgs e)
@@ -4567,7 +4748,9 @@ namespace KIMI_Sim
             double actual = Main.field_start + (trackBar_ele.Value * (Main.field_end - Main.field_start)) / (Main.field_steps - 1);
             set_e_field(actual);
             ele_roll = false;
+            update_axis = false;
             start_animation();
+            update_axis = true;
         }
 
         private void trackBar_conc_Scroll(object sender, EventArgs e)
@@ -4576,7 +4759,9 @@ namespace KIMI_Sim
             double actual = Main.conc_start + (trackBar_conc.Value * (Main.conc_end - Main.conc_start)) / (Main.conc_steps - 1);
             set_concentration(actual);
             conc_roll = false;
+            update_axis = false;
             start_animation();
+            update_axis = true;
         }
 
         private void trackBar_dist_Scroll(object sender, EventArgs e)
@@ -4593,7 +4778,9 @@ namespace KIMI_Sim
                 set_distanc(actual);
             }
             dist_roll = false;
+            update_axis = false;
             start_animation();
+            update_axis = true;
         }
 
         private void checkBox_log_CheckedChanged(object sender, EventArgs e)
@@ -4613,7 +4800,7 @@ namespace KIMI_Sim
 
         private void Calculation_control_Load(object sender, EventArgs e)
         {
-            Load_type = 0;
+            Load_type = -1;
             this.Location = this.Owner.Location;
             resize_form();
         }
@@ -4754,7 +4941,7 @@ namespace KIMI_Sim
 
         private void enable_interpolation()
         {
-            if (Load_type != 0 && calculated_data)
+            if (Load_type != -1 && calculated_data)
             {
                 interpolation();
             }
@@ -4913,8 +5100,17 @@ namespace KIMI_Sim
             int i = 0;
             foreach(Data_storage data_storage in Main.data_storage)
             {
-                ListViewItem item = new ListViewItem();
-                item.Text = data_storage.ToString();
+                string ele_status = "False";
+                if(data_storage.Is_Ele)
+                {
+                    ele_status = "True";
+                }
+                if (data_storage.Is_Ele_din)
+                {
+                    ele_status = "Dinamic";
+                }
+                string[] row = new string[] {data_storage.Time.ToString(), data_storage.Dimension.ToString(), data_storage.Is_Con_din.ToString(), ele_status };
+                ListViewItem item = new ListViewItem(row);
                 item.Tag = data_storage;
                 listView1.Items.Add(item);
                 i++;
@@ -4975,51 +5171,6 @@ namespace KIMI_Sim
                 Main.data_storage.Remove(DS);
             }
             Show_data_colection();
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            // show data
-            var item_colection = listView1.SelectedItems;
-            Data_storage ItemList = new Data_storage();
-            foreach (ListViewItem item in item_colection)
-            {
-                ItemList = (Data_storage)item.Tag;
-            }
-            hlavicka = ItemList.Header;
-            data_dim = Convert.ToSByte(ItemList.Dimension);
-            Concentration_name = ItemList.Concentration_name;
-            current_electric_field = ItemList.Electric_field_konstant_value;
-            is_time = ItemList.Is_Time;
-            is_con_din = ItemList.Is_Con_din;
-            is_ele = ItemList.Is_Ele;
-            is_ele_din = ItemList.Is_Ele_din;
-            if (ItemList.Dimension == 1)
-            {
-                foreach(List<List<double[,]>> d2construct in ItemList.Calculation_memmory)
-                {
-                    foreach(List<double[,]> d1construct in d2construct)
-                    {
-                        tabulka = d1construct;
-                    }
-                }
-            }
-            if (ItemList.Dimension == 2)
-            {
-                foreach (List<List<double[,]>> d2construct in ItemList.Calculation_memmory)
-                {
-                    data_D2 = d2construct;
-                }
-            }
-            if (ItemList.Dimension == 3)
-            {
-                data_D3 = ItemList.Calculation_memmory;
-            }
-            start_vizualization();
-            iniciate_listbox();
-            start_animation();
-            toolStripStatusLabel1.Text = "Data loaded";
-
         }
 
         private void button6_Click(object sender, EventArgs e)
@@ -5129,26 +5280,150 @@ namespace KIMI_Sim
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
         {
             // draw details
-            var item_colection = listView1.SelectedItems;
-            string s_1 = "";
-            string s_2 = "";
-            foreach (ListViewItem item in item_colection)
+            if (listView1.SelectedItems != null)
             {
-                s_1 = "";
-                s_2 = "";
-                Data_storage data_storage = (Data_storage)item.Tag;
-                List<Items_used> items_used = new List<Items_used>();
-                foreach(Reactions_used reactions in data_storage.Reactions_collection_used)
+                try
                 {
-                    s_1 += reactions.Specific_name() + "\t" + reactions.rate_konstant.representation + "\r\n";
-                    if (reactions.reaction_type == 2)
+                    var item_colection = listView1.SelectedItems;
+                    string s_1 = "";
+                    string s_2 = "";
+                    foreach (ListViewItem item in item_colection)
                     {
-                        s_1 += reactions.Specific_name_() + "\t" + reactions.rate_konstant_.representation + "\r\n";
+                        s_1 = "";
+                        s_2 = "";
+                        Data_storage data_storage = (Data_storage)item.Tag;
+                        List<Items_used> items_used = new List<Items_used>();
+                        foreach (Reactions_used reactions in data_storage.Reactions_collection_used)
+                        {
+                            s_1 += reactions.Specific_name() + "\t" + reactions.rate_konstant.representation + "\r\n";
+                            if (reactions.reaction_type == 2)
+                            {
+                                s_1 += reactions.Specific_name_() + "\t" + reactions.rate_konstant_.representation + "\r\n";
+                            }
+                        }
                     }
+                    textBox7.Text = s_1 + s_2;
+                    // show data
+                    Data_storage ItemList = new Data_storage();
+                    foreach (ListViewItem item in item_colection)
+                    {
+                        ItemList = (Data_storage)item.Tag;
+                    }
+                    hlavicka = ItemList.Header;
+                    data_dim = Convert.ToSByte(ItemList.Dimension);
+                    Concentration_name = ItemList.Concentration_name;
+                    current_electric_field = ItemList.Electric_field_konstant_value;
+                    is_time = ItemList.Is_Time;
+                    is_con_din = ItemList.Is_Con_din;
+                    is_ele = ItemList.Is_Ele;
+                    is_ele_din = ItemList.Is_Ele_din;
+                    if (ItemList.Dimension == 1)
+                    {
+                        foreach (List<List<double[,]>> d2construct in ItemList.Calculation_memmory)
+                        {
+                            foreach (List<double[,]> d1construct in d2construct)
+                            {
+                                tabulka = d1construct;
+                            }
+                        }
+                    }
+                    if (ItemList.Dimension == 2)
+                    {
+                        foreach (List<List<double[,]>> d2construct in ItemList.Calculation_memmory)
+                        {
+                            data_D2 = d2construct;
+                        }
+                    }
+                    if (ItemList.Dimension == 3)
+                    {
+                        data_D3 = ItemList.Calculation_memmory;
+                    }
+                    start_vizualization();
+                    iniciate_listbox();
+                    start_animation();
+                    toolStripStatusLabel1.Text = "Data loaded";
                 }
+                catch { }
             }
-            textBox7.Text = s_1 + s_2;
         }
         #endregion
+
+        private void checkBox3_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox3.Checked)
+            {
+                relative_values = true;
+            }
+            else
+            {
+                relative_values = false;
+            }
+            estimate_relative_values();
+            update_axis = false;
+            start_animation();
+            update_axis = true;
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            // Add SRI
+            AddNeutral addneutral = new AddNeutral();
+            List<Items> used_items = new List<Items>();
+            foreach(Items_used items_ in ItemColection_used)
+            {
+                used_items.Add(items_.GetItem());
+            }
+            addneutral.Items = used_items;
+            addneutral.Data_type = false;
+            addneutral.Remove_data = false;
+            addneutral.to_SRI_listbox = true;
+            addneutral.ShowCollection();
+            addneutral.Show(this);
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            // Remove SRI
+            if (listBox1.SelectedItem != null)
+            {
+                Items ToBeRemoved = null;
+                foreach (Items item in listBox1.Items)
+                {
+                    if (listBox1.SelectedItem == item)
+                    {
+                        ToBeRemoved = item;
+                    }
+                }
+                listBox1.Items.Remove(ToBeRemoved);
+            }
+            else
+            {
+                AddNeutral addneutral = new AddNeutral();
+                List<Items> SRI_list = new List<Items>();
+                foreach (Items item in listBox1.Items)
+                {
+                    SRI_list.Add(item);
+                }
+                addneutral.Items = SRI_list;
+                addneutral.Data_type = false;
+                addneutral.Remove_data = true;
+                addneutral.to_SRI_listbox = true;
+                addneutral.ShowCollection();
+                addneutral.Show(this);
+            }
+            check_button();
+        }
+
+        public static void check_button()
+        {
+            if (listBox1.Items.Count == 0)
+            {
+                button9.Enabled = false;
+            }
+            else
+            {
+                button9.Enabled = true;
+            }
+        }
     }
 }

@@ -16,7 +16,7 @@ namespace KIMI_Sim
         public bool Data_type { get; set; }
         public bool Remove_data { get; set; }
 
-
+        public bool to_SRI_listbox { get; set; }
 
         public AddNeutral()
         {
@@ -26,7 +26,11 @@ namespace KIMI_Sim
         {
             foreach (Items item in Items)
             {
-                if (item.cation == false)
+                if (item.cation == false && to_SRI_listbox == false)
+                {
+                    this.listBox1.Items.Add(item);
+                }
+                if (item.cation == true && to_SRI_listbox == true)
                 {
                     this.listBox1.Items.Add(item);
                 }
@@ -48,28 +52,49 @@ namespace KIMI_Sim
             if (Remove_data == false)
             {
                 //Add
-                if (Data_type == true)
-                { // product
-                    Main.listBox_products.Items.Add((Items)listBox1.SelectedItem);
+                if (!to_SRI_listbox)
+                {
+                    if (Data_type == true)
+                    { // product
+                        Main.listBox_products.Items.Add((Items)listBox1.SelectedItem);
+                    }
+                    else
+                    { // reactant
+                        Main.listBox_reactants.Items.Add((Items)listBox1.SelectedItem);
+                    }
                 }
                 else
-                { // reactant
-                    Main.listBox_reactants.Items.Add((Items)listBox1.SelectedItem);
+                {
+                    Calculation_control.listBox1.Items.Add((Items)listBox1.SelectedItem);
                 }
             }
             else
             {
-                //Remove
-                if (Data_type == true)
-                { // product
-                    Main.listBox_products.Items.Remove((Items)listBox1.SelectedItem);
+                if (!to_SRI_listbox)
+                {
+                    //Remove
+                    if (Data_type == true)
+                    { // product
+                        Main.listBox_products.Items.Remove((Items)listBox1.SelectedItem);
+                    }
+                    else
+                    { // reactant
+                        Main.listBox_reactants.Items.Remove((Items)listBox1.SelectedItem);
+                    }
                 }
                 else
-                { // reactant
-                    Main.listBox_reactants.Items.Remove((Items)listBox1.SelectedItem);
+                {
+                    Calculation_control.listBox1.Items.Remove((Items)listBox1.SelectedItem);
                 }
             }
-            Main.listbox_change();
+            if(!to_SRI_listbox)
+            {
+                Main.listbox_change();
+            }
+            else
+            {
+                Calculation_control.check_button();
+            }
             this.Close();
         }
 
@@ -88,7 +113,14 @@ namespace KIMI_Sim
             }
             catch
             {
-                MessageBox.Show("Neutral is not selected!");
+                if (!to_SRI_listbox)
+                {
+                    MessageBox.Show("Neutral is not selected!");
+                }
+                else
+                {
+                    MessageBox.Show("SRI is not selected!");
+                }
             }
         }
 
@@ -104,28 +136,49 @@ namespace KIMI_Sim
                 if (Remove_data == false)
                 {
                     //Add
-                    if (Data_type == true)
-                    { // product
-                        Main.listBox_products.Items.Add((Items)listBox1.SelectedItem);
+                    if (!to_SRI_listbox)
+                    {
+                        if (Data_type == true)
+                        { // product
+                            Main.listBox_products.Items.Add((Items)listBox1.SelectedItem);
+                        }
+                        else
+                        { // reactant
+                            Main.listBox_reactants.Items.Add((Items)listBox1.SelectedItem);
+                        }
                     }
                     else
-                    { // reactant
-                        Main.listBox_reactants.Items.Add((Items)listBox1.SelectedItem);
+                    {
+                        Calculation_control.listBox1.Items.Add((Items)listBox1.SelectedItem);
                     }
                 }
                 else
                 {
-                    //Remove
-                    if (Data_type == true)
-                    { // product
-                        Main.listBox_products.Items.Remove((Items)listBox1.SelectedItem);
+                    if (!to_SRI_listbox)
+                    {
+                        //Remove
+                        if (Data_type == true)
+                        { // product
+                            Main.listBox_products.Items.Remove((Items)listBox1.SelectedItem);
+                        }
+                        else
+                        { // reactant
+                            Main.listBox_reactants.Items.Remove((Items)listBox1.SelectedItem);
+                        }
                     }
                     else
-                    { // reactant
-                        Main.listBox_reactants.Items.Remove((Items)listBox1.SelectedItem);
+                    {
+                        Calculation_control.listBox1.Items.Remove((Items)listBox1.SelectedItem);
                     }
                 }
-                Main.listbox_change();
+                if (!to_SRI_listbox)
+                {
+                    Main.listbox_change();
+                }
+                else
+                {
+                    Calculation_control.check_button();
+                }
                 this.Close();
             }
         }
@@ -139,28 +192,49 @@ namespace KIMI_Sim
                     if (Remove_data == false)
                     {
                         //Add
-                        if (Data_type == true)
-                        { // product
-                            Main.listBox_products.Items.Add((Items)listBox1.SelectedItem);
+                        if (!to_SRI_listbox)
+                        {
+                            if (Data_type == true)
+                            { // product
+                                Main.listBox_products.Items.Add((Items)listBox1.SelectedItem);
+                            }
+                            else
+                            { // reactant
+                                Main.listBox_reactants.Items.Add((Items)listBox1.SelectedItem);
+                            }
                         }
                         else
-                        { // reactant
-                            Main.listBox_reactants.Items.Add((Items)listBox1.SelectedItem);
+                        {
+                            Calculation_control.listBox1.Items.Add((Items)listBox1.SelectedItem);
                         }
                     }
                     else
                     {
-                        //Remove
-                        if (Data_type == true)
-                        { // product
-                            Main.listBox_products.Items.Remove((Items)listBox1.SelectedItem);
+                        if (!to_SRI_listbox)
+                        {
+                            //Remove
+                            if (Data_type == true)
+                            { // product
+                                Main.listBox_products.Items.Remove((Items)listBox1.SelectedItem);
+                            }
+                            else
+                            { // reactant
+                                Main.listBox_reactants.Items.Remove((Items)listBox1.SelectedItem);
+                            }
                         }
                         else
-                        { // reactant
-                            Main.listBox_reactants.Items.Remove((Items)listBox1.SelectedItem);
+                        {
+                            Calculation_control.listBox1.Items.Remove((Items)listBox1.SelectedItem);
                         }
                     }
-                    Main.listbox_change();
+                    if (!to_SRI_listbox)
+                    {
+                        Main.listbox_change();
+                    }
+                    else
+                    {
+                        Calculation_control.check_button();
+                    }
                     this.Close();
                 }
             }

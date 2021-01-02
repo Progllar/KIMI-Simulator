@@ -142,16 +142,25 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.button7 = new System.Windows.Forms.Button();
             this.listView1 = new System.Windows.Forms.ListView();
             this.Date = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.Dim = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.Con = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.Ele = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            groupBox3 = new System.Windows.Forms.GroupBox();
+            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            listBox1 = new System.Windows.Forms.ListBox();
+            button9 = new System.Windows.Forms.Button();
+            this.label29 = new System.Windows.Forms.Label();
+            this.button8 = new System.Windows.Forms.Button();
+            this.label28 = new System.Windows.Forms.Label();
             this.label27 = new System.Windows.Forms.Label();
             this.textBox7 = new System.Windows.Forms.TextBox();
             this.button6 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
             this.label17 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.label10 = new System.Windows.Forms.Label();
@@ -162,7 +171,6 @@
             this.label11 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.button7 = new System.Windows.Forms.Button();
             checkBox3 = new System.Windows.Forms.CheckBox();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_conc)).BeginInit();
@@ -174,6 +182,7 @@
             this.tabPage1.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            groupBox3.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -1152,7 +1161,7 @@
             // button_interpolation
             // 
             this.button_interpolation.Enabled = false;
-            this.button_interpolation.Location = new System.Drawing.Point(82, 63);
+            this.button_interpolation.Location = new System.Drawing.Point(6, 279);
             this.button_interpolation.Name = "button_interpolation";
             this.button_interpolation.Size = new System.Drawing.Size(77, 25);
             this.button_interpolation.TabIndex = 88;
@@ -1162,11 +1171,11 @@
             // 
             // button_Load
             // 
-            this.button_Load.Location = new System.Drawing.Point(6, 63);
+            this.button_Load.Location = new System.Drawing.Point(113, 19);
             this.button_Load.Name = "button_Load";
-            this.button_Load.Size = new System.Drawing.Size(70, 25);
+            this.button_Load.Size = new System.Drawing.Size(138, 25);
             this.button_Load.TabIndex = 89;
-            this.button_Load.Text = "Load data";
+            this.button_Load.Text = "Load experimental data";
             this.button_Load.UseVisualStyleBackColor = true;
             this.button_Load.Click += new System.EventHandler(this.button_Load_Click);
             // 
@@ -1177,7 +1186,7 @@
             // label24
             // 
             this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(7, 25);
+            this.label24.Location = new System.Drawing.Point(96, 285);
             this.label24.Name = "label24";
             this.label24.Size = new System.Drawing.Size(54, 13);
             this.label24.TabIndex = 90;
@@ -1186,7 +1195,7 @@
             // label26
             // 
             label26.AutoSize = true;
-            label26.Location = new System.Drawing.Point(6, 47);
+            label26.Location = new System.Drawing.Point(6, 25);
             label26.Name = "label26";
             label26.Size = new System.Drawing.Size(64, 13);
             label26.TabIndex = 92;
@@ -1194,7 +1203,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(139, 43);
+            this.button1.Location = new System.Drawing.Point(240, 281);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(20, 20);
             this.button1.TabIndex = 93;
@@ -1204,7 +1213,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(85, 43);
+            this.button2.Location = new System.Drawing.Point(186, 281);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(20, 20);
             this.button2.TabIndex = 94;
@@ -1215,7 +1224,7 @@
             // label25
             // 
             this.label25.AutoSize = true;
-            this.label25.Location = new System.Drawing.Point(109, 47);
+            this.label25.Location = new System.Drawing.Point(210, 285);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(24, 13);
             this.label25.TabIndex = 95;
@@ -1337,6 +1346,7 @@
             checkBox3.TabIndex = 92;
             checkBox3.Text = ":Rel";
             checkBox3.UseVisualStyleBackColor = true;
+            checkBox3.CheckedChanged += new System.EventHandler(this.checkBox3_CheckedChanged);
             // 
             // tabPage3
             // 
@@ -1348,7 +1358,6 @@
             this.tabPage3.Controls.Add(this.button6);
             this.tabPage3.Controls.Add(this.button5);
             this.tabPage3.Controls.Add(this.button4);
-            this.tabPage3.Controls.Add(this.button3);
             this.tabPage3.Controls.Add(this.label17);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
@@ -1357,22 +1366,54 @@
             this.tabPage3.Text = "Data managment";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
+            // button7
+            // 
+            this.button7.Location = new System.Drawing.Point(149, 264);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(134, 23);
+            this.button7.TabIndex = 106;
+            this.button7.Text = "Use selected properties";
+            this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
+            // 
             // listView1
             // 
             this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.Date,
-            this.Dim});
+            this.Dim,
+            this.Con,
+            this.Ele});
+            this.listView1.HideSelection = false;
             this.listView1.Location = new System.Drawing.Point(8, 20);
             this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(275, 264);
+            this.listView1.Size = new System.Drawing.Size(275, 209);
             this.listView1.TabIndex = 105;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
             this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
             // 
+            // Date
+            // 
+            this.Date.Text = "Time";
+            this.Date.Width = 130;
+            // 
+            // Dim
+            // 
+            this.Dim.Text = "Dim";
+            this.Dim.Width = 30;
+            // 
+            // Con
+            // 
+            this.Con.Text = "Conc. ?";
+            // 
+            // Ele
+            // 
+            this.Ele.Text = "E/N ?";
+            // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(groupBox3);
             this.groupBox1.Controls.Add(this.label24);
             this.groupBox1.Controls.Add(this.button_Load);
             this.groupBox1.Controls.Add(label26);
@@ -1380,17 +1421,87 @@
             this.groupBox1.Controls.Add(this.button1);
             this.groupBox1.Controls.Add(this.button_interpolation);
             this.groupBox1.Controls.Add(this.label25);
-            this.groupBox1.Location = new System.Drawing.Point(8, 600);
+            this.groupBox1.Location = new System.Drawing.Point(8, 479);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(275, 100);
+            this.groupBox1.Size = new System.Drawing.Size(275, 311);
             this.groupBox1.TabIndex = 104;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Interpolation";
+            this.groupBox1.Text = "Experimental data";
+            // 
+            // groupBox3
+            // 
+            groupBox3.Controls.Add(this.comboBox2);
+            groupBox3.Controls.Add(listBox1);
+            groupBox3.Controls.Add(button9);
+            groupBox3.Controls.Add(this.label29);
+            groupBox3.Controls.Add(this.button8);
+            groupBox3.Controls.Add(this.label28);
+            groupBox3.Enabled = false;
+            groupBox3.Location = new System.Drawing.Point(6, 50);
+            groupBox3.Name = "groupBox3";
+            groupBox3.Size = new System.Drawing.Size(263, 223);
+            groupBox3.TabIndex = 102;
+            groupBox3.TabStop = false;
+            groupBox3.Text = "SIFT MIM Reagent ions settings";
+            // 
+            // comboBox2
+            // 
+            this.comboBox2.FormattingEnabled = true;
+            this.comboBox2.Location = new System.Drawing.Point(6, 41);
+            this.comboBox2.Name = "comboBox2";
+            this.comboBox2.Size = new System.Drawing.Size(248, 21);
+            this.comboBox2.TabIndex = 99;
+            // 
+            // listBox1
+            // 
+            listBox1.FormattingEnabled = true;
+            listBox1.Location = new System.Drawing.Point(6, 90);
+            listBox1.Name = "listBox1";
+            listBox1.Size = new System.Drawing.Size(248, 95);
+            listBox1.TabIndex = 96;
+            // 
+            // button9
+            // 
+            button9.Location = new System.Drawing.Point(131, 191);
+            button9.Name = "button9";
+            button9.Size = new System.Drawing.Size(100, 23);
+            button9.TabIndex = 98;
+            button9.Text = "Remove SRI";
+            button9.UseVisualStyleBackColor = true;
+            button9.Click += new System.EventHandler(this.button9_Click);
+            // 
+            // label29
+            // 
+            this.label29.AutoSize = true;
+            this.label29.Location = new System.Drawing.Point(6, 74);
+            this.label29.Name = "label29";
+            this.label29.Size = new System.Drawing.Size(119, 13);
+            this.label29.TabIndex = 101;
+            this.label29.Text = "Secondary reagent ions";
+            // 
+            // button8
+            // 
+            this.button8.Location = new System.Drawing.Point(25, 191);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(100, 23);
+            this.button8.TabIndex = 97;
+            this.button8.Text = "Add SRI";
+            this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
+            // 
+            // label28
+            // 
+            this.label28.AutoSize = true;
+            this.label28.Location = new System.Drawing.Point(6, 25);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(97, 13);
+            this.label28.TabIndex = 100;
+            this.label28.Text = "Primary reagent ion";
             // 
             // label27
             // 
             this.label27.AutoSize = true;
-            this.label27.Location = new System.Drawing.Point(5, 354);
+            this.label27.Location = new System.Drawing.Point(5, 299);
             this.label27.Name = "label27";
             this.label27.Size = new System.Drawing.Size(92, 13);
             this.label27.TabIndex = 103;
@@ -1398,18 +1509,18 @@
             // 
             // textBox7
             // 
-            this.textBox7.Location = new System.Drawing.Point(8, 370);
+            this.textBox7.Location = new System.Drawing.Point(8, 315);
             this.textBox7.Multiline = true;
             this.textBox7.Name = "textBox7";
             this.textBox7.ReadOnly = true;
-            this.textBox7.Size = new System.Drawing.Size(275, 224);
+            this.textBox7.Size = new System.Drawing.Size(275, 158);
             this.textBox7.TabIndex = 102;
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(8, 319);
+            this.button6.Location = new System.Drawing.Point(8, 264);
             this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(85, 23);
+            this.button6.Size = new System.Drawing.Size(135, 23);
             this.button6.TabIndex = 101;
             this.button6.Text = "Export details";
             this.button6.UseVisualStyleBackColor = true;
@@ -1417,33 +1528,23 @@
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(8, 290);
+            this.button5.Location = new System.Drawing.Point(8, 235);
             this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(85, 23);
+            this.button5.Size = new System.Drawing.Size(135, 23);
             this.button5.TabIndex = 100;
-            this.button5.Text = "Save selected";
+            this.button5.Text = "Save data_set to folder";
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(107, 290);
+            this.button4.Location = new System.Drawing.Point(148, 235);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(85, 23);
+            this.button4.Size = new System.Drawing.Size(135, 23);
             this.button4.TabIndex = 99;
             this.button4.Text = "Delete data";
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
-            // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(198, 290);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(85, 23);
-            this.button3.TabIndex = 98;
-            this.button3.Text = "Show data";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // label17
             // 
@@ -1563,16 +1664,6 @@
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
-            // button7
-            // 
-            this.button7.Location = new System.Drawing.Point(198, 319);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(85, 23);
-            this.button7.TabIndex = 106;
-            this.button7.Text = "Use data";
-            this.button7.UseVisualStyleBackColor = true;
-            this.button7.Click += new System.EventHandler(this.button7_Click);
-            // 
             // Calculation_control
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1603,6 +1694,8 @@
             this.tabPage3.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            groupBox3.ResumeLayout(false);
+            groupBox3.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
             this.ResumeLayout(false);
@@ -1738,11 +1831,12 @@
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button3;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.ColumnHeader Date;
         private System.Windows.Forms.ColumnHeader Dim;
+        private System.Windows.Forms.ColumnHeader Con;
+        private System.Windows.Forms.ColumnHeader Ele;
         private System.Windows.Forms.Button button7;
         public static System.Windows.Forms.RadioButton radioButton2;
         public static System.Windows.Forms.GroupBox groupBox2;
@@ -1751,6 +1845,164 @@
         public static System.Windows.Forms.Label label26;
         public static OxyPlot.WindowsForms.PlotView plot1;
         public static System.Windows.Forms.CheckBox checkBox3;
-
+        private static System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.ComboBox comboBox2;
+        public static System.Windows.Forms.ListBox listBox1;
+        private static System.Windows.Forms.Button button9;
+        private System.Windows.Forms.Label label29;
+        private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.Label label28;
     }
 }
+
+/*
+ * 
+ *         
+        private System.Windows.Forms.Button button_OK;
+        private System.Windows.Forms.TextBox textBoxC1;
+        private System.Windows.Forms.TextBox textBoxD1;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox textBoxA10;
+        private System.Windows.Forms.TextBox textBoxB10;
+        private System.Windows.Forms.VScrollBar vScrollBar1;
+        private System.Windows.Forms.TextBox textBoxA9;
+        private System.Windows.Forms.TextBox textBoxB9;
+        private System.Windows.Forms.TextBox textBoxA8;
+        private System.Windows.Forms.TextBox textBoxB8;
+        private System.Windows.Forms.TextBox textBoxA7;
+        private System.Windows.Forms.TextBox textBoxB7;
+        private System.Windows.Forms.TextBox textBoxA6;
+        private System.Windows.Forms.TextBox textBoxB6;
+        private System.Windows.Forms.TextBox textBoxA5;
+        private System.Windows.Forms.TextBox textBoxB5;
+        private System.Windows.Forms.TextBox textBoxA4;
+        private System.Windows.Forms.TextBox textBoxB4;
+        private System.Windows.Forms.TextBox textBoxA3;
+        private System.Windows.Forms.TextBox textBoxB3;
+        private System.Windows.Forms.TextBox textBoxA2;
+        private System.Windows.Forms.TextBox textBoxB2;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox textBoxA1;
+        private System.Windows.Forms.TextBox textBoxB1;
+        private System.Windows.Forms.TextBox textBoxC2;
+        private System.Windows.Forms.TextBox textBoxD2;
+        private System.Windows.Forms.TextBox textBoxC3;
+        private System.Windows.Forms.TextBox textBoxD3;
+        private System.Windows.Forms.TextBox textBoxC4;
+        private System.Windows.Forms.TextBox textBoxD4;
+        private System.Windows.Forms.TextBox textBoxC5;
+        private System.Windows.Forms.TextBox textBoxD5;
+        private System.Windows.Forms.TextBox textBoxC6;
+        private System.Windows.Forms.TextBox textBoxD6;
+        private System.Windows.Forms.TextBox textBoxC7;
+        private System.Windows.Forms.TextBox textBoxD7;
+        private System.Windows.Forms.TextBox textBoxC8;
+        private System.Windows.Forms.TextBox textBoxD8;
+        private System.Windows.Forms.TextBox textBoxC9;
+        private System.Windows.Forms.TextBox textBoxD9;
+        private System.Windows.Forms.VScrollBar vScrollBar2;
+        private System.Windows.Forms.Button button_cancle;
+        private System.Windows.Forms.TextBox textBoxC10;
+        private System.Windows.Forms.TextBox textBoxD10;
+        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Button button_export;
+        private System.Windows.Forms.TextBox textBox_conc;
+        public System.Windows.Forms.TextBox textBox_dist;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.TrackBar trackBar_conc;
+        private System.Windows.Forms.Button button_ms;
+        private System.Windows.Forms.RadioButton radioButton_ms;
+        private System.Windows.Forms.RadioButton radioButton_kinetic;
+        private System.Windows.Forms.TrackBar trackBar_dist;
+        private System.Windows.Forms.CheckBox checkBox2;
+        private System.Windows.Forms.RadioButton radioButton1;
+        private System.Windows.Forms.TextBox textBox4;
+        private System.Windows.Forms.TextBox textBox5;
+        private System.Windows.Forms.TextBox textBox6;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.CheckBox checkBox_log;
+        private System.Windows.Forms.Label label21;
+        private System.Windows.Forms.Button button_t_x;
+        private System.Windows.Forms.Label label22;
+        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.TextBox textBox_ele;
+        private System.Windows.Forms.TrackBar trackBar_ele;
+        private System.Windows.Forms.Button button_interpolation;
+        private System.Windows.Forms.Button button_Load;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.RadioButton radioButton3;
+        private System.Windows.Forms.Label label24;
+        private System.Windows.Forms.Label labelG10;
+        private System.Windows.Forms.Label labelG9;
+        private System.Windows.Forms.Label labelG8;
+        private System.Windows.Forms.Label labelG7;
+        private System.Windows.Forms.Label labelG6;
+        private System.Windows.Forms.Label labelG5;
+        private System.Windows.Forms.Label labelG4;
+        private System.Windows.Forms.Label labelG3;
+        private System.Windows.Forms.Label labelG2;
+        private System.Windows.Forms.Label labelG1;
+        private System.Windows.Forms.RadioButton radioButton_dinamic;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Label label25;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage tabPage2;
+
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.TabPage tabPage3;
+
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label17;
+
+        private System.Windows.Forms.Label label27;
+        private System.Windows.Forms.TextBox textBox7;
+        private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.ListView listView1;
+        private System.Windows.Forms.ColumnHeader Date;
+        private System.Windows.Forms.ColumnHeader Dim;
+        private System.Windows.Forms.ColumnHeader Con;
+        private System.Windows.Forms.ColumnHeader Ele;
+        private System.Windows.Forms.Button button7;
+        public static System.Windows.Forms.RadioButton radioButton2;
+        public static System.Windows.Forms.GroupBox groupBox2;
+        public static System.Windows.Forms.GroupBox groupBox5;
+        public static System.Windows.Forms.CheckedListBox checkedListBox1;
+        public static System.Windows.Forms.Label label26;
+        public static OxyPlot.WindowsForms.PlotView plot1;
+        public static System.Windows.Forms.CheckBox checkBox3;
+        private static System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.ComboBox comboBox2;
+        public static System.Windows.Forms.ListBox listBox1;
+        private static System.Windows.Forms.Button button9;
+        private System.Windows.Forms.Label label29;
+        private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.Label label28;
+ * */

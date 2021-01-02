@@ -18,6 +18,7 @@ namespace KIMI_Sim
 {
     public partial class Results_KineticModel : Form
     {
+        public List<Data_storage> data_storage { get; set; }
         public string[] hlavicka { get; set; }
         public string[] hlavicka_din { get; set; }
         public List<double[,]> tabulka { get; set; }
@@ -29,6 +30,7 @@ namespace KIMI_Sim
         private string Popis_X { get; set; }
         private bool is_time = true;
         public double _concentration { get; set; }
+
         public double _distance { get; set; }
         private bool conc_roll = false;
         private bool dist_roll = false;

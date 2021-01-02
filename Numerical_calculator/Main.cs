@@ -732,7 +732,7 @@ namespace KIMI_Sim
 
         private void button_Proceed_Click(object sender, EventArgs e)
         {
-            // kontrola parametrov
+            // start new calculation control
             Calculation_control recap = new Calculation_control();
             recap.ItemColection_used = ItemColection_used;
             recap.ReactionColection_used = ReactionColection_used;
@@ -1814,6 +1814,7 @@ namespace KIMI_Sim
             addneutral.Items = ItemColection;
             addneutral.Data_type = false;
             addneutral.Remove_data = false;
+            addneutral.to_SRI_listbox = false;
             addneutral.ShowCollection();
             addneutral.Show(this);
         }
@@ -1825,6 +1826,7 @@ namespace KIMI_Sim
             addneutral.Items = ItemColection;
             addneutral.Data_type = true;
             addneutral.Remove_data = false;
+            addneutral.to_SRI_listbox = false;
             addneutral.ShowCollection();
             addneutral.Show(this);
         }
@@ -1854,6 +1856,7 @@ namespace KIMI_Sim
                 addneutral.Items = Neutrals_list;
                 addneutral.Data_type = false;
                 addneutral.Remove_data = true;
+                addneutral.to_SRI_listbox = false;
                 addneutral.ShowCollection();
                 addneutral.Show(this);
             }
@@ -1885,6 +1888,7 @@ namespace KIMI_Sim
                 addneutral.Items = Neutrals_list;
                 addneutral.Data_type = true;
                 addneutral.Remove_data = true;
+                addneutral.to_SRI_listbox = false;
                 addneutral.ShowCollection();
                 addneutral.Show(this);
             }
@@ -2494,8 +2498,7 @@ namespace KIMI_Sim
         {
             Results_KineticModel Kinetick_results = new Results_KineticModel();
             Kinetick_results.Popis_din = name_din;
-            //Kinetick_results.hlavicka = hlavicka;
-            //Kinetick_results.tabulka = tabulka;
+            Kinetick_results.data_storage = data_storage;
             Kinetick_results.name_din = name_din;
             if (calc_type)
             {
@@ -2509,10 +2512,16 @@ namespace KIMI_Sim
             {
                 Kinetick_results._concentration = conc_end;
             }
-            Kinetick_results.start();
-            Kinetick_results.iniciate();
+            //Kinetick_results.start();
+            //Kinetick_results.iniciate();
             Kinetick_results.Show(this);
-            Kinetick_results.start_animation();
+            //Kinetick_results.start_animation();
+            /*
+             * kinetics_results shall be used to overwiev present and saved data via data_storage
+             * Before it can be implemented, data_storage needs to be modified to also copy values (not via indexing) from neutrals list and settings classes
+             * it shall contains data_storage import option and all data managing options from Calculation_control
+             * 
+             * */
         }
 
         private void profile3ToolStripMenuItem_Click(object sender, EventArgs e)

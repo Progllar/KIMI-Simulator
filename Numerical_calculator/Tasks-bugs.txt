@@ -3,9 +3,9 @@
 Main: delete/overwriting of existing reactions in Main is not done properly.
 Main: Missing control of rate constnats, if the caclulation is reasonable. If not, calculation will crush.
 Calculation_control: Convolution of MS is not working.
-Main/results: Oxyplot - color of the data not mach color of imported data.
+Main/results: Oxyplot - color of the data not mach color of imported data. (Solved partially as the list of collors resets for imported data. Exact color match will be neede only after interpolation will be implemented)
 
-Results: Rework of calculated data saving in calculation_control/Data_management is required. A lot of information is not visible. 
+Results: Rework of calculated data saving in calculation_control/Data_management is required. (Revorked si Items and Reaction class is nowe copied properly, but List of neutrals and Settings is still not)
 Results: Export of calculation parameters together with results export.
 Results: Implementation od data interpolation.
 

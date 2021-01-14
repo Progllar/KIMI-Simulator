@@ -440,7 +440,7 @@ namespace KIMI_Sim
             double progress = 0;
             double Electric_field = 0, Concentration = 0;
             bool Electric_field_IsChanged = false;
-            int Electric_field_steps_cnt = 0, Concentration_steps_cnt = 0;
+            int Electric_field_steps_cnt = 1, Concentration_steps_cnt = 1;
             total_cycle = 1;
             actual_cycle = 1;
             bool Electric_field_Continue = false, Concentration_continue = false;
@@ -2533,7 +2533,7 @@ namespace KIMI_Sim
             }
             if (Load_type != -1)
             {
-                for (int i = 1; i < Load_hlavicka.GetLength(0); i++)
+                for (int i = 1; i < Load_hlavicka_str.GetLength(0); i++)
                 {
                     string str = Load_hlavicka_str[i].ToString();
                     bool done = false;
@@ -3874,7 +3874,7 @@ namespace KIMI_Sim
         {
             List<ScatterSeries> list = new List<ScatterSeries>();
             int cnt = 0;
-            for (int i = 1; i < Load_hlavicka.GetLength(0); i++)
+            for (int i = 1; i < Load_hlavicka_str.GetLength(0); i++)
             {
                 ScatterSeries sc = new ScatterSeries();
                 sc.MarkerSize = Marker_Size;
@@ -5072,7 +5072,9 @@ namespace KIMI_Sim
 
         private void checkedListBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            update_axis = false;
             start_animation();
+            update_axis = false;
         }
 
         public double Lambda()

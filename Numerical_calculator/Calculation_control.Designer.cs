@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.CheckBox checkBox3;
             this.button_OK = new System.Windows.Forms.Button();
             this.textBoxC1 = new System.Windows.Forms.TextBox();
             this.textBoxD1 = new System.Windows.Forms.TextBox();
@@ -171,6 +172,8 @@
             this.label11 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.label30 = new System.Windows.Forms.Label();
+            this.label31 = new System.Windows.Forms.Label();
             checkBox3 = new System.Windows.Forms.CheckBox();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_conc)).BeginInit();
@@ -1142,6 +1145,8 @@
             // 
             // groupBox5
             // 
+            groupBox5.Controls.Add(this.label31);
+            groupBox5.Controls.Add(this.label30);
             groupBox5.Controls.Add(this.checkBox2);
             groupBox5.Controls.Add(this.textBox6);
             groupBox5.Controls.Add(this.radioButton1);
@@ -1664,6 +1669,24 @@
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
+            // label30
+            // 
+            this.label30.AutoSize = true;
+            this.label30.Location = new System.Drawing.Point(83, 86);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(20, 13);
+            this.label30.TabIndex = 87;
+            this.label30.Text = "Td";
+            // 
+            // label31
+            // 
+            this.label31.AutoSize = true;
+            this.label31.Location = new System.Drawing.Point(83, 126);
+            this.label31.Name = "label31";
+            this.label31.Size = new System.Drawing.Size(20, 13);
+            this.label31.TabIndex = 88;
+            this.label31.Text = "Td";
+            // 
             // Calculation_control
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1710,6 +1733,8 @@
         private System.Windows.Forms.TextBox textBoxD1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label31;
+        private System.Windows.Forms.Label label30;
         private System.Windows.Forms.TextBox textBoxA10;
         private System.Windows.Forms.TextBox textBoxB10;
         private System.Windows.Forms.VScrollBar vScrollBar1;
@@ -1863,6 +1888,8 @@
         private System.Windows.Forms.TextBox textBoxD1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label31;
+        private System.Windows.Forms.Label label30;
         private System.Windows.Forms.TextBox textBoxA10;
         private System.Windows.Forms.TextBox textBoxB10;
         private System.Windows.Forms.VScrollBar vScrollBar1;

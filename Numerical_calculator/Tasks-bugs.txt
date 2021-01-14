@@ -1,7 +1,8 @@
 ﻿Need to be done/reworked
 
-Main: delete/overwriting of existing reactions in Main is not done properly.
-Main: Missing control of rate constnats, if the caclulation is reasonable. If not, calculation will crush.
+Calculation_control: Scatter poins of experimantal data input changes color of the border
+Main: delete/overwriting of existing reactions in Main has some bugs.
+Main: Also deleting of item can bug, if more items of the same type are inserted (delete last added item, not selected one)
 Calculation_control: Convolution of MS is not working.
 Main/results: Oxyplot - color of the data not mach color of imported data. (Solved partially as the list of collors resets for imported data. Exact color match will be neede only after interpolation will be implemented)
 
@@ -9,5 +10,8 @@ Results: Rework of calculated data saving in calculation_control/Data_management
 Results: Export of calculation parameters together with results export.
 Results: Implementation od data interpolation.
 
-Extras: Electric field can in V/cm, E/N or Er
+Extras: Electric field can be presented in V/cm, E/N or Er
+
+Color coding for reactions and Items: I may add collos to reactions and Items in Calculation_control for beter orientation in data.
+Add KIMI icons to other windows, not only Main. Also change names of individual windows, so they are not confusing. 
 

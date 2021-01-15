@@ -2149,12 +2149,23 @@ namespace KIMI_Sim
                         bool ok = false;
                         foreach (Items Items in ItemColection)
                         {
-                            if (compare(Items, UItems.GetItem()))
+                            if (Items.name == UItems.name)
+                            {
+                                Items.cation = UItems.cation;
+                                Items.concentration = UItems.concentration;
+                                Items.diffusion = UItems.diffusion;
+                                Items.formula = UItems.formula;
+                                Items.group_ID = UItems.group_ID;
+                                Items.mass = UItems.mass;
+                                Items.mobility = UItems.mobility;
+                                Items.s_name = UItems.s_name;
+                            }
+                            if (compare(Items, UItems.GetItem())) // compare if the two items share all properties
                             {
                                 ok = true;
                             }
                         }
-                        if (!ok)
+                        if (!ok) // if dont, chose if create a new one
                         {
                             Items new_item = new Items(UItems.GetItem());
                             doplnok.Add(new_item);
@@ -2170,12 +2181,12 @@ namespace KIMI_Sim
                         bool OK = false;
                         foreach (Reactions Reaction in RactionColection)
                         {
-                            if (compare(Reaction, UReactions))
+                            if (compare(Reaction, UReactions))  // compare if the two reactions share all properties
                             {
                                 OK = true;
                             }
                         }
-                        if (!OK)
+                        if (!OK) // if dont, chose if create a new one
                         {
                             Reactions new_reaction = new Reactions(UReactions.GetReaction());
                             dodatok.Add(new_reaction);
@@ -2267,6 +2278,7 @@ namespace KIMI_Sim
 
         private void loadResourcesToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            // Clear the list of Items and Reactions and replase them with the new one 
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
             openFileDialog1.InitialDirectory = "c:\\";
             openFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";

@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.CheckBox checkBox3;
             this.button_OK = new System.Windows.Forms.Button();
             this.textBoxC1 = new System.Windows.Forms.TextBox();
             this.textBoxD1 = new System.Windows.Forms.TextBox();

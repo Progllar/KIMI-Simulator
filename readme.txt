@@ -14,8 +14,13 @@ All executed simulations are temporarily saved and can be selected in Data manag
 
 The KIMI Sim also allows to insert experimental data previously obtained by SFIT-MS, PTR-MS of SIFDT-MS experiments.
 
-Disclaimer
+Sources
+This project uses external source code and external libraries, namely:
+MassSpectrometry library for Mass Spectrometry objects developed by Stefan Solnstev under the LGPLv3.0 licence (https://www.gnu.org/licenses/lgpl-3.0.txt)
+OxyPlot.Core library for graphical interface under the MIT licence (https://licenses.nuget.org/MIT)
+MwtWinDll library for caclulation of isotopic distribution of ions under the Apache licence v2.0 (https://www.apache.org/licenses/LICENSE-2.0) 
 
+Disclaimer
 This project was created as a part of the European Union’s Horizon 2020 research and innovation programme. All the work in freely accessible and public, following the research share policy of EU founded projects. The project was developed in order to simulate chemical ionisation processes, occurring in the SCIMS techniques. The results can be used to describe those processes. The authors of the projects are happy share the project, but are not responsible for a poor quality of results if the project is not used properly. 
 
 Acknowledgment
